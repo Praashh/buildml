@@ -1,18 +1,20 @@
 import { getToken } from 'next-auth/jwt';
 import { NextRequest, NextResponse } from 'next/server';
+import { env } from './env';
 
 export async function middleware(req: NextRequest) {
     const token = await getToken({
         req,
-        secret: process.env.AUTH_SECRET as string,
-        salt: process.env.AUTH_SALT as string,
+        secret: env.NEXTAUTH_SECRET as string,
+        salt: process.env.NEXTAUTH_SALT as string,
         secureCookie: req.nextUrl.protocol === 'https:',
     });
-    console.log('request', req);
-    console.log('All cookies:', req.cookies.getAll());
+    // console.log('request', req);
+    // console.log('All cookies:', req.cookies.getAll());
 
-    console.log('NEXTAUTH_SECRET', process.env.AUTH_SECRET);
-    console.log('token', token);
+    // console.log('NEXTAUTH_SECRET', process.env.NEXTAUTH_SECRET);
+    // console.log('NEXTAUTH_SALT', process.env.NEXTAUTH_SALT);
+    // console.log('token', token);
     if (!token) {
         return NextResponse.redirect(new URL('/', req.url));
     }
