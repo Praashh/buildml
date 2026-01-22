@@ -2,7 +2,8 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { Menu } from "lucide-react"
+import Image from "next/image"
+import { Menu, User, LogOut, Trophy } from "lucide-react"
 
 import { Button } from "~/components/ui/button"
 import { signIn, signOut, useSession } from "next-auth/react"
@@ -18,16 +19,111 @@ import {
     NavigationMenuList,
     navigationMenuTriggerStyle,
 } from "~/components/ui/navigation-menu"
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu"
 
 const navItems = [
     { name: "Practice", href: "/practice" },
     { name: "About", href: "/about" },
     { name: "Sponsor", href: "/sponsor" },
-    { name: "Feedback", href: "/feedback" },
+    { name: "Leaderboard", href: "/leaderboard" },
 ]
 
+// User Avatar component
+function UserAvatar({ src, name }: { src?: string | null; name?: string | null }) {
+    const initials = name
+        ? name
+            .split(" ")
+            .map((n) => n[0])
+            .join("")
+            .toUpperCase()
+            .slice(0, 2)
+        : "U"
+
+    if (src) {
+        return (
+            <Image
+                src={src}
+                alt={name ?? "User avatar"}
+                width={36}
+                height={36}
+                className="rounded-full border-2 border-green-500/50 transition-all hover:border-green-400"
+            />
+        )
+    }
+
+    return (
+        <div className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-green-500/50 bg-green-500/20 text-sm font-semibold text-green-400 transition-all hover:border-green-400 hover:bg-green-500/30">
+            {initials}
+        </div>
+    )
+}
+
+// User Profile Dropdown
+function UserProfileDropdown() {
+    const { data: session } = useSession()
+
+    return (
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <button className="flex items-center gap-2 rounded-full outline-none ring-offset-black transition-all focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
+                    <UserAvatar src={session?.user?.image} name={session?.user?.name} />
+                </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+                align="end"
+                className="w-56 border-white/10 bg-gray-950/95 backdrop-blur-xl"
+            >
+                <DropdownMenuLabel className="font-normal">
+                    <div className="flex flex-col space-y-1">
+                        <p className="text-sm font-medium text-white">
+                            {session?.user?.name ?? "User"}
+                        </p>
+                        <p className="text-xs text-gray-400">
+                            {session?.user?.email}
+                        </p>
+                    </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator className="bg-white/10" />
+                <DropdownMenuItem asChild>
+                    <Link
+                        href="/profile"
+                        className="flex cursor-pointer items-center text-white/80 hover:text-green-400 focus:text-green-400"
+                    >
+                        <User className="mr-2 h-4 w-4" />
+                        Profile
+                    </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                    <Link
+                        href="/leaderboard"
+                        className="flex cursor-pointer items-center text-white/80 hover:text-green-400 focus:text-green-400"
+                    >
+                        <Trophy className="mr-2 h-4 w-4" />
+                        Leaderboard
+                    </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator className="bg-white/10" />
+                <DropdownMenuItem
+                    onClick={() => signOut()}
+                    className="cursor-pointer text-red-400 hover:text-red-300 focus:text-red-300"
+                >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Sign Out
+                </DropdownMenuItem>
+            </DropdownMenuContent>
+        </DropdownMenu>
+    )
+}
+
 export function Navbar() {
-    const { data: session, status } = useSession()
+    const { status } = useSession()
     const [isOpen, setIsOpen] = React.useState(false)
 
     return (
@@ -60,40 +156,25 @@ export function Navbar() {
                         </NavigationMenu>
                     </div>
 
-                    {/* Auth Buttons - Desktop */}
-                    <div className="hidden md:flex items-center space-x-3">
+                    {/* Auth Section - Desktop */}
+                    <div className="hidden md:flex items-center">
                         {status === "authenticated" ? (
-                            <div className="flex items-center space-x-3">
-                                <span className="text-white/70 text-sm">{session.user?.name}</span>
-                                <Button
-                                    variant="ghost"
-                                    onClick={() => signOut()}
-                                    className="text-white/90 hover:text-red-400 hover:bg-white/10"
-                                >
-                                    Sign Out
-                                </Button>
-                            </div>
+                            <UserProfileDropdown />
                         ) : (
-                            <>
-                                <Button
-                                    variant="ghost"
-                                    onClick={() => signIn("google")}
-                                    className="text-white/90 hover:text-green-400 hover:bg-white/10"
-                                >
-                                    Sign In
-                                </Button>
-                                <Button
-                                    onClick={() => signIn("google")}
-                                    className="bg-linear-to-r from-green-400 to-emerald-500 text-black font-semibold hover:from-green-500 hover:to-emerald-600 transition-all shadow-lg shadow-green-500/20"
-                                >
-                                    Sign Up
-                                </Button>
-                            </>
+                            <Button
+                                onClick={() => signIn("google")}
+                                className="bg-linear-to-r from-green-400 to-emerald-500 text-black font-semibold hover:from-green-500 hover:to-emerald-600 transition-all shadow-lg shadow-green-500/20"
+                            >
+                                Login
+                            </Button>
                         )}
                     </div>
 
                     {/* Mobile Menu */}
-                    <div className="md:hidden">
+                    <div className="md:hidden flex items-center gap-3">
+                        {/* Mobile User Avatar */}
+                        {status === "authenticated" && <UserProfileDropdown />}
+
                         <Sheet open={isOpen} onOpenChange={setIsOpen}>
                             <SheetTrigger asChild>
                                 <Button
@@ -122,29 +203,39 @@ export function Navbar() {
                                     ))}
                                     <div className="pt-4 border-t border-white/10 space-y-3">
                                         {status === "authenticated" ? (
-                                            <Button
-                                                variant="ghost"
-                                                onClick={() => signOut()}
-                                                className="w-full text-white/90 hover:text-red-400 hover:bg-white/10"
-                                            >
-                                                Sign Out
-                                            </Button>
-                                        ) : (
                                             <>
+                                                <Link
+                                                    href="/profile"
+                                                    onClick={() => setIsOpen(false)}
+                                                    className="flex items-center gap-2 text-white/90 hover:text-green-400 transition-colors py-2"
+                                                >
+                                                    <User className="h-4 w-4" />
+                                                    Profile
+                                                </Link>
+                                                <Link
+                                                    href="/leaderboard"
+                                                    onClick={() => setIsOpen(false)}
+                                                    className="flex items-center gap-2 text-white/90 hover:text-green-400 transition-colors py-2"
+                                                >
+                                                    <Trophy className="h-4 w-4" />
+                                                    Leaderboard
+                                                </Link>
                                                 <Button
                                                     variant="ghost"
-                                                    onClick={() => signIn("google")}
-                                                    className="w-full text-white/90 hover:text-green-400 hover:bg-white/10"
+                                                    onClick={() => signOut()}
+                                                    className="w-full justify-start text-red-400 hover:text-red-300 hover:bg-white/10 p-0 h-auto py-2"
                                                 >
-                                                    Sign In
-                                                </Button>
-                                                <Button
-                                                    onClick={() => signIn("google")}
-                                                    className="w-full bg-linear-to-r from-green-400 to-emerald-500 text-black font-semibold hover:from-green-500 hover:to-emerald-600 transition-all"
-                                                >
-                                                    Sign Up
+                                                    <LogOut className="mr-2 h-4 w-4" />
+                                                    Sign Out
                                                 </Button>
                                             </>
+                                        ) : (
+                                            <Button
+                                                onClick={() => signIn("google")}
+                                                className="w-full bg-linear-to-r from-green-400 to-emerald-500 text-black font-semibold hover:from-green-500 hover:to-emerald-600 transition-all"
+                                            >
+                                                Login
+                                            </Button>
                                         )}
                                     </div>
                                 </div>
@@ -156,3 +247,4 @@ export function Navbar() {
         </nav>
     )
 }
+

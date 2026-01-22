@@ -30,9 +30,12 @@ export const submissionRouter = createTRPCRouter({
                         language: "py",
                         version: "3.10.0",
                         files: [
-                            { name: "tests.py", content: problem.testCode },
-                            { name: "solution.py", content: input.code },
+                            { name: "user_code.py", content: input.code },
+                            { name: "test_code.py", content: problem.testCode },
                         ],
+                        run: {
+                            args: ["-m", "unittest", "-v", "test_code.py"]
+                        },
                         compile_timeout: 10000,
                         run_timeout: 3000,
                         compile_cpu_time: 10000,

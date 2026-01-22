@@ -1,16 +1,14 @@
 import { HydrateClient } from "~/trpc/server";
 import { Navbar } from "../_components/navbar";
 import { Footer } from "../_components/footer";
-import RainingLetters from "../_components/hero";
 
 export default async function AboutPage() {
     return (
         <HydrateClient>
-            <div className="relative min-h-screen">
+            <div className="relative min-h-screen flex flex-col">
                 <Navbar />
-                <RainingLetters />
 
-                <main className="absolute inset-0 z-10 container mx-auto px-6 lg:px-8 pt-32 pb-20 max-w-4xl overflow-y-auto">
+                <main className="flex-1 container mx-auto px-6 lg:px-8 pt-32 pb-20 max-w-4xl">
 
                     {/* Header Section */}
                     <div className="mb-16">

@@ -1,241 +1,128 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { useState, useEffect, useCallback, useRef } from "react"
+import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { Button } from "~/components/ui/button";
+import { Users } from "lucide-react";
+import { NeuralNetwork } from "./neural-network";
 
-interface Character {
-    char: string
-    x: number
-    y: number
-    speed: number
-}
-
-class TextScramble {
-    el: HTMLElement
-    chars: string
-    queue: Array<{
-        from: string
-        to: string
-        start: number
-        end: number
-        char?: string
-    }>
-    frame: number
-    frameRequest: number
-    resolve: (value: void | PromiseLike<void>) => void
-
-    constructor(el: HTMLElement) {
-        this.el = el
-        this.chars = '!<>-_\\/[]{}—=+*^?#'
-        this.queue = []
-        this.frame = 0
-        this.frameRequest = 0
-        this.resolve = () => { }
-        this.update = this.update.bind(this)
-    }
-
-    setText(newText: string) {
-        const oldText = this.el.innerText
-        const length = Math.max(oldText.length, newText.length)
-        const promise = new Promise<void>((resolve) => this.resolve = resolve)
-        this.queue = []
-
-        for (let i = 0; i < length; i++) {
-            const from = oldText[i] || ''
-            const to = newText[i] || ''
-            const start = Math.floor(Math.random() * 40)
-            const end = start + Math.floor(Math.random() * 40)
-            this.queue.push({ from, to, start, end })
-        }
-
-        cancelAnimationFrame(this.frameRequest)
-        this.frame = 0
-        this.update()
-        return promise
-    }
-
-    update() {
-        let output = ''
-        let complete = 0
-
-        for (let i = 0, n = this.queue.length; i < n; i++) {
-            const item = this.queue[i]
-            if (!item) continue
-            let { from, to, start, end, char } = item
-            if (this.frame >= end) {
-                complete++
-                output += to
-            } else if (this.frame >= start) {
-                if (!char || Math.random() < 0.28) {
-                    char = this.chars[Math.floor(Math.random() * this.chars.length)]
-                    item.char = char
-                }
-                output += `<span class="dud">${char}</span>`
-            } else {
-                output += from
-            }
-        }
-
-        this.el.innerHTML = output
-        if (complete === this.queue.length) {
-            this.resolve()
-        } else {
-            this.frameRequest = requestAnimationFrame(this.update)
-            this.frame++
-        }
-    }
-}
-
-const ScrambledTitle: React.FC = () => {
-    const elementRef = useRef<HTMLHeadingElement>(null)
-    const scramblerRef = useRef<TextScramble | null>(null)
-    const [mounted, setMounted] = useState(false)
+// Matrix rain effect component
+function MatrixRain() {
+    const canvasRef = useRef<HTMLCanvasElement>(null);
 
     useEffect(() => {
-        if (elementRef.current && !scramblerRef.current) {
-            scramblerRef.current = new TextScramble(elementRef.current)
-            setMounted(true)
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return;
+
+        const resizeCanvas = () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        };
+
+        resizeCanvas();
+        window.addEventListener("resize", resizeCanvas);
+
+        const chars = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789";
+        const charArray = chars.split("");
+        const fontSize = 16;
+        const columns = Math.floor(canvas.width / fontSize);
+        const drops: number[] = [];
+
+        for (let i = 0; i < columns; i++) {
+            drops[i] = Math.random() * -100;
         }
-    }, [])
 
-    useEffect(() => {
-        if (mounted && scramblerRef.current) {
-            const phrases = [
-                'Hello, 21st.dev,',
-                'It\'s RAINING',
-                'with\' letters',
-                'and alphabets',
-                'dont FORGET to bring',
-                'your umbrella today'
-            ]
+        const draw = () => {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            let counter = 0
-            const next = () => {
-                if (scramblerRef.current) {
-                    const phrase = phrases[counter]
-                    if (phrase) {
-                        scramblerRef.current.setText(phrase).then(() => {
-                            setTimeout(next, 2000)
-                        })
-                    }
-                    counter = (counter + 1) % phrases.length
+            ctx.font = `${fontSize}px monospace`;
+
+            for (let i = 0; i < drops.length; i++) {
+                const char = charArray[Math.floor(Math.random() * charArray.length)];
+                const x = i * fontSize;
+                const y = drops[i]! * fontSize;
+
+                // Varying green shades for depth
+                const brightness = Math.random() * 155 + 100;
+                ctx.fillStyle = `rgba(0, ${brightness}, 0, 0.8)`;
+                ctx.fillText(char!, x, y);
+
+                if (y > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
                 }
+                drops[i]! += 0.5;
             }
+        };
 
-            next()
-        }
-    }, [mounted])
+        const interval = setInterval(draw, 50);
+
+        return () => {
+            clearInterval(interval);
+            window.removeEventListener("resize", resizeCanvas);
+        };
+    }, []);
 
     return (
-        <h1
-            ref={elementRef}
-            className="text-white text-6xl font-bold tracking-wider justify-center"
-            style={{ fontFamily: 'monospace' }}
-        >
-            RAINING LETTERS
-        </h1>
-    )
+        <canvas
+            ref={canvasRef}
+            className="pointer-events-none absolute inset-0 opacity-40"
+        />
+    );
 }
 
-const RainingLetters: React.FC = () => {
-    const [characters, setCharacters] = useState<Character[]>([])
-    const [activeIndices, setActiveIndices] = useState<Set<number>>(new Set())
-
-    const createCharacters = useCallback(() => {
-        const allChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?"
-        const charCount = 300
-        const newCharacters: Character[] = []
-
-        for (let i = 0; i < charCount; i++) {
-            newCharacters.push({
-                char: allChars[Math.floor(Math.random() * allChars.length)]!,
-                x: Math.random() * 100,
-                y: Math.random() * 100,
-                speed: 0.1 + Math.random() * 0.3,
-            })
-        }
-
-        return newCharacters
-    }, [])
-
-    useEffect(() => {
-        setCharacters(createCharacters())
-    }, [createCharacters])
-
-    useEffect(() => {
-        const updateActiveIndices = () => {
-            const newActiveIndices = new Set<number>()
-            const numActive = Math.floor(Math.random() * 3) + 3
-            for (let i = 0; i < numActive; i++) {
-                newActiveIndices.add(Math.floor(Math.random() * characters.length))
-            }
-            setActiveIndices(newActiveIndices)
-        }
-
-        const flickerInterval = setInterval(updateActiveIndices, 50)
-        return () => clearInterval(flickerInterval)
-    }, [characters.length])
-
-    useEffect(() => {
-        let animationFrameId: number
-
-        const updatePositions = () => {
-            setCharacters(prevChars =>
-                prevChars.map(char => ({
-                    ...char,
-                    y: char.y + char.speed,
-                    ...(char.y >= 100 && {
-                        y: -5,
-                        x: Math.random() * 100,
-                        char: "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?"[
-                            Math.floor(Math.random() * "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?".length)
-                        ]!,
-                    }),
-                }))
-            )
-            animationFrameId = requestAnimationFrame(updatePositions)
-        }
-
-        animationFrameId = requestAnimationFrame(updatePositions)
-        return () => cancelAnimationFrame(animationFrameId)
-    }, [])
-
+export default function RainingLetters() {
     return (
-        <div className="relative w-full h-screen bg-black overflow-hidden">
-            {/* Raining Characters */}
-            {characters.map((char, index) => (
-                <span
-                    key={index}
-                    className={`absolute text-xs transition-colors duration-100 ${activeIndices.has(index)
-                        ? "text-[#00ff00] text-base scale-125 z-10 font-bold animate-pulse"
-                        : "text-slate-600 font-light"
-                        }`}
-                    style={{
-                        left: `${char.x}%`,
-                        top: `${char.y}%`,
-                        transform: `translate(-50%, -50%) ${activeIndices.has(index) ? 'scale(1.25)' : 'scale(1)'}`,
-                        textShadow: activeIndices.has(index)
-                            ? '0 0 8px rgba(255,255,255,0.8), 0 0 12px rgba(255,255,255,0.4)'
-                            : 'none',
-                        opacity: activeIndices.has(index) ? 1 : 0.4,
-                        transition: 'color 0.1s, transform 0.1s, text-shadow 0.1s',
-                        willChange: 'transform, top',
-                        fontSize: '1.8rem'
-                    }}
-                >
-                    {char.char}
-                </span>
-            ))}
+        <section className="relative flex min-h-[calc(100vh-80px)] items-center overflow-hidden bg-black">
+            {/* Matrix Rain Background */}
+            <MatrixRain />
 
-            <style jsx global>{`
-        .dud {
-          color: #0f0;
-          opacity: 0.7;
-        }
-      `}</style>
-        </div>
-    )
+            {/* Content */}
+            <div className="relative z-10 mx-auto w-full max-w-7xl px-6 lg:px-8">
+                <div className="grid w-full grid-cols-1 items-center gap-8 lg:grid-cols-2">
+                    {/* Left side - Text content */}
+                    <div className="space-y-8">
+                        <h1 className="text-5xl font-bold leading-[1.1] tracking-tight text-white md:text-6xl lg:text-7xl">
+                            Don't just read
+                            <br />
+                            the paper.
+                            <br />
+                            <span className="font-mono text-green-500">Compile it.</span>
+                        </h1>
+
+                        <p className="max-w-md text-base text-gray-400 md:text-lg">
+                            Bridge the gap between theory and reality. Implement state-of-the-art models{" "}
+                            <span className="font-mono font-semibold text-white">from scratch</span>, line by line.
+                        </p>
+
+                        <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+                            <Button
+                                asChild
+                                size="lg"
+                                className="w-fit rounded-full bg-white px-8 py-6 text-base font-semibold text-black transition-all hover:bg-green-400 hover:shadow-lg"
+                            >
+                                <Link href="/practice">Start Coding</Link>
+                            </Button>
+                        </div>
+
+                        <div className="flex items-center gap-2 text-gray-500">
+                            <Users className="h-4 w-4" />
+                            <span className="text-sm">
+                                <span className="font-semibold text-green-500">{0}</span>{" "}
+                                people coding now
+                            </span>
+                        </div>
+                    </div>
+
+                    {/* Right side - Neural Network */}
+                    <div className="relative hidden h-[450px] w-full lg:block">
+                        <NeuralNetwork />
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
 }
-
-export default RainingLetters
-

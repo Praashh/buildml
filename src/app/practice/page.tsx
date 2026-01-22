@@ -15,11 +15,6 @@ export default async function PracticePage() {
         <div className="relative min-h-screen bg-black flex flex-col">
             <Navbar />
 
-            {/* Background Effect */}
-            <div className="absolute inset-0 z-0 pointer-events-none opacity-40">
-                <RainingLetters />
-            </div>
-
             <main className="relative z-10 flex-1 pt-32 pb-20">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     {/* Header Section */}
