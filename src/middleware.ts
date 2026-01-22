@@ -11,19 +11,19 @@ export async function middleware(req: NextRequest) {
     console.log('request', req);
     console.log('All cookies:', req.cookies.getAll());
 
-    console.log('NEXTAUTH_SECRET', process.env.NEXTAUTH_SECRET);
+    console.log('NEXTAUTH_SECRET', process.env.AUTH_SECRET);
     console.log('token', token);
     if (!token) {
-        return NextResponse.redirect(new URL('/signin', req.url));
+        return NextResponse.redirect(new URL('/', req.url));
     }
 
     const now = Date.now() / 1000;
     if (token.exp && now > token.exp) {
         // console.log('TOKEN EXPIRED');
-        return NextResponse.redirect(new URL('/signin', req.url));
+        return NextResponse.redirect(new URL('/', req.url));
     }
 
     return NextResponse.next();
 }
 
-export const config = { matcher: ['/dashboard/:path*'] };
+export const config = { matcher: ['/dashboard/:path*', '/practice', '/leaderboard', '/profile'] };

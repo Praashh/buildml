@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { Button } from "~/components/ui/button";
 import { Users } from "lucide-react";
 import { NeuralNetwork } from "./neural-network";
+import { api } from "~/trpc/react";
 
-// Matrix rain effect component
 function MatrixRain() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -75,6 +75,8 @@ function MatrixRain() {
 }
 
 export default function RainingLetters() {
+    const { data: users, isPending } = api.user.getAllUsers.useQuery();
+
     return (
         <section className="relative flex min-h-[calc(100vh-80px)] items-center overflow-hidden bg-black">
             {/* Matrix Rain Background */}
@@ -111,14 +113,14 @@ export default function RainingLetters() {
                         <div className="flex items-center gap-2 text-gray-500">
                             <Users className="h-4 w-4" />
                             <span className="text-sm">
-                                <span className="font-semibold text-green-500">{0}</span>{" "}
+                                <span className="font-semibold text-green-500">{isPending ? "Loading..." : users}</span>{" "}
                                 people coding now
                             </span>
                         </div>
                     </div>
 
                     {/* Right side - Neural Network */}
-                    <div className="relative hidden h-[450px] w-full lg:block">
+                    <div className="relative hidden h-112.5 w-full lg:block">
                         <NeuralNetwork />
                     </div>
                 </div>
