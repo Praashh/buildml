@@ -3,34 +3,36 @@ import { prisma } from "~/db";
 const databaseUrl = process.env.DATABASE_URL;
 
 if (!databaseUrl) {
-    throw new Error('DATABASE_URL is not set.');
+	throw new Error("DATABASE_URL is not set.");
 }
 
 async function main() {
-    // Create problem sets first
-    const mlFundamentals = await prisma.problemSet.upsert({
-        where: { slug: 'ml-fundamentals' },
-        update: {
-            title: 'Machine Learning Fundamentals',
-            description: 'Core concepts every ML engineer should master. From initialization techniques to optimization algorithms.',
-        },
-        create: {
-            title: 'Machine Learning Fundamentals',
-            slug: 'ml-fundamentals',
-            description: 'Core concepts every ML engineer should master. From initialization techniques to optimization algorithms.',
-        },
-    });
+	// Create problem sets first
+	const mlFundamentals = await prisma.problemSet.upsert({
+		where: { slug: "ml-fundamentals" },
+		update: {
+			title: "Machine Learning Fundamentals",
+			description:
+				"Core concepts every ML engineer should master. From initialization techniques to optimization algorithms.",
+		},
+		create: {
+			title: "Machine Learning Fundamentals",
+			slug: "ml-fundamentals",
+			description:
+				"Core concepts every ML engineer should master. From initialization techniques to optimization algorithms.",
+		},
+	});
 
-    console.log(`Created problem set: ${mlFundamentals.title}`);
+	console.log(`Created problem set: ${mlFundamentals.title}`);
 
-    const problems = [
-        {
-            title: 'Xavier Initialization',
-            slug: 'xavier-initialization',
-            difficulty: 'Medium',
-            order: 1,
-            problemSetId: mlFundamentals.id,
-            description: `
+	const problems = [
+		{
+			title: "Xavier Initialization",
+			slug: "xavier-initialization",
+			difficulty: "Medium",
+			order: 1,
+			problemSetId: mlFundamentals.id,
+			description: `
 Implement Xavier Initialization (also known as Glorot Initialization) for a neural network weight tensor.
 
 Xavier initialization is designed to keep the scale of gradients roughly the same across all layers. For a layer with $n_{in}$ input neurons and $n_{out}$ output neurons, the weights are sampled from a distribution with variance:
@@ -57,7 +59,7 @@ def xavier_init(shape, gain=1.0):
     """
 \`\`\`
       `,
-            templateCode: `import numpy as np
+			templateCode: `import numpy as np
 
 def xavier_init(shape, gain=1.0):
     """
@@ -68,7 +70,7 @@ def xavier_init(shape, gain=1.0):
     # Your code here
     raise NotImplementedError
 `,
-            testCode: `
+			testCode: `
 import numpy as np
 from solution import xavier_init
 
@@ -99,15 +101,15 @@ def test():
 
 if __name__ == "__main__":
     test()
-`
-        },
-        {
-            title: 'He Initialization',
-            slug: 'he-initialization',
-            difficulty: 'Medium',
-            order: 2,
-            problemSetId: mlFundamentals.id,
-            description: `
+`,
+		},
+		{
+			title: "He Initialization",
+			slug: "he-initialization",
+			difficulty: "Medium",
+			order: 2,
+			problemSetId: mlFundamentals.id,
+			description: `
 Implement He Initialization (also known as Kaiming Initialization) for ReLU-activated neural networks.
 
 He initialization accounts for the fact that ReLU neurons kill half of their inputs (negative values become 0). For a layer with $n_{in}$ input neurons, the weights are sampled with variance:
@@ -130,7 +132,7 @@ def he_init(shape, gain=np.sqrt(2)):
     """
 \`\`\`
       `,
-            templateCode: `import numpy as np
+			templateCode: `import numpy as np
 
 def he_init(shape, gain=np.sqrt(2)):
     """
@@ -141,7 +143,7 @@ def he_init(shape, gain=np.sqrt(2)):
     # Your code here
     raise NotImplementedError
 `,
-            testCode: `
+			testCode: `
 import numpy as np
 from solution import he_init
 
@@ -172,15 +174,15 @@ def test():
 
 if __name__ == "__main__":
     test()
-`
-        },
-        {
-            title: 'Softmax Function',
-            slug: 'softmax-function',
-            difficulty: 'Easy',
-            order: 3,
-            problemSetId: mlFundamentals.id,
-            description: `
+`,
+		},
+		{
+			title: "Softmax Function",
+			slug: "softmax-function",
+			difficulty: "Easy",
+			order: 3,
+			problemSetId: mlFundamentals.id,
+			description: `
 Implement the Softmax function, which converts a vector of real numbers into a probability distribution.
 
 The softmax function is defined as:
@@ -198,7 +200,7 @@ def softmax(x):
     """
 \`\`\`
       `,
-            templateCode: `import numpy as np
+			templateCode: `import numpy as np
 
 def softmax(x):
     """
@@ -208,7 +210,7 @@ def softmax(x):
     # Your code here
     raise NotImplementedError
 `,
-            testCode: `
+			testCode: `
 import numpy as np
 from solution import softmax
 
@@ -238,27 +240,27 @@ def test():
 
 if __name__ == "__main__":
     test()
-`
-        }
-    ];
+`,
+		},
+	];
 
-    for (const problem of problems) {
-        await prisma.problem.upsert({
-            where: { slug: problem.slug },
-            update: problem,
-            create: problem,
-        });
-    }
+	for (const problem of problems) {
+		await prisma.problem.upsert({
+			where: { slug: problem.slug },
+			update: problem,
+			create: problem,
+		});
+	}
 
-    console.log(`Seeded ${problems.length} problems`);
-    console.log('Seed successful');
+	console.log(`Seeded ${problems.length} problems`);
+	console.log("Seed successful");
 }
 
 main()
-    .catch((e) => {
-        console.error(e);
-        process.exit(1);
-    })
-    .finally(async () => {
-        await prisma.$disconnect();
-    });
+	.catch((e) => {
+		console.error(e);
+		process.exit(1);
+	})
+	.finally(async () => {
+		await prisma.$disconnect();
+	});

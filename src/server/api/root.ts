@@ -6,11 +6,11 @@ import { submissionRouter } from "./routers/submission";
 import { userRouter } from "./routers/user";
 
 export const appRouter = createTRPCRouter({
-    feedback: feedbackRouter,
-    problem: problemRouter,
-    problemSet: problemSetRouter,
-    submission: submissionRouter,
-    user: userRouter
+	feedback: feedbackRouter,
+	problem: problemRouter,
+	problemSet: problemSetRouter,
+	submission: submissionRouter,
+	user: userRouter,
 });
 
 export type AppRouter = typeof appRouter;

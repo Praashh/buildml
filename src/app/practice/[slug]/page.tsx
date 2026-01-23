@@ -1,190 +1,226 @@
-import { api } from "~/trpc/server";
+import {
+	Activity,
+	BrainCircuit,
+	ChevronLeft,
+	ChevronRight,
+	Code,
+	Layers,
+	Sparkles,
+	Zap,
+} from "lucide-react";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { Card } from "~/components/ui/card";
-import { Navbar } from "../../_components/navbar";
-import { Footer } from "../../_components/footer";
-import { ChevronRight, ChevronLeft, BrainCircuit, Activity, Zap, Layers, Code, Sparkles } from "lucide-react";
-import type { Metadata } from "next";
 import { createMetadata, generateCourseSchema } from "~/lib/seo";
+import { api } from "~/trpc/server";
+import { Footer } from "../../_components/footer";
+import { Navbar } from "../../_components/navbar";
 
 type PageProps = {
-    params: Promise<{ slug: string }>;
+	params: Promise<{ slug: string }>;
 };
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-    const { slug } = await params;
-    const problemSet = await api.problemSet.getBySlug({ slug });
+export async function generateMetadata({
+	params,
+}: PageProps): Promise<Metadata> {
+	const { slug } = await params;
+	const problemSet = await api.problemSet.getBySlug({ slug });
 
-    if (!problemSet) {
-        return createMetadata({
-            title: "Problem Set Not Found",
-            noIndex: true,
-        });
-    }
+	if (!problemSet) {
+		return createMetadata({
+			title: "Problem Set Not Found",
+			noIndex: true,
+		});
+	}
 
-    return createMetadata({
-        title: problemSet.title,
-        description:
-            problemSet.description ||
-            `Master ${problemSet.title} with ${problemSet.problems.length} hands-on coding challenges. Implement AI/ML concepts from scratch.`,
-        pathname: `/practice/${slug}`,
-    });
+	return createMetadata({
+		title: problemSet.title,
+		description:
+			problemSet.description ||
+			`Master ${problemSet.title} with ${problemSet.problems.length} hands-on coding challenges. Implement AI/ML concepts from scratch.`,
+		pathname: `/practice/${slug}`,
+	});
 }
 
 export default async function ProblemSetPage({ params }: PageProps) {
-    const { slug } = await params;
-    const problemSet = await api.problemSet.getBySlug({ slug });
+	const { slug } = await params;
+	const problemSet = await api.problemSet.getBySlug({ slug });
 
-    if (!problemSet) {
-        notFound();
-    }
+	if (!problemSet) {
+		notFound();
+	}
 
-    // Count problems by difficulty
-    const difficultyCounts = problemSet.problems.reduce((acc, p) => {
-        acc[p.difficulty] = (acc[p.difficulty] || 0) + 1;
-        return acc;
-    }, {} as Record<string, number>);
+	// Count problems by difficulty
+	const difficultyCounts = problemSet.problems.reduce(
+		(acc, p) => {
+			acc[p.difficulty] = (acc[p.difficulty] || 0) + 1;
+			return acc;
+		},
+		{} as Record<string, number>,
+	);
 
-    return (
-        <div className="relative min-h-screen bg-black flex flex-col">
-            {/* Background Effects */}
-            <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
-                <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-green-500/5 rounded-full blur-3xl animate-pulse" />
-                <div className="absolute bottom-1/3 right-1/4 w-80 h-80 bg-emerald-500/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
-            </div>
+	return (
+		<div className="relative flex min-h-screen flex-col bg-black">
+			{/* Background Effects */}
+			<div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+				<div className="absolute top-1/4 left-1/4 h-96 w-96 animate-pulse rounded-full bg-green-500/5 blur-3xl" />
+				<div
+					className="absolute right-1/4 bottom-1/3 h-80 w-80 animate-pulse rounded-full bg-emerald-500/5 blur-3xl"
+					style={{ animationDelay: "1s" }}
+				/>
+			</div>
 
-            <Navbar />
+			<Navbar />
 
-            <main className="relative z-10 flex-1 pt-32 pb-20">
-                <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                    {/* Breadcrumb & Header */}
-                    <div className="mb-12">
-                        <Link
-                            href="/practice"
-                            className="inline-flex items-center text-zinc-500 hover:text-green-400 transition-colors mb-8 group"
-                        >
-                            <ChevronLeft className="w-4 h-4 mr-1 group-hover:-translate-x-1 transition-transform" />
-                            Back to Problem Sets
-                        </Link>
+			<main className="relative z-10 flex-1 pt-32 pb-20">
+				<div className="container mx-auto px-4 sm:px-6 lg:px-8">
+					{/* Breadcrumb & Header */}
+					<div className="mb-12">
+						<Link
+							className="group mb-8 inline-flex items-center text-zinc-500 transition-colors hover:text-green-400"
+							href="/practice"
+						>
+							<ChevronLeft className="mr-1 h-4 w-4 transition-transform group-hover:-translate-x-1" />
+							Back to Problem Sets
+						</Link>
 
-                        <div className="flex items-start gap-4 mb-6">
-                            <div className="p-3 rounded-xl bg-gradient-to-br from-green-500/20 to-emerald-500/10 border border-green-500/20">
-                                <Layers className="w-6 h-6 text-green-400" />
-                            </div>
-                            <div>
-                                <h1 className="text-4xl font-bold text-white mb-3 tracking-tight">{problemSet.title}</h1>
-                                {problemSet.description && (
-                                    <p className="text-zinc-400 max-w-3xl leading-relaxed text-lg">
-                                        {problemSet.description}
-                                    </p>
-                                )}
-                            </div>
-                        </div>
+						<div className="mb-6 flex items-start gap-4">
+							<div className="rounded-xl border border-green-500/20 bg-gradient-to-br from-green-500/20 to-emerald-500/10 p-3">
+								<Layers className="h-6 w-6 text-green-400" />
+							</div>
+							<div>
+								<h1 className="mb-3 font-bold text-4xl text-white tracking-tight">
+									{problemSet.title}
+								</h1>
+								{problemSet.description && (
+									<p className="max-w-3xl text-lg text-zinc-400 leading-relaxed">
+										{problemSet.description}
+									</p>
+								)}
+							</div>
+						</div>
 
-                        {/* Stats Bar */}
-                        <div className="flex flex-wrap items-center gap-4 mt-8 p-4 rounded-xl bg-zinc-900/50 border border-white/5">
-                            <Badge variant="outline" className="border-zinc-700 text-zinc-400 px-3 py-1">
-                                <Code className="w-3 h-3 mr-2" />
-                                {problemSet.problems.length} {problemSet.problems.length === 1 ? "Problem" : "Problems"}
-                            </Badge>
-                            {difficultyCounts.Easy && (
-                                <Badge variant="success" className="px-3 py-1">
-                                    {difficultyCounts.Easy} Easy
-                                </Badge>
-                            )}
-                            {difficultyCounts.Medium && (
-                                <Badge variant="warning" className="px-3 py-1">
-                                    {difficultyCounts.Medium} Medium
-                                </Badge>
-                            )}
-                            {difficultyCounts.Hard && (
-                                <Badge variant="destructive" className="px-3 py-1">
-                                    {difficultyCounts.Hard} Hard
-                                </Badge>
-                            )}
-                        </div>
-                    </div>
+						{/* Stats Bar */}
+						<div className="mt-8 flex flex-wrap items-center gap-4 rounded-xl border border-white/5 bg-zinc-900/50 p-4">
+							<Badge
+								className="border-zinc-700 px-3 py-1 text-zinc-400"
+								variant="outline"
+							>
+								<Code className="mr-2 h-3 w-3" />
+								{problemSet.problems.length}{" "}
+								{problemSet.problems.length === 1 ? "Problem" : "Problems"}
+							</Badge>
+							{difficultyCounts.Easy && (
+								<Badge className="px-3 py-1" variant="success">
+									{difficultyCounts.Easy} Easy
+								</Badge>
+							)}
+							{difficultyCounts.Medium && (
+								<Badge className="px-3 py-1" variant="warning">
+									{difficultyCounts.Medium} Medium
+								</Badge>
+							)}
+							{difficultyCounts.Hard && (
+								<Badge className="px-3 py-1" variant="destructive">
+									{difficultyCounts.Hard} Hard
+								</Badge>
+							)}
+						</div>
+					</div>
 
-                    {/* Problems List */}
-                    <div className="space-y-4">
-                        {problemSet.problems.map((problem, index) => (
-                            <div
-                                key={problem.id}
-                                className="group animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-both"
-                                style={{ animationDelay: `${index * 50}ms` }}
-                            >
-                                <Card className="border-white/5 bg-zinc-900/30 backdrop-blur-xl hover:bg-zinc-900/50 hover:border-green-500/30 transition-all duration-300 overflow-hidden relative">
-                                    {/* Hover Gradient */}
-                                    <div className="absolute inset-0 bg-gradient-to-r from-green-500/0 via-green-500/5 to-green-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+					{/* Problems List */}
+					<div className="space-y-4">
+						{problemSet.problems.map((problem, index) => (
+							<div
+								className="group fade-in slide-in-from-bottom-4 animate-in fill-mode-both duration-500"
+								key={problem.id}
+								style={{ animationDelay: `${index * 50}ms` }}
+							>
+								<Card className="relative overflow-hidden border-white/5 bg-zinc-900/30 backdrop-blur-xl transition-all duration-300 hover:border-green-500/30 hover:bg-zinc-900/50">
+									{/* Hover Gradient */}
+									<div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-green-500/0 via-green-500/5 to-green-500/0 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
 
-                                    <div className="flex items-center justify-between p-6 relative z-10">
-                                        <div className="flex items-center gap-6">
-                                            {/* Problem Number */}
-                                            <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-zinc-800/80 text-zinc-400 font-mono text-sm font-bold border border-white/5 group-hover:border-green-500/20 group-hover:text-green-400 transition-all">
-                                                {String(index + 1).padStart(2, '0')}
-                                            </div>
+									<div className="relative z-10 flex items-center justify-between p-6">
+										<div className="flex items-center gap-6">
+											{/* Problem Number */}
+											<div className="flex h-12 w-12 items-center justify-center rounded-xl border border-white/5 bg-zinc-800/80 font-bold font-mono text-sm text-zinc-400 transition-all group-hover:border-green-500/20 group-hover:text-green-400">
+												{String(index + 1).padStart(2, "0")}
+											</div>
 
-                                            {/* Icon */}
-                                            <div className="p-2.5 rounded-lg bg-green-500/10 border border-green-500/20 group-hover:scale-110 transition-transform">
-                                                {index % 3 === 0 ? <BrainCircuit className="w-5 h-5 text-green-400" /> :
-                                                    index % 3 === 1 ? <Activity className="w-5 h-5 text-green-400" /> :
-                                                        <Zap className="w-5 h-5 text-green-400" />}
-                                            </div>
+											{/* Icon */}
+											<div className="rounded-lg border border-green-500/20 bg-green-500/10 p-2.5 transition-transform group-hover:scale-110">
+												{index % 3 === 0 ? (
+													<BrainCircuit className="h-5 w-5 text-green-400" />
+												) : index % 3 === 1 ? (
+													<Activity className="h-5 w-5 text-green-400" />
+												) : (
+													<Zap className="h-5 w-5 text-green-400" />
+												)}
+											</div>
 
-                                            {/* Problem Info */}
-                                            <div>
-                                                <h3 className="text-lg font-semibold text-white group-hover:text-green-400 transition-colors">
-                                                    {problem.title}
-                                                </h3>
-                                                <p className="text-sm text-zinc-500 mt-1">
-                                                    Implement {problem.title.toLowerCase()} from first principles
-                                                </p>
-                                            </div>
-                                        </div>
+											{/* Problem Info */}
+											<div>
+												<h3 className="font-semibold text-lg text-white transition-colors group-hover:text-green-400">
+													{problem.title}
+												</h3>
+												<p className="mt-1 text-sm text-zinc-500">
+													Implement {problem.title.toLowerCase()} from first
+													principles
+												</p>
+											</div>
+										</div>
 
-                                        <div className="flex items-center gap-4">
-                                            <Badge variant={
-                                                problem.difficulty === "Easy" ? "success" :
-                                                    problem.difficulty === "Medium" ? "warning" : "destructive"
-                                            } className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider">
-                                                {problem.difficulty}
-                                            </Badge>
+										<div className="flex items-center gap-4">
+											<Badge
+												className="px-3 py-1 font-bold text-[10px] uppercase tracking-wider"
+												variant={
+													problem.difficulty === "Easy"
+														? "success"
+														: problem.difficulty === "Medium"
+															? "warning"
+															: "destructive"
+												}
+											>
+												{problem.difficulty}
+											</Badge>
 
-                                            <Link href={`/practice/${slug}/${problem.slug}`}>
-                                                <Button
-                                                    size="sm"
-                                                    className="bg-white/5 hover:bg-green-500 text-white hover:text-black border border-white/10 hover:border-green-500 transition-all duration-300 font-semibold px-6 relative overflow-hidden group/btn"
-                                                >
-                                                    <span className="relative z-10 flex items-center">
-                                                        Solve
-                                                        <ChevronRight className="w-4 h-4 ml-1 group-hover/btn:translate-x-0.5 transition-transform" />
-                                                    </span>
-                                                    <div className="absolute inset-0 bg-gradient-to-r from-green-500 to-emerald-500 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300" />
-                                                </Button>
-                                            </Link>
-                                        </div>
-                                    </div>
-                                </Card>
-                            </div>
-                        ))}
-                    </div>
+											<Link href={`/practice/${slug}/${problem.slug}`}>
+												<Button
+													className="group/btn relative overflow-hidden border border-white/10 bg-white/5 px-6 font-semibold text-white transition-all duration-300 hover:border-green-500 hover:bg-green-500 hover:text-black"
+													size="sm"
+												>
+													<span className="relative z-10 flex items-center">
+														Solve
+														<ChevronRight className="ml-1 h-4 w-4 transition-transform group-hover/btn:translate-x-0.5" />
+													</span>
+													<div className="absolute inset-0 bg-gradient-to-r from-green-500 to-emerald-500 opacity-0 transition-opacity duration-300 group-hover/btn:opacity-100" />
+												</Button>
+											</Link>
+										</div>
+									</div>
+								</Card>
+							</div>
+						))}
+					</div>
 
-                    {problemSet.problems.length === 0 && (
-                        <div className="text-center py-20 border border-dashed border-zinc-800 rounded-2xl bg-zinc-900/20">
-                            <div className="w-16 h-16 rounded-2xl bg-zinc-800/50 flex items-center justify-center mx-auto mb-6">
-                                <Sparkles className="w-8 h-8 text-zinc-600" />
-                            </div>
-                            <p className="text-zinc-500 text-lg">No problems in this set yet.</p>
-                            <p className="text-zinc-600 mt-2">New challenges coming soon!</p>
-                        </div>
-                    )}
-                </div>
-            </main>
+					{problemSet.problems.length === 0 && (
+						<div className="rounded-2xl border border-zinc-800 border-dashed bg-zinc-900/20 py-20 text-center">
+							<div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-zinc-800/50">
+								<Sparkles className="h-8 w-8 text-zinc-600" />
+							</div>
+							<p className="text-lg text-zinc-500">
+								No problems in this set yet.
+							</p>
+							<p className="mt-2 text-zinc-600">New challenges coming soon!</p>
+						</div>
+					)}
+				</div>
+			</main>
 
-            <Footer />
-        </div>
-    );
+			<Footer />
+		</div>
+	);
 }

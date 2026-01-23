@@ -1,123 +1,151 @@
-import { api } from "~/trpc/server";
+import { BookOpen, ChevronRight, Layers, Notebook, Target } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "~/components/ui/card";
-import { Navbar } from "../_components/navbar";
-import { Footer } from "../_components/footer";
-import { ChevronRight, Layers, BookOpen, Sparkles, Target, Zap } from "lucide-react";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "~/components/ui/card";
 import { createMetadata } from "~/lib/seo";
+import { api } from "~/trpc/server";
+import { Footer } from "../_components/footer";
+import { Navbar } from "../_components/navbar";
 
 export const metadata = createMetadata({
-    title: "Practice AI/ML Challenges",
-    description:
-        "Master AI and Machine Learning through hands-on coding challenges. Implement research papers, neural networks, and algorithms from scratch.",
-    pathname: "/practice",
+	title: "Practice AI/ML Challenges",
+	description:
+		"Master AI and Machine Learning through hands-on coding challenges. Implement research papers, neural networks, and algorithms from scratch.",
+	pathname: "/practice",
 });
 
 export default async function PracticePage() {
-    const problemSets = await api.problemSet.getAll();
+	const problemSets = await api.problemSet.getAll();
 
-    return (
-        <div className="relative min-h-screen bg-black flex flex-col">
-            {/* Background Effects */}
-            <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
-                <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-green-500/5 rounded-full blur-3xl animate-pulse" />
-                <div className="absolute bottom-1/3 right-1/4 w-80 h-80 bg-emerald-500/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
-            </div>
+	return (
+		<div className="relative flex min-h-screen flex-col bg-black">
+			{/* Background Effects */}
+			<div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+				<div className="absolute top-1/4 left-1/4 h-96 w-96 animate-pulse rounded-full bg-green-500/5 blur-3xl" />
+				<div
+					className="absolute right-1/4 bottom-1/3 h-80 w-80 animate-pulse rounded-full bg-emerald-500/5 blur-3xl"
+					style={{ animationDelay: "1s" }}
+				/>
+			</div>
 
-            <Navbar />
+			<Navbar />
 
-            <main className="relative z-10 flex-1 pt-32 pb-20">
-                <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                    {/* Header */}
-                    <div className="mb-16 text-center">
-                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-green-500/20 bg-green-500/5 mb-6">
-                            <Sparkles className="w-4 h-4 text-green-400" />
-                            <span className="text-sm font-medium text-green-400">AI/ML Practice Arena</span>
-                        </div>
-                        <h1 className="text-5xl font-bold text-white mb-6 tracking-tight">
-                            Choose Your
-                            <span className="bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent"> Challenge</span>
-                        </h1>
-                        <p className="text-zinc-400 max-w-2xl mx-auto text-lg leading-relaxed">
-                            Master AI/ML concepts through curated problem sets. Each set contains multiple challenges designed to build your skills progressively.
-                        </p>
-                    </div>
+			<main className="relative z-10 flex-1 pt-32 pb-20">
+				<div className="container mx-auto px-4 sm:px-6 lg:px-8">
+					{/* Header */}
+					<div className="mb-16 text-center">
+						<div className="mb-6 inline-flex items-center gap-2 rounded-full border border-green-500/20 bg-green-500/5 px-4 py-2">
+							<Notebook className="h-4 w-4 text-green-400" />
+							<span className="font-medium text-green-400 text-sm">
+								AI/ML Practice Arena
+							</span>
+						</div>
+						<h1 className="mb-6 font-bold text-5xl text-white tracking-tight">
+							Choose Your
+							<span className="bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">
+								{" "}
+								Challenge
+							</span>
+						</h1>
+						<p className="mx-auto max-w-2xl text-lg text-zinc-400 leading-relaxed">
+							Master AI/ML concepts through curated problem sets. Each set
+							contains multiple challenges designed to build your skills
+							progressively.
+						</p>
+					</div>
 
-                    {/* Stats Row */}
-                    <div className="flex justify-center gap-8 mb-12">
-                        <div className="flex items-center gap-2 text-zinc-500">
-                            <Layers className="w-4 h-4 text-green-500" />
-                            <span className="text-sm">{problemSets.length} Problem Sets</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-zinc-500">
-                            <Target className="w-4 h-4 text-green-500" />
-                            <span className="text-sm">{problemSets.reduce((acc, set) => acc + set._count.problems, 0)} Total Challenges</span>
-                        </div>
-                    </div>
+					{/* Stats Row */}
+					<div className="mb-12 flex justify-center gap-8">
+						<div className="flex items-center gap-2 text-zinc-500">
+							<Layers className="h-4 w-4 text-green-500" />
+							<span className="text-sm">{problemSets.length} Problem Sets</span>
+						</div>
+						<div className="flex items-center gap-2 text-zinc-500">
+							<Target className="h-4 w-4 text-green-500" />
+							<span className="text-sm">
+								{problemSets.reduce((acc, set) => acc + set._count.problems, 0)}{" "}
+								Total Challenges
+							</span>
+						</div>
+					</div>
 
-                    {/* Problem Sets Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {problemSets.map((set, index) => (
-                            <div
-                                key={set.id}
-                                className="group animate-in fade-in slide-in-from-bottom-8 duration-700 fill-mode-both"
-                                style={{ animationDelay: `${index * 100}ms` }}
-                            >
-                                <Card className="h-full border-white/5 bg-zinc-900/30 backdrop-blur-xl hover:bg-zinc-900/50 hover:border-green-500/30 transition-all duration-500 relative overflow-hidden group">
-                                    {/* Ambient Glow */}
-                                    <div className="absolute -top-24 -right-24 w-48 h-48 bg-green-500/5 blur-3xl rounded-full group-hover:bg-green-500/10 transition-colors duration-500" />
+					{/* Problem Sets Grid */}
+					<div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+						{problemSets.map((set, index) => (
+							<div
+								className="group fade-in slide-in-from-bottom-8 animate-in fill-mode-both duration-700"
+								key={set.id}
+								style={{ animationDelay: `${index * 100}ms` }}
+							>
+								<Card className="group relative h-full overflow-hidden border-white/5 bg-zinc-900/30 backdrop-blur-xl transition-all duration-500 hover:border-green-500/30 hover:bg-zinc-900/50">
+									{/* Ambient Glow */}
+									<div className="absolute -top-24 -right-24 h-48 w-48 rounded-full bg-green-500/5 blur-3xl transition-colors duration-500 group-hover:bg-green-500/10" />
 
-                                    {/* Hover Border Gradient */}
-                                    <div className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-r from-green-500/10 via-transparent to-emerald-500/10 pointer-events-none" />
+									{/* Hover Border Gradient */}
+									<div className="pointer-events-none absolute inset-0 rounded-lg bg-gradient-to-r from-green-500/10 via-transparent to-emerald-500/10 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
 
-                                    <CardHeader className="relative z-10 pb-2">
-                                        <div className="flex justify-between items-start mb-6">
-                                            <div className="p-3 rounded-xl bg-gradient-to-br from-green-500/20 to-emerald-500/10 border border-green-500/20 group-hover:scale-110 transition-transform duration-300">
-                                                <Layers className="w-6 h-6 text-green-400" />
-                                            </div>
-                                            <Badge variant="outline" className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider border-zinc-700 text-zinc-400 group-hover:border-green-500/30 group-hover:text-green-400 transition-colors">
-                                                {set._count.problems} {set._count.problems === 1 ? "Problem" : "Problems"}
-                                            </Badge>
-                                        </div>
-                                        <CardTitle className="text-2xl font-bold text-white group-hover:text-green-400 transition-colors duration-300">
-                                            {set.title}
-                                        </CardTitle>
-                                        <CardDescription className="text-zinc-400 line-clamp-2 mt-3 leading-relaxed">
-                                            {set.description || `Explore ${set._count.problems} curated problems to strengthen your understanding.`}
-                                        </CardDescription>
-                                    </CardHeader>
+									<CardHeader className="relative z-10 pb-2">
+										<div className="mb-6 flex items-start justify-between">
+											<div className="rounded-xl border border-green-500/20 bg-gradient-to-br from-green-500/20 to-emerald-500/10 p-3 transition-transform duration-300 group-hover:scale-110">
+												<Layers className="h-6 w-6 text-green-400" />
+											</div>
+											<Badge
+												className="border-zinc-700 px-3 py-1 font-bold text-[10px] text-zinc-400 uppercase tracking-wider transition-colors group-hover:border-green-500/30 group-hover:text-green-400"
+												variant="outline"
+											>
+												{set._count.problems}{" "}
+												{set._count.problems === 1 ? "Problem" : "Problems"}
+											</Badge>
+										</div>
+										<CardTitle className="font-bold text-2xl text-white transition-colors duration-300 group-hover:text-green-400">
+											{set.title}
+										</CardTitle>
+										<CardDescription className="mt-3 line-clamp-2 text-zinc-400 leading-relaxed">
+											{set.description ||
+												`Explore ${set._count.problems} curated problems to strengthen your understanding.`}
+										</CardDescription>
+									</CardHeader>
 
-                                    <CardContent className="relative z-10 pt-4">
-                                        <Link href={`/practice/${set.slug}`}>
-                                            <Button className="w-full group/btn bg-white/5 hover:bg-green-500 text-white hover:text-black border border-white/10 hover:border-green-500 transition-all duration-300 font-bold py-6 relative overflow-hidden">
-                                                <span className="relative z-10 flex items-center justify-center">
-                                                    Start Challenge
-                                                    <ChevronRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
-                                                </span>
-                                                <div className="absolute inset-0 bg-gradient-to-r from-green-500 to-emerald-500 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300" />
-                                            </Button>
-                                        </Link>
-                                    </CardContent>
-                                </Card>
-                            </div>
-                        ))}
-                    </div>
+									<CardContent className="relative z-10 pt-4">
+										<Link href={`/practice/${set.slug}`}>
+											<Button className="group/btn relative w-full overflow-hidden border border-white/10 bg-white/5 py-6 font-bold text-white transition-all duration-300 hover:border-green-500 hover:bg-green-500 hover:text-black">
+												<span className="relative z-10 flex items-center justify-center">
+													Start Challenge
+													<ChevronRight className="ml-2 h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
+												</span>
+												<div className="absolute inset-0 bg-gradient-to-r from-green-500 to-emerald-500 opacity-0 transition-opacity duration-300 group-hover/btn:opacity-100" />
+											</Button>
+										</Link>
+									</CardContent>
+								</Card>
+							</div>
+						))}
+					</div>
 
-                    {problemSets.length === 0 && (
-                        <div className="text-center py-20 border border-dashed border-zinc-800 rounded-2xl bg-zinc-900/20">
-                            <div className="w-16 h-16 rounded-2xl bg-zinc-800/50 flex items-center justify-center mx-auto mb-6">
-                                <BookOpen className="w-8 h-8 text-zinc-600" />
-                            </div>
-                            <p className="text-zinc-500 text-lg">No problem sets available yet.</p>
-                            <p className="text-zinc-600 mt-2">Check back soon for new challenges!</p>
-                        </div>
-                    )}
-                </div>
-            </main>
+					{problemSets.length === 0 && (
+						<div className="rounded-2xl border border-zinc-800 border-dashed bg-zinc-900/20 py-20 text-center">
+							<div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-zinc-800/50">
+								<BookOpen className="h-8 w-8 text-zinc-600" />
+							</div>
+							<p className="text-lg text-zinc-500">
+								No problem sets available yet.
+							</p>
+							<p className="mt-2 text-zinc-600">
+								Check back soon for new challenges!
+							</p>
+						</div>
+					)}
+				</div>
+			</main>
 
-            <Footer />
-        </div>
-    );
+			<Footer />
+		</div>
+	);
 }

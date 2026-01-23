@@ -1,250 +1,330 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import Link from "next/link"
-import Image from "next/image"
-import { Menu, User, LogOut, Trophy } from "lucide-react"
-
-import { Button } from "~/components/ui/button"
-import { signIn, signOut, useSession } from "next-auth/react"
+import { AnimatePresence, motion } from "framer-motion";
+import { ChevronRight, LogOut, Menu, Trophy, User } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { signIn, signOut, useSession } from "next-auth/react";
+import * as React from "react";
+import { Button } from "~/components/ui/button";
 import {
-    Sheet,
-    SheetContent,
-    SheetTrigger,
-} from "~/components/ui/sheet"
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu";
 import {
-    NavigationMenu,
-    NavigationMenuItem,
-    NavigationMenuLink,
-    NavigationMenuList,
-    navigationMenuTriggerStyle,
-} from "~/components/ui/navigation-menu"
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "~/components/ui/dropdown-menu"
+	Sheet,
+	SheetContent,
+	SheetHeader,
+	SheetTitle,
+	SheetTrigger,
+} from "~/components/ui/sheet";
+import { cn } from "~/lib/utils";
 
 const navItems = [
-    { name: "Practice", href: "/practice" },
-    { name: "About", href: "/about" },
-    { name: "Sponsor", href: "/sponsor" },
-    { name: "Leaderboard", href: "/leaderboard" },
-]
+	{ name: "Practice", href: "/practice" },
+	{ name: "About", href: "/about" },
+	{ name: "Sponsor", href: "/sponsor" },
+	{ name: "Leaderboard", href: "/leaderboard" },
+];
 
 // User Avatar component
-function UserAvatar({ src, name }: { src?: string | null; name?: string | null }) {
-    const initials = name
-        ? name
-            .split(" ")
-            .map((n) => n[0])
-            .join("")
-            .toUpperCase()
-            .slice(0, 2)
-        : "U"
+function UserAvatar({
+	src,
+	name,
+}: {
+	src?: string | null;
+	name?: string | null;
+}) {
+	const initials = name
+		? name
+				.split(" ")
+				.map((n) => n[0])
+				.join("")
+				.toUpperCase()
+				.slice(0, 2)
+		: "U";
 
-    if (src) {
-        return (
-            <Image
-                src={src}
-                alt={name ?? "User avatar"}
-                width={36}
-                height={36}
-                className="rounded-full border-2 border-green-500/50 transition-all hover:border-green-400"
-            />
-        )
-    }
+	if (src) {
+		return (
+			<div className="group relative">
+				<Image
+					alt={name ?? "User avatar"}
+					className="rounded-full border-2 border-green-500/50 transition-all duration-300 group-hover:border-green-400 group-hover:shadow-[0_0_15px_rgba(34,197,94,0.3)]"
+					height={36}
+					src={src}
+					width={36}
+				/>
+			</div>
+		);
+	}
 
-    return (
-        <div className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-green-500/50 bg-green-500/20 text-sm font-semibold text-green-400 transition-all hover:border-green-400 hover:bg-green-500/30">
-            {initials}
-        </div>
-    )
+	return (
+		<div className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-green-500/50 bg-green-500/10 font-semibold text-green-400 text-sm transition-all duration-300 hover:border-green-400 hover:bg-green-500/20">
+			{initials}
+		</div>
+	);
 }
 
 // User Profile Dropdown
 function UserProfileDropdown() {
-    const { data: session } = useSession()
+	const { data: session } = useSession();
 
-    return (
-        <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-2 rounded-full outline-none ring-offset-black transition-all focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
-                    <UserAvatar src={session?.user?.image} name={session?.user?.name} />
-                </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-                align="end"
-                className="w-56 border-white/10 bg-gray-950/95 backdrop-blur-xl"
-            >
-                <DropdownMenuLabel className="font-normal">
-                    <div className="flex flex-col space-y-1">
-                        <p className="text-sm font-medium text-white">
-                            {session?.user?.name ?? "User"}
-                        </p>
-                        <p className="text-xs text-gray-400">
-                            {session?.user?.email}
-                        </p>
-                    </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator className="bg-white/10" />
-                <DropdownMenuItem asChild>
-                    <Link
-                        href="/profile"
-                        className="flex cursor-pointer items-center text-white/80 hover:text-green-400 focus:text-green-400"
-                    >
-                        <User className="mr-2 h-4 w-4" />
-                        Profile
-                    </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                    <Link
-                        href="/leaderboard"
-                        className="flex cursor-pointer items-center text-white/80 hover:text-green-400 focus:text-green-400"
-                    >
-                        <Trophy className="mr-2 h-4 w-4" />
-                        Leaderboard
-                    </Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator className="bg-white/10" />
-                <DropdownMenuItem
-                    onClick={() => signOut()}
-                    className="cursor-pointer text-red-400 hover:text-red-300 focus:text-red-300"
-                >
-                    <LogOut className="mr-2 h-4 w-4" />
-                    Sign Out
-                </DropdownMenuItem>
-            </DropdownMenuContent>
-        </DropdownMenu>
-    )
+	return (
+		<DropdownMenu>
+			<DropdownMenuTrigger asChild>
+				<button className="flex items-center gap-2 rounded-full outline-none ring-offset-black transition-all focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
+					<UserAvatar name={session?.user?.name} src={session?.user?.image} />
+				</button>
+			</DropdownMenuTrigger>
+			<DropdownMenuContent
+				align="end"
+				className="w-56 border-white/10 bg-gray-950/95 p-1 shadow-2xl backdrop-blur-xl"
+			>
+				<DropdownMenuLabel className="px-2 py-3 font-normal">
+					<div className="flex flex-col space-y-1">
+						<p className="truncate font-medium text-sm text-white">
+							{session?.user?.name ?? "User"}
+						</p>
+						<p className="truncate text-gray-500 text-xs">
+							{session?.user?.email}
+						</p>
+					</div>
+				</DropdownMenuLabel>
+				<DropdownMenuSeparator className="bg-white/10" />
+				<DropdownMenuItem asChild>
+					<Link
+						className="flex cursor-pointer items-center rounded-md px-2 py-2 text-gray-300 text-sm transition-colors hover:bg-white/5 hover:text-green-400 focus:bg-white/5 focus:text-green-400"
+						href="/profile"
+					>
+						<User className="mr-2 h-4 w-4" />
+						Profile
+					</Link>
+				</DropdownMenuItem>
+				<DropdownMenuItem asChild>
+					<Link
+						className="flex cursor-pointer items-center rounded-md px-2 py-2 text-gray-300 text-sm transition-colors hover:bg-white/5 hover:text-green-400 focus:bg-white/5 focus:text-green-400"
+						href="/leaderboard"
+					>
+						<Trophy className="mr-2 h-4 w-4" />
+						Leaderboard
+					</Link>
+				</DropdownMenuItem>
+				<DropdownMenuSeparator className="bg-white/10" />
+				<DropdownMenuItem
+					className="cursor-pointer rounded-md px-2 py-2 text-red-400 text-sm transition-colors hover:bg-red-500/10 hover:text-red-300 focus:bg-red-500/10 focus:text-red-300"
+					onClick={() => signOut()}
+				>
+					<LogOut className="mr-2 h-4 w-4" />
+					Sign Out
+				</DropdownMenuItem>
+			</DropdownMenuContent>
+		</DropdownMenu>
+	);
 }
 
 export function Navbar() {
-    const { status } = useSession()
-    const [isOpen, setIsOpen] = React.useState(false)
+	const { data: session, status } = useSession();
+	const [isOpen, setIsOpen] = React.useState(false);
+	const pathname = usePathname();
+	const [hoveredPath, setHoveredPath] = React.useState<string | null>(null);
 
-    return (
-        <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/10 bg-black/50 backdrop-blur-md">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex h-16 items-center justify-between">
-                    {/* Logo */}
-                    <Link href="/" className="flex items-center space-x-2">
-                        <span className="text-2xl font-bold bg-linear-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">
-                            100xPractice
-                        </span>
-                    </Link>
+	return (
+		<nav className="fixed top-0 right-0 left-0 z-50 border-white/5 border-b bg-black/60 backdrop-blur-xl">
+			<div className="container mx-auto px-4 sm:px-6 lg:px-8">
+				<div className="flex h-16 items-center justify-between">
+					{/* Logo */}
+					<Link className="group flex items-center space-x-3" href="/">
+						<div className="flex h-8 w-8 rotate-3 items-center justify-center rounded-lg bg-linear-to-br from-green-400 to-emerald-600 transition-transform duration-300 group-hover:rotate-0">
+							<span className="font-bold text-black text-lg">X</span>
+						</div>
+						<span className="bg-linear-to-r from-white via-white to-green-400 bg-clip-text font-bold text-transparent text-xl tracking-tight">
+							100xPractice
+						</span>
+					</Link>
 
-                    {/* Desktop Navigation */}
-                    <div className="hidden md:flex items-center space-x-1">
-                        <NavigationMenu>
-                            <NavigationMenuList>
-                                {navItems.map((item) => (
-                                    <NavigationMenuItem key={item.name}>
-                                        <Link href={item.href} legacyBehavior passHref>
-                                            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                                <span className="text-white/90 hover:text-green-400 transition-colors">
-                                                    {item.name}
-                                                </span>
-                                            </NavigationMenuLink>
-                                        </Link>
-                                    </NavigationMenuItem>
-                                ))}
-                            </NavigationMenuList>
-                        </NavigationMenu>
-                    </div>
+					{/* Desktop Navigation */}
+					<div className="hidden items-center rounded-full border border-white/5 bg-white/5 px-1.5 py-1 shadow-inner md:flex">
+						<div className="relative flex items-center space-x-1">
+							{navItems.map((item) => {
+								const isActive = pathname === item.href;
+								return (
+									<Link
+										className={cn(
+											"relative whitespace-nowrap px-4 py-1.5 font-medium text-sm transition-colors duration-300",
+											isActive
+												? "text-green-400"
+												: "text-gray-400 hover:text-white",
+										)}
+										href={item.href}
+										key={item.href}
+										onMouseEnter={() => setHoveredPath(item.href)}
+										onMouseLeave={() => setHoveredPath(null)}
+									>
+										<span className="relative z-10">{item.name}</span>
+										{hoveredPath === item.href && (
+											<motion.span
+												animate={{ opacity: 1 }}
+												className="absolute inset-0 z-0 rounded-full bg-white/10"
+												exit={{ opacity: 0 }}
+												initial={{ opacity: 0 }}
+												layoutId="nav-hover-bg"
+												transition={{
+													type: "spring",
+													bounce: 0.25,
+													duration: 0.5,
+												}}
+											/>
+										)}
+										{isActive && (
+											<motion.div
+												className="absolute -bottom-1 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)]"
+												layoutId="nav-active-dot"
+												transition={{
+													type: "spring",
+													bounce: 0.2,
+													duration: 0.6,
+												}}
+											/>
+										)}
+									</Link>
+								);
+							})}
+						</div>
+					</div>
 
-                    {/* Auth Section - Desktop */}
-                    <div className="hidden md:flex items-center">
-                        {status === "authenticated" ? (
-                            <UserProfileDropdown />
-                        ) : (
-                            <Button
-                                onClick={() => signIn("google")}
-                                className="bg-linear-to-r from-green-400 to-emerald-500 text-black font-semibold hover:from-green-500 hover:to-emerald-600 transition-all shadow-lg shadow-green-500/20"
-                            >
-                                Login
-                            </Button>
-                        )}
-                    </div>
+					{/* Auth Section - Desktop */}
+					<div className="hidden items-center md:flex">
+						<AnimatePresence mode="wait">
+							{status === "authenticated" ? (
+								<motion.div
+									animate={{ opacity: 1, scale: 1 }}
+									exit={{ opacity: 0, scale: 0.95 }}
+									initial={{ opacity: 0, scale: 0.95 }}
+									key="profile"
+								>
+									<UserProfileDropdown />
+								</motion.div>
+							) : (
+								<motion.div
+									animate={{ opacity: 1, x: 0 }}
+									exit={{ opacity: 0, x: 20 }}
+									initial={{ opacity: 0, x: 20 }}
+									key="login"
+								>
+									<Button
+										className="group relative overflow-hidden rounded-full bg-green-500 px-6 py-2 font-bold text-black shadow-[0_0_20px_rgba(34,197,94,0.2)] transition-all duration-300 hover:bg-green-400 hover:shadow-[0_0_25px_rgba(34,197,94,0.4)]"
+										onClick={() => signIn("google")}
+									>
+										<span className="relative z-10">Login</span>
+										<div className="absolute inset-0 -translate-x-full bg-linear-to-r from-white/0 via-white/20 to-white/0 transition-transform duration-1000 group-hover:translate-x-full" />
+									</Button>
+								</motion.div>
+							)}
+						</AnimatePresence>
+					</div>
 
-                    {/* Mobile Menu */}
-                    <div className="md:hidden flex items-center gap-3">
-                        {/* Mobile User Avatar */}
-                        {status === "authenticated" && <UserProfileDropdown />}
+					{/* Mobile Menu */}
+					<div className="flex items-center gap-3 md:hidden">
+						{status === "authenticated" && <UserProfileDropdown />}
 
-                        <Sheet open={isOpen} onOpenChange={setIsOpen}>
-                            <SheetTrigger asChild>
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="text-white/90 hover:text-green-400 hover:bg-white/10"
-                                >
-                                    <Menu className="h-6 w-6" />
-                                    <span className="sr-only">Toggle menu</span>
-                                </Button>
-                            </SheetTrigger>
-                            <SheetContent
-                                side="right"
-                                className="bg-black/95 border-white/10 backdrop-blur-xl"
-                            >
-                                <div className="flex flex-col space-y-4 mt-8">
-                                    {navItems.map((item) => (
-                                        <Link
-                                            key={item.name}
-                                            href={item.href}
-                                            onClick={() => setIsOpen(false)}
-                                            className="text-lg text-white/90 hover:text-green-400 transition-colors py-2"
-                                        >
-                                            {item.name}
-                                        </Link>
-                                    ))}
-                                    <div className="pt-4 border-t border-white/10 space-y-3">
-                                        {status === "authenticated" ? (
-                                            <>
-                                                <Link
-                                                    href="/profile"
-                                                    onClick={() => setIsOpen(false)}
-                                                    className="flex items-center gap-2 text-white/90 hover:text-green-400 transition-colors py-2"
-                                                >
-                                                    <User className="h-4 w-4" />
-                                                    Profile
-                                                </Link>
-                                                <Link
-                                                    href="/leaderboard"
-                                                    onClick={() => setIsOpen(false)}
-                                                    className="flex items-center gap-2 text-white/90 hover:text-green-400 transition-colors py-2"
-                                                >
-                                                    <Trophy className="h-4 w-4" />
-                                                    Leaderboard
-                                                </Link>
-                                                <Button
-                                                    variant="ghost"
-                                                    onClick={() => signOut()}
-                                                    className="w-full justify-start text-red-400 hover:text-red-300 hover:bg-white/10 p-0 h-auto py-2"
-                                                >
-                                                    <LogOut className="mr-2 h-4 w-4" />
-                                                    Sign Out
-                                                </Button>
-                                            </>
-                                        ) : (
-                                            <Button
-                                                onClick={() => signIn("google")}
-                                                className="w-full bg-linear-to-r from-green-400 to-emerald-500 text-black font-semibold hover:from-green-500 hover:to-emerald-600 transition-all"
-                                            >
-                                                Login
-                                            </Button>
-                                        )}
-                                    </div>
-                                </div>
-                            </SheetContent>
-                        </Sheet>
-                    </div>
-                </div>
-            </div>
-        </nav>
-    )
+						<Sheet onOpenChange={setIsOpen} open={isOpen}>
+							<SheetTrigger asChild>
+								<Button
+									className="rounded-full text-white/80 hover:bg-white/10 hover:text-white"
+									size="icon"
+									variant="ghost"
+								>
+									<Menu className="h-5 w-5" />
+									<span className="sr-only">Toggle menu</span>
+								</Button>
+							</SheetTrigger>
+							<SheetContent
+								className="w-[300px] border-white/10 bg-black/95 p-0 backdrop-blur-2xl"
+								side="right"
+							>
+								<SheetHeader className="border-white/5 border-b p-6">
+									<SheetTitle className="text-left">
+										<span className="bg-linear-to-r from-green-400 to-emerald-500 bg-clip-text font-bold text-transparent text-xl">
+											100xPractice
+										</span>
+									</SheetTitle>
+								</SheetHeader>
+								<div className="flex flex-col p-4">
+									<div className="space-y-1">
+										{navItems.map((item) => {
+											const isActive = pathname === item.href;
+											return (
+												<Link
+													className={cn(
+														"group flex items-center justify-between rounded-xl px-4 py-4 transition-all duration-200",
+														isActive
+															? "bg-green-500/10 text-green-400"
+															: "text-gray-400 hover:bg-white/5 hover:text-white",
+													)}
+													href={item.href}
+													key={item.href}
+													onClick={() => setIsOpen(false)}
+												>
+													<span className="font-medium text-base">
+														{item.name}
+													</span>
+													<ChevronRight
+														className={cn(
+															"h-4 w-4 transition-transform duration-200 group-hover:translate-x-1",
+															isActive ? "text-green-400" : "text-gray-600",
+														)}
+													/>
+												</Link>
+											);
+										})}
+									</div>
+
+									<div className="mt-8 mb-4 border-white/5 border-t px-4 pt-8">
+										{status === "authenticated" ? (
+											<div className="space-y-4">
+												<div className="mb-6 flex items-center gap-3 rounded-lg bg-white/5 p-2">
+													<UserAvatar
+														name={session?.user?.name}
+														src={session?.user?.image}
+													/>
+													<div className="flex flex-col">
+														<span className="font-medium text-sm text-white">
+															{session?.user?.name}
+														</span>
+														<span className="text-gray-500 text-xs">
+															{session?.user?.email}
+														</span>
+													</div>
+												</div>
+												<Button
+													className="w-full rounded-xl border-red-500/20 py-6 text-red-400 hover:bg-red-500/10 hover:text-red-300"
+													onClick={() => signOut()}
+													variant="outline"
+												>
+													<LogOut className="mr-2 h-4 w-4" />
+													Sign Out
+												</Button>
+											</div>
+										) : (
+											<Button
+												className="w-full rounded-xl bg-linear-to-r from-green-400 to-emerald-500 py-6 font-bold text-black transition-all hover:shadow-[0_0_20px_rgba(34,197,94,0.3)]"
+												onClick={() => signIn("google")}
+											>
+												Login to Get Started
+											</Button>
+										)}
+									</div>
+								</div>
+							</SheetContent>
+						</Sheet>
+					</div>
+				</div>
+			</div>
+		</nav>
+	);
 }
-
