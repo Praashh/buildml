@@ -1,213 +1,164 @@
-"use client";
-
-import { use, useState, useEffect } from "react";
-import { api } from "~/trpc/react";
-import CodeEditor from "~/app/_components/editor";
-import { Button } from "~/components/ui/button";
+import { api } from "~/trpc/server";
+import Link from "next/link";
+import { notFound } from "next/navigation";
 import { Badge } from "~/components/ui/badge";
-import { Play, Send, CheckCircle, XCircle, Loader2, ChevronRight, Terminal as TerminalIcon, BookOpen } from "lucide-react";
-import ReactMarkdown from "react-markdown";
-import remarkMath from "remark-math";
-import rehypeKatex from "rehype-katex";
-import "katex/dist/katex.min.css"; // Import KaTeX styles
+import { Button } from "~/components/ui/button";
+import { Card } from "~/components/ui/card";
+import { Navbar } from "../../_components/navbar";
+import { Footer } from "../../_components/footer";
+import { ChevronRight, ChevronLeft, BrainCircuit, Activity, Zap, Layers, Code, Sparkles } from "lucide-react";
 
-import {
-    ResizableHandle,
-    ResizablePanel,
-    ResizablePanelGroup,
-} from "~/components/ui/resizable";
-import { Navbar } from "~/app/_components/navbar";
+export default async function ProblemSetPage({ params }: { params: Promise<{ slug: string }> }) {
+    const { slug } = await params;
+    const problemSet = await api.problemSet.getBySlug({ slug });
 
-export default function ProblemSolvingPage({ params }: { params: Promise<{ slug: string }> }) {
-    const { slug } = use(params);
-    const [code, setCode] = useState("");
-    const [result, setResult] = useState<any>(null);
-
-    const { data: problem, isLoading } = api.problem.getBySlug.useQuery({ slug });
-
-    const runMutation = api.submission.run.useMutation({
-        onSuccess: (data) => setResult(data),
-    });
-
-    const submitMutation = api.submission.submit.useMutation({
-        onSuccess: (data) => setResult(data),
-    });
-
-    useEffect(() => {
-        if (problem) {
-            setCode(problem.templateCode);
-        }
-    }, [problem]);
-
-    if (isLoading || !problem) {
-        return (
-            <div className="flex items-center justify-center min-h-screen bg-black">
-                <Loader2 className="w-8 h-8 animate-spin text-green-500" />
-            </div>
-        );
+    if (!problemSet) {
+        notFound();
     }
 
-    const handleRun = () => {
-        runMutation.mutate({ problemId: problem.id, code });
-    };
-
-    const handleSubmit = () => {
-        submitMutation.mutate({ problemId: problem.id, code });
-    };
-
-    const isExecuting = runMutation.isPending || submitMutation.isPending;
+    // Count problems by difficulty
+    const difficultyCounts = problemSet.problems.reduce((acc, p) => {
+        acc[p.difficulty] = (acc[p.difficulty] || 0) + 1;
+        return acc;
+    }, {} as Record<string, number>);
 
     return (
-        <div className="flex flex-col h-screen bg-black overflow-hidden">
+        <div className="relative min-h-screen bg-black flex flex-col">
+            {/* Background Effects */}
+            <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+                <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-green-500/5 rounded-full blur-3xl animate-pulse" />
+                <div className="absolute bottom-1/3 right-1/4 w-80 h-80 bg-emerald-500/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
+            </div>
+
             <Navbar />
 
-            <div className="flex-1 flex flex-col pt-16 overflow-hidden">
-                {/* Compact Header Bar */}
-                <div className="h-12 border-b border-white/10 bg-zinc-950 flex items-center justify-between px-4 shrink-0">
-                    <div className="flex items-center space-x-3 overflow-hidden">
-                        <div className="flex items-center space-x-1 text-zinc-500 text-xs font-medium shrink-0">
-                            <span>Practice</span>
-                            <ChevronRight className="w-3 h-3" />
+            <main className="relative z-10 flex-1 pt-32 pb-20">
+                <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                    {/* Breadcrumb & Header */}
+                    <div className="mb-12">
+                        <Link
+                            href="/practice"
+                            className="inline-flex items-center text-zinc-500 hover:text-green-400 transition-colors mb-8 group"
+                        >
+                            <ChevronLeft className="w-4 h-4 mr-1 group-hover:-translate-x-1 transition-transform" />
+                            Back to Problem Sets
+                        </Link>
+
+                        <div className="flex items-start gap-4 mb-6">
+                            <div className="p-3 rounded-xl bg-gradient-to-br from-green-500/20 to-emerald-500/10 border border-green-500/20">
+                                <Layers className="w-6 h-6 text-green-400" />
+                            </div>
+                            <div>
+                                <h1 className="text-4xl font-bold text-white mb-3 tracking-tight">{problemSet.title}</h1>
+                                {problemSet.description && (
+                                    <p className="text-zinc-400 max-w-3xl leading-relaxed text-lg">
+                                        {problemSet.description}
+                                    </p>
+                                )}
+                            </div>
                         </div>
-                        <h1 className="text-sm font-semibold tracking-tight text-white truncate max-w-[200px] sm:max-w-md">
-                            {problem.title}
-                        </h1>
-                        <Badge variant={
-                            problem.difficulty === "Easy" ? "success" :
-                                problem.difficulty === "Medium" ? "warning" : "destructive"
-                        } className="h-5 px-1.5 text-[10px] uppercase tracking-wider">
-                            {problem.difficulty}
-                        </Badge>
+
+                        {/* Stats Bar */}
+                        <div className="flex flex-wrap items-center gap-4 mt-8 p-4 rounded-xl bg-zinc-900/50 border border-white/5">
+                            <Badge variant="outline" className="border-zinc-700 text-zinc-400 px-3 py-1">
+                                <Code className="w-3 h-3 mr-2" />
+                                {problemSet.problems.length} {problemSet.problems.length === 1 ? "Problem" : "Problems"}
+                            </Badge>
+                            {difficultyCounts.Easy && (
+                                <Badge variant="success" className="px-3 py-1">
+                                    {difficultyCounts.Easy} Easy
+                                </Badge>
+                            )}
+                            {difficultyCounts.Medium && (
+                                <Badge variant="warning" className="px-3 py-1">
+                                    {difficultyCounts.Medium} Medium
+                                </Badge>
+                            )}
+                            {difficultyCounts.Hard && (
+                                <Badge variant="destructive" className="px-3 py-1">
+                                    {difficultyCounts.Hard} Hard
+                                </Badge>
+                            )}
+                        </div>
                     </div>
-                </div>
 
-                <ResizablePanelGroup orientation="horizontal" className="flex-1 overflow-hidden">
-                    {/* Left Panel: Description */}
-                    <ResizablePanel defaultSize={40} minSize={25} className="bg-zinc-950">
-                        <div className="h-full flex flex-col">
-                            <div className="h-9 border-b border-white/5 flex items-center px-4 shrink-0">
-                                <span className="flex items-center text-[10px] font-bold uppercase tracking-widest text-zinc-500">
-                                    <BookOpen className="w-3 h-3 mr-2 text-green-500" />
-                                    Problem Statement
-                                </span>
-                            </div>
-                            <div className="flex-1 overflow-y-auto p-6 scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent">
-                                <div className="prose prose-sm prose-invert max-w-none 
-                                    prose-headings:text-white prose-headings:font-bold prose-headings:tracking-tight
-                                    prose-p:text-zinc-400 prose-p:leading-relaxed
-                                    prose-strong:text-white
-                                    prose-pre:bg-black/50 prose-pre:border prose-pre:border-white/10
-                                    prose-code:text-emerald-400 prose-code:bg-emerald-400/10 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none
-                                    prose-a:text-green-400 hover:prose-a:text-green-300 transition-colors">
-                                    <ReactMarkdown
-                                        remarkPlugins={[remarkMath]}
-                                        rehypePlugins={[rehypeKatex]}
-                                    >
-                                        {problem.description}
-                                    </ReactMarkdown>
-                                </div>
-                            </div>
-                        </div>
-                    </ResizablePanel>
+                    {/* Problems List */}
+                    <div className="space-y-4">
+                        {problemSet.problems.map((problem, index) => (
+                            <div
+                                key={problem.id}
+                                className="group animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-both"
+                                style={{ animationDelay: `${index * 50}ms` }}
+                            >
+                                <Card className="border-white/5 bg-zinc-900/30 backdrop-blur-xl hover:bg-zinc-900/50 hover:border-green-500/30 transition-all duration-300 overflow-hidden relative">
+                                    {/* Hover Gradient */}
+                                    <div className="absolute inset-0 bg-gradient-to-r from-green-500/0 via-green-500/5 to-green-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
-                    <ResizableHandle withHandle className="bg-black border-x border-white/5 hover:bg-zinc-800 transition-colors w-1.5 cursor-col-resize" />
-
-                    {/* Right Panel: Editor & Terminal */}
-                    <ResizablePanel defaultSize={60} className="bg-zinc-950">
-                        <ResizablePanelGroup orientation="vertical">
-                            <ResizablePanel defaultSize={70} minSize={20} className="relative overflow-hidden">
-                                <div className="h-full relative bg-black">
-                                    <CodeEditor
-                                        value={code}
-                                        onChange={(val) => setCode(val || "")}
-                                    />
-                                </div>
-                            </ResizablePanel>
-
-                            <ResizableHandle withHandle className="bg-black border-y border-white/5 hover:bg-zinc-800 transition-colors h-1.5 cursor-row-resize" />
-
-                            <ResizablePanel defaultSize={30} minSize={10} className="bg-black">
-                                <div className="h-full flex flex-col font-mono">
-                                    <div className="h-9 border-b border-white/5 flex items-center justify-between px-4 bg-zinc-950 shrink-0">
-                                        <div className="flex items-center space-x-4">
-                                            <div className="flex items-center space-x-2">
-                                                <TerminalIcon className="w-3 h-3 text-zinc-500" />
-                                                <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Console</span>
+                                    <div className="flex items-center justify-between p-6 relative z-10">
+                                        <div className="flex items-center gap-6">
+                                            {/* Problem Number */}
+                                            <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-zinc-800/80 text-zinc-400 font-mono text-sm font-bold border border-white/5 group-hover:border-green-500/20 group-hover:text-green-400 transition-all">
+                                                {String(index + 1).padStart(2, '0')}
                                             </div>
 
-                                            <div className="flex items-center space-x-1 border-l border-white/10 pl-4">
-                                                <Button
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    onClick={handleRun}
-                                                    disabled={isExecuting}
-                                                    className="h-6 px-2 text-[10px] font-bold text-zinc-400 hover:text-white hover:bg-white/5"
-                                                >
-                                                    {runMutation.isPending ? <Loader2 className="w-2.5 h-2.5 mr-1.5 animate-spin" /> : <Play className="h-2.5 w-2.5 mr-1.5 fill-current text-yellow-500" />}
-                                                    RUN
-                                                </Button>
-                                                <Button
-                                                    size="sm"
-                                                    onClick={handleSubmit}
-                                                    disabled={isExecuting}
-                                                    className="h-6 px-2 text-[10px] font-bold bg-green-500/10 hover:bg-green-500 text-green-500 hover:text-black rounded transition-all active:scale-95"
-                                                >
-                                                    {submitMutation.isPending ? <Loader2 className="w-2.5 h-2.5 mr-1.5 animate-spin" /> : <Send className="h-2.5 w-2.5 mr-1.5" />}
-                                                    SUBMIT
-                                                </Button>
+                                            {/* Icon */}
+                                            <div className="p-2.5 rounded-lg bg-green-500/10 border border-green-500/20 group-hover:scale-110 transition-transform">
+                                                {index % 3 === 0 ? <BrainCircuit className="w-5 h-5 text-green-400" /> :
+                                                    index % 3 === 1 ? <Activity className="w-5 h-5 text-green-400" /> :
+                                                        <Zap className="w-5 h-5 text-green-400" />}
+                                            </div>
+
+                                            {/* Problem Info */}
+                                            <div>
+                                                <h3 className="text-lg font-semibold text-white group-hover:text-green-400 transition-colors">
+                                                    {problem.title}
+                                                </h3>
+                                                <p className="text-sm text-zinc-500 mt-1">
+                                                    Implement {problem.title.toLowerCase()} from first principles
+                                                </p>
                                             </div>
                                         </div>
 
-                                        {result && (
-                                            <div className="flex items-center">
-                                                {result.status === "PASS" ? (
-                                                    <span className="text-[10px] font-bold text-green-500 flex items-center">
-                                                        <div className="w-1.5 h-1.5 rounded-full bg-green-500 mr-2 animate-pulse" />
-                                                        ALL TESTS PASSED
-                                                    </span>
-                                                ) : (
-                                                    <span className="text-[10px] font-bold text-red-500 flex items-center">
-                                                        <div className="w-1.5 h-1.5 rounded-full bg-red-500 mr-2 animate-pulse" />
-                                                        EXECUTION {result.status}
-                                                    </span>
-                                                )}
-                                            </div>
-                                        )}
-                                    </div>
+                                        <div className="flex items-center gap-4">
+                                            <Badge variant={
+                                                problem.difficulty === "Easy" ? "success" :
+                                                    problem.difficulty === "Medium" ? "warning" : "destructive"
+                                            } className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider">
+                                                {problem.difficulty}
+                                            </Badge>
 
-                                    <div className="flex-1 overflow-y-auto p-4 text-[13px] leading-relaxed select-text scrollbar-thin scrollbar-thumb-zinc-800">
-                                        {isExecuting && (
-                                            <div className="flex items-center text-zinc-500 animate-pulse italic">
-                                                <span className="text-green-500 mr-2">➜</span>
-                                                Executing test suite...
-                                            </div>
-                                        )}
-
-                                        {result ? (
-                                            <div className="space-y-4">
-                                                <div className="group">
-                                                    <div className="text-zinc-600 mb-2 border-b border-zinc-800/50 pb-1 flex justify-between">
-                                                        <span>Output Logs</span>
-                                                        <span className="text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">PID: {Math.floor(Math.random() * 9000) + 1000}</span>
-                                                    </div>
-                                                    <div className="bg-zinc-900/40 p-3 rounded-lg border border-white/5 text-zinc-300 font-light">
-                                                        <pre className="whitespace-pre-wrap font-mono break-all leading-relaxed">{result.output || "(no output returned)"}</pre>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        ) : !isExecuting && (
-                                            <div className="text-zinc-700 italic flex items-center">
-                                                <span className="text-zinc-800 mr-2 opacity-30 tracking-tighter">{"||||"}</span>
-                                                Ready for execution. Click 'Run' to test your logic.
-                                            </div>
-                                        )}
+                                            <Link href={`/practice/${slug}/${problem.slug}`}>
+                                                <Button
+                                                    size="sm"
+                                                    className="bg-white/5 hover:bg-green-500 text-white hover:text-black border border-white/10 hover:border-green-500 transition-all duration-300 font-semibold px-6 relative overflow-hidden group/btn"
+                                                >
+                                                    <span className="relative z-10 flex items-center">
+                                                        Solve
+                                                        <ChevronRight className="w-4 h-4 ml-1 group-hover/btn:translate-x-0.5 transition-transform" />
+                                                    </span>
+                                                    <div className="absolute inset-0 bg-gradient-to-r from-green-500 to-emerald-500 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300" />
+                                                </Button>
+                                            </Link>
+                                        </div>
                                     </div>
-                                </div>
-                            </ResizablePanel>
-                        </ResizablePanelGroup>
-                    </ResizablePanel>
-                </ResizablePanelGroup>
-            </div>
+                                </Card>
+                            </div>
+                        ))}
+                    </div>
+
+                    {problemSet.problems.length === 0 && (
+                        <div className="text-center py-20 border border-dashed border-zinc-800 rounded-2xl bg-zinc-900/20">
+                            <div className="w-16 h-16 rounded-2xl bg-zinc-800/50 flex items-center justify-center mx-auto mb-6">
+                                <Sparkles className="w-8 h-8 text-zinc-600" />
+                            </div>
+                            <p className="text-zinc-500 text-lg">No problems in this set yet.</p>
+                            <p className="text-zinc-600 mt-2">New challenges coming soon!</p>
+                        </div>
+                    )}
+                </div>
+            </main>
+
+            <Footer />
         </div>
     );
 }

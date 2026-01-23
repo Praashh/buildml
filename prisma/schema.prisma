@@ -46,6 +46,16 @@ model User {
     submissions   Submission[]
 }
 
+model ProblemSet {
+    id          String    @id @default(cuid())
+    title       String
+    slug        String    @unique
+    description String?   @db.Text
+    problems    Problem[]
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime  @updatedAt
+}
+
 model Problem {
     id           String       @id @default(cuid())
     title        String
@@ -54,6 +64,9 @@ model Problem {
     difficulty   String // Easy, Medium, Hard
     templateCode String       @db.Text // Initial code given to user (e.g., solution.py)
     testCode     String       @db.Text // Verification script (e.g., tests.py) that imports the user's solution
+    order        Int          @default(0) // Order within problem set
+    problemSetId String?
+    problemSet   ProblemSet?  @relation(fields: [problemSetId], references: [id])
     submissions  Submission[]
     createdAt    DateTime     @default(now())
     updatedAt    DateTime     @updatedAt

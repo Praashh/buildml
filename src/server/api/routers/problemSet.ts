@@ -1,12 +1,14 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
-export const problemRouter = createTRPCRouter({
+export const problemSetRouter = createTRPCRouter({
     getAll: publicProcedure.query(async ({ ctx }) => {
-        return ctx.prisma.problem.findMany({
+        return ctx.prisma.problemSet.findMany({
             orderBy: { createdAt: "desc" },
             include: {
-                problemSet: true,
+                _count: {
+                    select: { problems: true },
+                },
             },
         });
     }),
@@ -14,10 +16,12 @@ export const problemRouter = createTRPCRouter({
     getBySlug: publicProcedure
         .input(z.object({ slug: z.string() }))
         .query(async ({ ctx, input }) => {
-            return ctx.prisma.problem.findUnique({
+            return ctx.prisma.problemSet.findUnique({
                 where: { slug: input.slug },
                 include: {
-                    problemSet: true,
+                    problems: {
+                        orderBy: { order: "asc" },
+                    },
                 },
             });
         }),
