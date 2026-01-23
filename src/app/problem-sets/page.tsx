@@ -6,6 +6,14 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "~/com
 import { Navbar } from "../_components/navbar";
 import { Footer } from "../_components/footer";
 import { ChevronRight, Layers, BookOpen } from "lucide-react";
+import { createMetadata } from "~/lib/seo";
+
+export const metadata = createMetadata({
+    title: "Problem Sets",
+    description:
+        "Browse all AI/ML problem sets on 100xPractice. Curated challenges organized by topic to help you master machine learning concepts.",
+    pathname: "/problem-sets",
+});
 
 export default async function ProblemSetsPage() {
     const problemSets = await api.problemSet.getAll();

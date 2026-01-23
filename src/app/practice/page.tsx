@@ -6,6 +6,14 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "~/com
 import { Navbar } from "../_components/navbar";
 import { Footer } from "../_components/footer";
 import { ChevronRight, Layers, BookOpen, Sparkles, Target, Zap } from "lucide-react";
+import { createMetadata } from "~/lib/seo";
+
+export const metadata = createMetadata({
+    title: "Practice AI/ML Challenges",
+    description:
+        "Master AI and Machine Learning through hands-on coding challenges. Implement research papers, neural networks, and algorithms from scratch.",
+    pathname: "/practice",
+});
 
 export default async function PracticePage() {
     const problemSets = await api.problemSet.getAll();

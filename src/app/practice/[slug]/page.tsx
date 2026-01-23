@@ -7,8 +7,34 @@ import { Card } from "~/components/ui/card";
 import { Navbar } from "../../_components/navbar";
 import { Footer } from "../../_components/footer";
 import { ChevronRight, ChevronLeft, BrainCircuit, Activity, Zap, Layers, Code, Sparkles } from "lucide-react";
+import type { Metadata } from "next";
+import { createMetadata, generateCourseSchema } from "~/lib/seo";
 
-export default async function ProblemSetPage({ params }: { params: Promise<{ slug: string }> }) {
+type PageProps = {
+    params: Promise<{ slug: string }>;
+};
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+    const { slug } = await params;
+    const problemSet = await api.problemSet.getBySlug({ slug });
+
+    if (!problemSet) {
+        return createMetadata({
+            title: "Problem Set Not Found",
+            noIndex: true,
+        });
+    }
+
+    return createMetadata({
+        title: problemSet.title,
+        description:
+            problemSet.description ||
+            `Master ${problemSet.title} with ${problemSet.problems.length} hands-on coding challenges. Implement AI/ML concepts from scratch.`,
+        pathname: `/practice/${slug}`,
+    });
+}
+
+export default async function ProblemSetPage({ params }: PageProps) {
     const { slug } = await params;
     const problemSet = await api.problemSet.getBySlug({ slug });
 

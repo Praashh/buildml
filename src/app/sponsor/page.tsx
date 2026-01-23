@@ -4,6 +4,14 @@ import { Footer } from "../_components/footer";
 import { Heart, Crown, Server, Award } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import Link from "next/link";
+import { createMetadata } from "~/lib/seo";
+
+export const metadata = createMetadata({
+    title: "Become a Sponsor",
+    description:
+        "Support 100xPractice and help keep AI/ML learning accessible to everyone. Sponsors receive premium features, badges, and lifetime access.",
+    pathname: "/sponsor",
+});
 
 const benefits = [
     {

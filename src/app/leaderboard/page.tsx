@@ -1,6 +1,14 @@
 import { HydrateClient } from "~/trpc/server";
 import { Navbar } from "../_components/navbar";
 import { Footer } from "../_components/footer";
+import { createMetadata } from "~/lib/seo";
+
+export const metadata = createMetadata({
+    title: "Leaderboard",
+    description:
+        "See the top performers on 100xPractice. Track your progress and compete with other AI/ML learners.",
+    pathname: "/leaderboard",
+});
 
 export default async function LeaderboardPage() {
     return (

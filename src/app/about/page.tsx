@@ -1,6 +1,14 @@
 import { HydrateClient } from "~/trpc/server";
 import { Navbar } from "../_components/navbar";
 import { Footer } from "../_components/footer";
+import { createMetadata } from "~/lib/seo";
+
+export const metadata = createMetadata({
+    title: "About",
+    description:
+        "Learn about 100xPractice - a platform for mastering AI/ML by implementing research papers from scratch. Built by praash with Next.js, TypeScript, tRPC, and Prisma.",
+    pathname: "/about",
+});
 
 export default async function AboutPage() {
     return (
