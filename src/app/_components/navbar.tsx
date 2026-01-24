@@ -42,11 +42,11 @@ function UserAvatar({
 }) {
 	const initials = name
 		? name
-				.split(" ")
-				.map((n) => n[0])
-				.join("")
-				.toUpperCase()
-				.slice(0, 2)
+			.split(" ")
+			.map((n) => n[0])
+			.join("")
+			.toUpperCase()
+			.slice(0, 2)
 		: "U";
 
 	if (src) {
@@ -54,7 +54,7 @@ function UserAvatar({
 			<div className="group relative">
 				<Image
 					alt={name ?? "User avatar"}
-					className="rounded-full border-2 border-green-500/50 transition-all duration-300 group-hover:border-green-400 group-hover:shadow-[0_0_15px_rgba(34,197,94,0.3)]"
+					className="rounded-full border-2 border-yellow-500/50 transition-all duration-300 group-hover:border-yellow-400 group-hover:shadow-[0_0_15px_rgba(234,179,8,0.3)]"
 					height={36}
 					src={src}
 					width={36}
@@ -64,7 +64,7 @@ function UserAvatar({
 	}
 
 	return (
-		<div className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-green-500/50 bg-green-500/10 font-semibold text-green-400 text-sm transition-all duration-300 hover:border-green-400 hover:bg-green-500/20">
+		<div className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-yellow-500/50 bg-yellow-500/10 font-semibold text-yellow-400 text-sm transition-all duration-300 hover:border-yellow-400 hover:bg-yellow-500/20">
 			{initials}
 		</div>
 	);
@@ -77,7 +77,7 @@ function UserProfileDropdown() {
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
-				<button className="flex items-center gap-2 rounded-full outline-none ring-offset-black transition-all focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
+				<button className="flex items-center gap-2 rounded-full outline-none ring-offset-black transition-all focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2">
 					<UserAvatar name={session?.user?.name} src={session?.user?.image} />
 				</button>
 			</DropdownMenuTrigger>
@@ -98,7 +98,7 @@ function UserProfileDropdown() {
 				<DropdownMenuSeparator className="bg-white/10" />
 				<DropdownMenuItem asChild>
 					<Link
-						className="flex cursor-pointer items-center rounded-md px-2 py-2 text-gray-300 text-sm transition-colors hover:bg-white/5 hover:text-green-400 focus:bg-white/5 focus:text-green-400"
+						className="flex cursor-pointer items-center rounded-md px-2 py-2 text-gray-300 text-sm transition-colors hover:bg-white/5 hover:text-yellow-400 focus:bg-white/5 focus:text-yellow-400"
 						href="/profile"
 					>
 						<User className="mr-2 h-4 w-4" />
@@ -107,7 +107,7 @@ function UserProfileDropdown() {
 				</DropdownMenuItem>
 				<DropdownMenuItem asChild>
 					<Link
-						className="flex cursor-pointer items-center rounded-md px-2 py-2 text-gray-300 text-sm transition-colors hover:bg-white/5 hover:text-green-400 focus:bg-white/5 focus:text-green-400"
+						className="flex cursor-pointer items-center rounded-md px-2 py-2 text-gray-300 text-sm transition-colors hover:bg-white/5 hover:text-yellow-400 focus:bg-white/5 focus:text-yellow-400"
 						href="/leaderboard"
 					>
 						<Trophy className="mr-2 h-4 w-4" />
@@ -139,10 +139,10 @@ export function Navbar() {
 				<div className="flex h-16 items-center justify-between">
 					{/* Logo */}
 					<Link className="group flex items-center space-x-3" href="/">
-						<div className="flex h-8 w-8 rotate-3 items-center justify-center rounded-lg bg-linear-to-br from-green-400 to-emerald-600 transition-transform duration-300 group-hover:rotate-0">
+						<div className="flex h-8 w-8 rotate-3 items-center justify-center rounded-lg bg-linear-to-br from-yellow-400 to-amber-600 transition-transform duration-300 group-hover:rotate-0">
 							<span className="font-bold text-black text-lg">X</span>
 						</div>
-						<span className="bg-linear-to-r from-white via-white to-green-400 bg-clip-text font-bold text-transparent text-xl tracking-tight">
+						<span className="bg-linear-to-r from-white via-white to-yellow-400 bg-clip-text font-bold text-transparent text-xl tracking-tight">
 							100xPractice
 						</span>
 					</Link>
@@ -157,7 +157,7 @@ export function Navbar() {
 										className={cn(
 											"relative whitespace-nowrap px-4 py-1.5 font-medium text-sm transition-colors duration-300",
 											isActive
-												? "text-green-400"
+												? "text-yellow-400"
 												: "text-gray-400 hover:text-white",
 										)}
 										href={item.href}
@@ -182,7 +182,7 @@ export function Navbar() {
 										)}
 										{isActive && (
 											<motion.div
-												className="absolute -bottom-1 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)]"
+												className="absolute -bottom-1 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-yellow-500 shadow-[0_0_8px_rgba(234,179,8,0.8)]"
 												layoutId="nav-active-dot"
 												transition={{
 													type: "spring",
@@ -217,7 +217,7 @@ export function Navbar() {
 									key="login"
 								>
 									<Button
-										className="group relative overflow-hidden rounded-full bg-green-500 px-6 py-2 font-bold text-black shadow-[0_0_20px_rgba(34,197,94,0.2)] transition-all duration-300 hover:bg-green-400 hover:shadow-[0_0_25px_rgba(34,197,94,0.4)]"
+										className="group relative overflow-hidden rounded-full bg-yellow-500 px-6 py-2 font-bold text-black shadow-[0_0_20px_rgba(234,179,8,0.2)] transition-all duration-300 hover:bg-yellow-400 hover:shadow-[0_0_25px_rgba(234,179,8,0.4)]"
 										onClick={() => signIn("google")}
 									>
 										<span className="relative z-10">Login</span>
@@ -249,7 +249,7 @@ export function Navbar() {
 							>
 								<SheetHeader className="border-white/5 border-b p-6">
 									<SheetTitle className="text-left">
-										<span className="bg-linear-to-r from-green-400 to-emerald-500 bg-clip-text font-bold text-transparent text-xl">
+										<span className="bg-linear-to-r from-yellow-400 to-amber-500 bg-clip-text font-bold text-transparent text-xl">
 											100xPractice
 										</span>
 									</SheetTitle>
@@ -263,7 +263,7 @@ export function Navbar() {
 													className={cn(
 														"group flex items-center justify-between rounded-xl px-4 py-4 transition-all duration-200",
 														isActive
-															? "bg-green-500/10 text-green-400"
+															? "bg-yellow-500/10 text-yellow-400"
 															: "text-gray-400 hover:bg-white/5 hover:text-white",
 													)}
 													href={item.href}
@@ -276,7 +276,7 @@ export function Navbar() {
 													<ChevronRight
 														className={cn(
 															"h-4 w-4 transition-transform duration-200 group-hover:translate-x-1",
-															isActive ? "text-green-400" : "text-gray-600",
+															isActive ? "text-yellow-400" : "text-gray-600",
 														)}
 													/>
 												</Link>
@@ -312,7 +312,7 @@ export function Navbar() {
 											</div>
 										) : (
 											<Button
-												className="w-full rounded-xl bg-linear-to-r from-green-400 to-emerald-500 py-6 font-bold text-black transition-all hover:shadow-[0_0_20px_rgba(34,197,94,0.3)]"
+												className="w-full rounded-xl bg-linear-to-r from-yellow-400 to-amber-500 py-6 font-bold text-black transition-all hover:shadow-[0_0_20px_rgba(234,179,8,0.3)]"
 												onClick={() => signIn("google")}
 											>
 												Login to Get Started

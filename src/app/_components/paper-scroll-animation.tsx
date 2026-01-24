@@ -6,11 +6,11 @@ import { useRef } from "react";
 function ReaderAnimation() {
 	return (
 		<div className="relative flex h-20 w-full flex-col items-center justify-center sm:h-24">
-			<div className="relative h-16 w-12 rounded border border-green-500/30 bg-gray-900/80 sm:h-20 sm:w-16">
+			<div className="relative h-16 w-12 rounded border border-yellow-500/30 bg-gray-900/80 sm:h-20 sm:w-16">
 				<div className="space-y-1 p-1.5 sm:space-y-1.5 sm:p-2">
 					{[0.7, 1, 0.85, 1, 0.6, 0.9, 0.75].map((width, i) => (
 						<div
-							className="h-0.5 rounded-full bg-green-500/20 sm:h-1"
+							className="h-0.5 rounded-full bg-yellow-500/20 sm:h-1"
 							key={i}
 							style={{ width: `${width * 100}%` }}
 						/>
@@ -18,7 +18,7 @@ function ReaderAnimation() {
 				</div>
 				<motion.div
 					animate={{ top: ["6px", "52px", "6px"] }}
-					className="absolute right-1 left-1 h-1.5 rounded-sm bg-green-400/30 sm:h-2"
+					className="absolute right-1 left-1 h-1.5 rounded-sm bg-yellow-400/30 sm:h-2"
 					transition={{
 						duration: 2.5,
 						repeat: Number.POSITIVE_INFINITY,
@@ -31,7 +31,7 @@ function ReaderAnimation() {
 					transition={{ duration: 1.5, repeat: Number.POSITIVE_INFINITY }}
 				>
 					<svg
-						className="h-3 w-3 text-green-400 sm:h-4 sm:w-4"
+						className="h-3 w-3 text-yellow-400 sm:h-4 sm:w-4"
 						fill="none"
 						stroke="currentColor"
 						strokeWidth={2}
@@ -59,18 +59,18 @@ function TyperAnimation() {
 
 	return (
 		<div className="relative flex h-20 w-full flex-col items-center justify-center sm:h-24">
-			<div className="w-full max-w-[140px] rounded-lg border border-green-500/30 bg-gray-950/90 p-2 sm:max-w-[180px] sm:p-3">
+			<div className="w-full max-w-35 rounded-lg border border-yellow-500/30 bg-gray-950/90 p-2 sm:max-w-45 sm:p-3">
 				<div className="mb-1.5 flex gap-1 sm:mb-2 sm:gap-1.5">
 					<div className="h-1.5 w-1.5 rounded-full bg-red-500/70 sm:h-2 sm:w-2" />
 					<div className="h-1.5 w-1.5 rounded-full bg-yellow-500/70 sm:h-2 sm:w-2" />
-					<div className="h-1.5 w-1.5 rounded-full bg-green-500/70 sm:h-2 sm:w-2" />
+					<div className="h-1.5 w-1.5 rounded-full bg-amber-500/70 sm:h-2 sm:w-2" />
 				</div>
 				<div className="space-y-0.5 font-mono text-[8px] sm:space-y-1 sm:text-[10px]">
 					{codeLines.map((line, lineIndex) => (
 						<div className="flex items-center" key={lineIndex}>
 							<motion.span
 								animate={{ opacity: 1 }}
-								className="text-green-400"
+								className="text-yellow-400"
 								initial={{ opacity: 0 }}
 								transition={{ delay: lineIndex * 0.8, duration: 0.3 }}
 							>
@@ -95,7 +95,7 @@ function TyperAnimation() {
 				</div>
 				<motion.span
 					animate={{ opacity: [1, 0, 1] }}
-					className="ml-0.5 inline-block h-2 w-0.5 bg-green-400 sm:ml-1 sm:h-2.5 sm:w-1"
+					className="ml-0.5 inline-block h-2 w-0.5 bg-yellow-400 sm:ml-1 sm:h-2.5 sm:w-1"
 					transition={{ duration: 0.8, repeat: Number.POSITIVE_INFINITY }}
 				/>
 			</div>
@@ -112,23 +112,23 @@ function TesterAnimation() {
 
 	return (
 		<div className="relative flex h-20 w-full flex-col items-center justify-center sm:h-24">
-			<div className="w-full max-w-[140px] space-y-1.5 sm:max-w-[180px] sm:space-y-2">
+			<div className="w-full max-w-35 space-y-1.5 sm:max-w-45 sm:space-y-2">
 				{tests.map((test) => (
 					<div className="flex items-center gap-1.5 sm:gap-2" key={test.name}>
 						<motion.div
 							animate={{
 								backgroundColor: [
 									"transparent",
-									"rgb(34 197 94 / 0.3)",
-									"rgb(34 197 94 / 0.3)",
+									"rgb(234 179 8 / 0.3)",
+									"rgb(234 179 8 / 0.3)",
 								],
 								borderColor: [
 									"rgb(34 197 94 / 0.5)",
-									"rgb(34 197 94)",
-									"rgb(34 197 94)",
+									"rgb(234 179 8)",
+									"rgb(234 179 8)",
 								],
 							}}
-							className="flex h-3 w-3 items-center justify-center rounded-full border border-green-500/50 sm:h-4 sm:w-4"
+							className="flex h-3 w-3 items-center justify-center rounded-full border border-yellow-500/50 sm:h-4 sm:w-4"
 							transition={{
 								duration: 2,
 								repeat: Number.POSITIVE_INFINITY,
@@ -139,7 +139,7 @@ function TesterAnimation() {
 							<motion.svg
 								className="h-1.5 w-1.5 sm:h-2 sm:w-2"
 								fill="none"
-								stroke="rgb(34 197 94)"
+								stroke="rgb(234 179 8)"
 								strokeWidth="3"
 								viewBox="0 0 24 24"
 							>
@@ -162,7 +162,7 @@ function TesterAnimation() {
 							<div className="h-1.5 overflow-hidden rounded-full bg-gray-800 sm:h-2">
 								<motion.div
 									animate={{ width: ["0%", "100%", "100%"] }}
-									className="h-full rounded-full bg-gradient-to-r from-green-600 to-green-400"
+									className="h-full rounded-full bg-linear-to-r from-amber-600 to-yellow-400"
 									initial={{ width: "0%" }}
 									transition={{
 										duration: 2,
@@ -176,7 +176,7 @@ function TesterAnimation() {
 						</div>
 						<motion.span
 							animate={{ opacity: [0, 0, 1, 1] }}
-							className="font-bold font-mono text-[7px] text-green-400 sm:text-[9px]"
+							className="font-bold font-mono text-[7px] text-yellow-400 sm:text-[9px]"
 							initial={{ opacity: 0 }}
 							transition={{
 								duration: 2,
@@ -209,7 +209,7 @@ function Paper({
 }) {
 	return (
 		<motion.div
-			className="absolute top-1/2 left-1/2 aspect-[4/5] w-[clamp(180px,45vw,320px)] -translate-x-1/2 rounded-xl border border-green-500/20 bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 p-3 shadow-2xl shadow-green-500/5 sm:rounded-2xl sm:p-4 md:p-6"
+			className="absolute top-1/2 left-1/2 aspect-4/5 w-[clamp(180px,45vw,320px)] -translate-x-1/2 rounded-xl border border-yellow-500/20 bg-linear-to-br from-gray-950 via-gray-900 to-gray-950 p-3 shadow-2xl shadow-yellow-500/5 sm:rounded-2xl sm:p-4 md:p-6"
 			style={{
 				x: translateX,
 				y: "-50%",
@@ -220,20 +220,20 @@ function Paper({
 			}}
 		>
 			<div className="space-y-1.5 sm:space-y-2 md:space-y-3">
-				<div className="h-1.5 w-3/4 rounded bg-green-500/20 sm:h-2 md:h-3" />
-				<div className="h-1.5 w-full rounded bg-green-500/10 sm:h-2 md:h-3" />
-				<div className="h-1.5 w-5/6 rounded bg-green-500/10 sm:h-2 md:h-3" />
-				<div className="h-1.5 w-full rounded bg-green-500/10 sm:h-2 md:h-3" />
-				<div className="h-1.5 w-4/5 rounded bg-green-500/10 sm:h-2 md:h-3" />
-				<div className="h-1.5 w-full rounded bg-green-500/10 sm:h-2 md:h-3" />
-				<div className="h-1.5 w-3/4 rounded bg-green-500/10 sm:h-2 md:h-3" />
-				<div className="h-1.5 w-5/6 rounded bg-green-500/10 sm:h-2 md:h-3" />
-				<div className="h-1.5 w-full rounded bg-green-500/10 sm:h-2 md:h-3" />
-				<div className="h-1.5 w-4/5 rounded bg-green-500/10 sm:h-2 md:h-3" />
+				<div className="h-1.5 w-3/4 rounded bg-yellow-500/20 sm:h-2 md:h-3" />
+				<div className="h-1.5 w-full rounded bg-yellow-500/10 sm:h-2 md:h-3" />
+				<div className="h-1.5 w-5/6 rounded bg-yellow-500/10 sm:h-2 md:h-3" />
+				<div className="h-1.5 w-full rounded bg-yellow-500/10 sm:h-2 md:h-3" />
+				<div className="h-1.5 w-4/5 rounded bg-yellow-500/10 sm:h-2 md:h-3" />
+				<div className="h-1.5 w-full rounded bg-yellow-500/10 sm:h-2 md:h-3" />
+				<div className="h-1.5 w-3/4 rounded bg-yellow-500/10 sm:h-2 md:h-3" />
+				<div className="h-1.5 w-5/6 rounded bg-yellow-500/10 sm:h-2 md:h-3" />
+				<div className="h-1.5 w-full rounded bg-yellow-500/10 sm:h-2 md:h-3" />
+				<div className="h-1.5 w-4/5 rounded bg-yellow-500/10 sm:h-2 md:h-3" />
 			</div>
 
 			<div className="absolute right-3 bottom-3 left-3 sm:right-4 sm:bottom-4 sm:left-4 md:right-6 md:bottom-6 md:left-6">
-				<div className="rounded-md border border-green-500/20 bg-gray-950/80 px-2 py-1.5 font-mono text-[10px] text-green-400 sm:rounded-lg sm:px-3 sm:py-2 sm:text-xs md:px-4 md:py-3 md:text-sm">
+				<div className="rounded-md border border-yellow-500/20 bg-gray-950/80 px-2 py-1.5 font-mono text-[10px] text-yellow-400 sm:rounded-lg sm:px-3 sm:py-2 sm:text-xs md:px-4 md:py-3 md:text-sm">
 					∑ log P(x_t | x_&lt;t)
 				</div>
 			</div>
@@ -250,15 +250,15 @@ function AnimatedStepCard({
 }) {
 	return (
 		<motion.div
-			className="relative flex h-[130px] w-[160px] flex-col items-center justify-center rounded-xl border border-green-500/30 bg-gradient-to-br from-gray-950 via-gray-900/95 to-gray-950 px-2 py-3 shadow-2xl shadow-green-500/10 sm:h-[160px] sm:w-[200px] sm:rounded-2xl sm:px-3 sm:py-4 md:h-[200px] md:w-[260px] md:px-4 md:py-6"
+			className="relative flex h-32.5 w-40 flex-col items-center justify-center rounded-xl border border-yellow-500/30 bg-linear-to-br from-gray-950 via-gray-900/95 to-gray-950 px-2 py-3 shadow-2xl shadow-yellow-500/10 sm:h-40 sm:w-50 sm:rounded-2xl sm:px-3 sm:py-4 md:h-50 md:w-65 md:px-4 md:py-6"
 			style={{ opacity }}
 			transition={{ duration: 0.2 }}
-			whileHover={{ scale: 1.03, borderColor: "rgb(34 197 94 / 0.5)" }}
+			whileHover={{ scale: 1.03, borderColor: "rgb(234 179 8 / 0.5)" }}
 		>
 			{type === "read" && <ReaderAnimation />}
 			{type === "code" && <TyperAnimation />}
 			{type === "test" && <TesterAnimation />}
-			<div className="pointer-events-none absolute -inset-px rounded-xl bg-gradient-to-br from-green-500/10 via-transparent to-green-500/5 sm:rounded-2xl" />
+			<div className="pointer-events-none absolute -inset-px rounded-xl bg-linear-to-br from-yellow-500/10 via-transparent to-yellow-500/5 sm:rounded-2xl" />
 		</motion.div>
 	);
 }
@@ -321,12 +321,12 @@ export default function PaperScrollAnimation() {
 	return (
 		<section className="relative h-[300vh] bg-black" ref={containerRef}>
 			<div className="sticky top-0 flex h-screen items-center justify-center overflow-hidden px-2 sm:px-4">
-				{/* Background grid - green themed */}
-				<div className="absolute inset-0 bg-[linear-gradient(rgba(34,197,94,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(34,197,94,0.03)_1px,transparent_1px)] bg-[size:30px_30px] sm:bg-[size:50px_50px]" />
+				{/* Background grid - gold themed */}
+				<div className="absolute inset-0 bg-[linear-gradient(rgba(234,179,8,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(234,179,8,0.03)_1px,transparent_1px)] bg-size-[30px_30px] sm:bg-size-[50px_50px]" />
 
 				{/* Papers container */}
 				<motion.div
-					className="relative h-[320px] w-full max-w-5xl sm:h-[400px] md:h-[500px]"
+					className="relative h-80 w-full max-w-5xl sm:h-100 md:h-125"
 					style={{ opacity: papersOpacity }}
 				>
 					{/* Back papers (shadows) */}

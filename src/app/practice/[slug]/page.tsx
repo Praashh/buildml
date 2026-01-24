@@ -66,9 +66,9 @@ export default async function ProblemSetPage({ params }: PageProps) {
 		<div className="relative flex min-h-screen flex-col bg-black">
 			{/* Background Effects */}
 			<div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-				<div className="absolute top-1/4 left-1/4 h-96 w-96 animate-pulse rounded-full bg-green-500/5 blur-3xl" />
+				<div className="absolute top-1/4 left-1/4 h-96 w-96 animate-pulse rounded-full bg-yellow-500/5 blur-3xl" />
 				<div
-					className="absolute right-1/4 bottom-1/3 h-80 w-80 animate-pulse rounded-full bg-emerald-500/5 blur-3xl"
+					className="absolute right-1/4 bottom-1/3 h-80 w-80 animate-pulse rounded-full bg-amber-500/5 blur-3xl"
 					style={{ animationDelay: "1s" }}
 				/>
 			</div>
@@ -80,7 +80,7 @@ export default async function ProblemSetPage({ params }: PageProps) {
 					{/* Breadcrumb & Header */}
 					<div className="mb-12">
 						<Link
-							className="group mb-8 inline-flex items-center text-zinc-500 transition-colors hover:text-green-400"
+							className="group mb-8 inline-flex items-center text-zinc-500 transition-colors hover:text-yellow-400"
 							href="/practice"
 						>
 							<ChevronLeft className="mr-1 h-4 w-4 transition-transform group-hover:-translate-x-1" />
@@ -88,8 +88,8 @@ export default async function ProblemSetPage({ params }: PageProps) {
 						</Link>
 
 						<div className="mb-6 flex items-start gap-4">
-							<div className="rounded-xl border border-green-500/20 bg-gradient-to-br from-green-500/20 to-emerald-500/10 p-3">
-								<Layers className="h-6 w-6 text-green-400" />
+							<div className="rounded-xl border border-yellow-500/20 bg-linear-to-br from-yellow-500/20 to-amber-500/10 p-3">
+								<Layers className="h-6 w-6 text-yellow-400" />
 							</div>
 							<div>
 								<h1 className="mb-3 font-bold text-4xl text-white tracking-tight">
@@ -139,31 +139,31 @@ export default async function ProblemSetPage({ params }: PageProps) {
 								key={problem.id}
 								style={{ animationDelay: `${index * 50}ms` }}
 							>
-								<Card className="relative overflow-hidden border-white/5 bg-zinc-900/30 backdrop-blur-xl transition-all duration-300 hover:border-green-500/30 hover:bg-zinc-900/50">
+								<Card className="relative overflow-hidden border-white/5 bg-zinc-900/30 backdrop-blur-xl transition-all duration-300 hover:border-yellow-500/30 hover:bg-zinc-900/50">
 									{/* Hover Gradient */}
-									<div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-green-500/0 via-green-500/5 to-green-500/0 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+									<div className="pointer-events-none absolute inset-0 bg-linear-to-r from-yellow-500/0 via-yellow-500/5 to-yellow-500/0 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
 
 									<div className="relative z-10 flex items-center justify-between p-6">
 										<div className="flex items-center gap-6">
 											{/* Problem Number */}
-											<div className="flex h-12 w-12 items-center justify-center rounded-xl border border-white/5 bg-zinc-800/80 font-bold font-mono text-sm text-zinc-400 transition-all group-hover:border-green-500/20 group-hover:text-green-400">
+											<div className="flex h-12 w-12 items-center justify-center rounded-xl border border-white/5 bg-zinc-800/80 font-bold font-mono text-sm text-zinc-400 transition-all group-hover:border-yellow-500/20 group-hover:text-yellow-400">
 												{String(index + 1).padStart(2, "0")}
 											</div>
 
 											{/* Icon */}
-											<div className="rounded-lg border border-green-500/20 bg-green-500/10 p-2.5 transition-transform group-hover:scale-110">
+											<div className="rounded-lg border border-yellow-500/20 bg-yellow-500/10 p-2.5 transition-transform group-hover:scale-110">
 												{index % 3 === 0 ? (
-													<BrainCircuit className="h-5 w-5 text-green-400" />
+													<BrainCircuit className="h-5 w-5 text-yellow-400" />
 												) : index % 3 === 1 ? (
-													<Activity className="h-5 w-5 text-green-400" />
+													<Activity className="h-5 w-5 text-yellow-400" />
 												) : (
-													<Zap className="h-5 w-5 text-green-400" />
+													<Zap className="h-5 w-5 text-yellow-400" />
 												)}
 											</div>
 
 											{/* Problem Info */}
 											<div>
-												<h3 className="font-semibold text-lg text-white transition-colors group-hover:text-green-400">
+												<h3 className="font-semibold text-lg text-white transition-colors group-hover:text-yellow-400">
 													{problem.title}
 												</h3>
 												<p className="mt-1 text-sm text-zinc-500">
@@ -189,14 +189,14 @@ export default async function ProblemSetPage({ params }: PageProps) {
 
 											<Link href={`/practice/${slug}/${problem.slug}`}>
 												<Button
-													className="group/btn relative overflow-hidden border border-white/10 bg-white/5 px-6 font-semibold text-white transition-all duration-300 hover:border-green-500 hover:bg-green-500 hover:text-black"
+													className="group/btn relative overflow-hidden border border-white/10 bg-white/5 px-6 font-semibold text-white transition-all duration-300 hover:border-yellow-500 hover:bg-yellow-500 hover:text-black"
 													size="sm"
 												>
 													<span className="relative z-10 flex items-center">
 														Solve
 														<ChevronRight className="ml-1 h-4 w-4 transition-transform group-hover/btn:translate-x-0.5" />
 													</span>
-													<div className="absolute inset-0 bg-gradient-to-r from-green-500 to-emerald-500 opacity-0 transition-opacity duration-300 group-hover/btn:opacity-100" />
+													<div className="absolute inset-0 bg-linear-to-r from-yellow-500 to-amber-500 opacity-0 transition-opacity duration-300 group-hover/btn:opacity-100" />
 												</Button>
 											</Link>
 										</div>

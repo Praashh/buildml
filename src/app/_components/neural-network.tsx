@@ -7,7 +7,7 @@ interface Node {
 	y: number;
 	vx: number;
 	vy: number;
-	color: "white" | "red" | "green";
+	color: "white" | "red" | "yellow";
 	size: number;
 }
 
@@ -41,7 +41,7 @@ export function NeuralNetwork() {
 		// Initialize nodes
 		const nodeCount = 35;
 		const nodes: Node[] = [];
-		const colors: ("white" | "red" | "green")[] = ["white", "red", "green"];
+		const colors: ("white" | "red" | "yellow")[] = ["white", "red", "yellow"];
 
 		for (let i = 0; i < nodeCount; i++) {
 			nodes.push({
@@ -126,9 +126,9 @@ export function NeuralNetwork() {
 				if (node.color === "white") {
 					ctx.fillStyle = "#ffffff";
 				} else if (node.color === "red") {
-					ctx.fillStyle = "#ef4444";
+					ctx.fillStyle = "#f59e0b"; // amber-500
 				} else {
-					ctx.fillStyle = "#22c55e";
+					ctx.fillStyle = "#eab308"; // yellow-500
 				}
 
 				ctx.fill();
@@ -138,8 +138,8 @@ export function NeuralNetwork() {
 					node.color === "white"
 						? "#ffffff"
 						: node.color === "red"
-							? "#ef4444"
-							: "#22c55e";
+							? "#f59e0b"
+							: "#eab308";
 				ctx.shadowBlur = 10;
 				ctx.fill();
 				ctx.shadowBlur = 0;

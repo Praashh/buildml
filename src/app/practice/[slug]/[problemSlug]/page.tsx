@@ -59,7 +59,7 @@ export default function PracticeProblemPage({
 	if (isLoading || !problem) {
 		return (
 			<div className="flex min-h-screen items-center justify-center bg-black">
-				<Loader2 className="h-8 w-8 animate-spin text-green-500" />
+				<Loader2 className="h-8 w-8 animate-spin text-yellow-500" />
 			</div>
 		);
 	}
@@ -94,14 +94,14 @@ export default function PracticeProblemPage({
 					<div className="flex items-center space-x-3 overflow-hidden">
 						<div className="flex shrink-0 items-center space-x-1 font-medium text-xs text-zinc-500">
 							<Link
-								className="transition-colors hover:text-green-400"
+								className="transition-colors hover:text-yellow-400"
 								href="/practice"
 							>
 								Practice
 							</Link>
 							<ChevronRight className="h-3 w-3" />
 							<Link
-								className="transition-colors hover:text-green-400"
+								className="transition-colors hover:text-yellow-400"
 								href={`/practice/${setSlug}`}
 							>
 								{problemSet?.title || setSlug}
@@ -163,12 +163,12 @@ export default function PracticeProblemPage({
 						<div className="flex h-full flex-col">
 							<div className="flex h-9 shrink-0 items-center border-white/5 border-b px-4">
 								<span className="flex items-center font-bold text-[10px] text-zinc-500 uppercase tracking-widest">
-									<BookOpen className="mr-2 h-3 w-3 text-green-500" />
+									<BookOpen className="mr-2 h-3 w-3 text-yellow-500" />
 									Problem Statement
 								</span>
 							</div>
 							<div className="scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent flex-1 overflow-y-auto p-6">
-								<div className="prose prose-sm prose-invert max-w-none prose-code:rounded prose-pre:border prose-pre:border-white/10 prose-code:bg-emerald-400/10 prose-pre:bg-black/50 prose-code:px-1.5 prose-code:py-0.5 prose-headings:font-bold prose-a:text-green-400 prose-code:text-emerald-400 prose-headings:text-white prose-p:text-zinc-400 prose-strong:text-white prose-p:leading-relaxed prose-headings:tracking-tight transition-colors prose-code:before:content-none prose-code:after:content-none hover:prose-a:text-green-300">
+								<div className="prose prose-sm prose-invert max-w-none prose-code:rounded prose-pre:border prose-pre:border-white/10 prose-code:bg-amber-400/10 prose-pre:bg-black/50 prose-code:px-1.5 prose-code:py-0.5 prose-headings:font-bold prose-a:text-yellow-400 prose-code:text-amber-400 prose-headings:text-white prose-p:text-zinc-400 prose-strong:text-white prose-p:leading-relaxed prose-headings:tracking-tight transition-colors prose-code:before:content-none prose-code:after:content-none hover:prose-a:text-yellow-300">
 									<ReactMarkdown
 										rehypePlugins={[rehypeKatex]}
 										remarkPlugins={[remarkMath]}
@@ -237,7 +237,7 @@ export default function PracticeProblemPage({
 													RUN
 												</Button>
 												<Button
-													className="h-6 rounded bg-green-500/10 px-2 font-bold text-[10px] text-green-500 transition-all hover:bg-green-500 hover:text-black active:scale-95"
+													className="h-6 rounded bg-yellow-500/10 px-2 font-bold text-[10px] text-yellow-500 transition-all hover:bg-yellow-500 hover:text-black active:scale-95"
 													disabled={isExecuting}
 													onClick={handleSubmit}
 													size="sm"
@@ -255,8 +255,8 @@ export default function PracticeProblemPage({
 										{result && (
 											<div className="flex items-center">
 												{result.status === "PASS" ? (
-													<span className="flex items-center font-bold text-[10px] text-green-500">
-														<div className="mr-2 h-1.5 w-1.5 animate-pulse rounded-full bg-green-500" />
+													<span className="flex items-center font-bold text-[10px] text-yellow-500">
+														<div className="mr-2 h-1.5 w-1.5 animate-pulse rounded-full bg-yellow-500" />
 														ALL TESTS PASSED
 													</span>
 												) : (
@@ -272,7 +272,7 @@ export default function PracticeProblemPage({
 									<div className="scrollbar-thin scrollbar-thumb-zinc-800 flex-1 select-text overflow-y-auto p-4 text-[13px] leading-relaxed">
 										{isExecuting && (
 											<div className="flex animate-pulse items-center text-zinc-500 italic">
-												<span className="mr-2 text-green-500">➜</span>
+												<span className="mr-2 text-yellow-500">➜</span>
 												Executing test suite...
 											</div>
 										)}

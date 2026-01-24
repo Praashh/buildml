@@ -18,7 +18,7 @@ export function Footer() {
                     {socialLinks.map((social) => (
                         <Link
                             aria-label={social.name}
-                            className="transform text-white/40 transition-all duration-300 hover:scale-110 hover:text-green-400"
+                            className="transform text-white/40 transition-all duration-300 hover:scale-110 hover:text-yellow-400"
                             href={social.href}
                             key={social.name}
                             rel="noopener noreferrer"
@@ -33,7 +33,7 @@ export function Footer() {
                 <div className="space-y-2 text-center">
                     <p className="font-medium text-sm text-white/60">
                         built by{" "}
-                        <span className="cursor-default text-white transition-colors hover:text-green-400">
+                        <span className="cursor-default text-white transition-colors hover:text-yellow-400">
                             praash
                         </span>
                     </p>

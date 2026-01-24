@@ -13,8 +13,14 @@ export const metadata = createMetadata({
 export default async function AboutPage() {
 	return (
 		<HydrateClient>
-			<div className="relative flex min-h-screen flex-col">
+			<div className="relative flex min-h-screen flex-col bg-black">
 				<Navbar />
+
+				{/* Background effects */}
+				<div className="pointer-events-none absolute inset-0 overflow-hidden">
+					<div className="absolute top-[10%] left-[20%] h-[40%] w-[40%] rounded-full bg-primary/10 blur-[120px]" />
+					<div className="absolute right-[20%] bottom-[10%] h-[40%] w-[40%] rounded-full bg-purple-500/10 blur-[120px]" />
+				</div>
 
 				<main className="container mx-auto max-w-4xl flex-1 px-6 pt-32 pb-20 lg:px-8">
 					{/* Header Section */}

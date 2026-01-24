@@ -92,7 +92,7 @@ export default function FeedbackPage() {
 									Name (optional)
 								</Label>
 								<Input
-									className="border-white/10 bg-white/5 text-white placeholder:text-white/30 focus:border-green-400/50 focus-visible:ring-green-400/30"
+									className="border-white/10 bg-white/5 text-white placeholder:text-white/30 focus:border-yellow-400/50 focus-visible:ring-yellow-400/30"
 									disabled={submitFeedback.isPending}
 									id="name"
 									name="name"
@@ -109,7 +109,7 @@ export default function FeedbackPage() {
 									Email
 								</Label>
 								<Input
-									className="border-white/10 bg-white/5 text-white placeholder:text-white/30 focus:border-green-400/50 focus-visible:ring-green-400/30"
+									className="border-white/10 bg-white/5 text-white placeholder:text-white/30 focus:border-yellow-400/50 focus-visible:ring-yellow-400/30"
 									disabled={submitFeedback.isPending}
 									id="email"
 									name="email"
@@ -132,7 +132,7 @@ export default function FeedbackPage() {
 									onValueChange={(value: FeedbackType) => setType(value)}
 									value={type}
 								>
-									<SelectTrigger className="border-white/10 bg-white/5 text-white focus:ring-green-400/30">
+									<SelectTrigger className="border-white/10 bg-white/5 text-white focus:ring-yellow-400/30">
 										<SelectValue placeholder="Select feedback type" />
 									</SelectTrigger>
 									<SelectContent className="border-white/10 bg-zinc-900">
@@ -170,7 +170,7 @@ export default function FeedbackPage() {
 									Message
 								</Label>
 								<Textarea
-									className="resize-none border-white/10 bg-white/5 text-white placeholder:text-white/30 focus:border-green-400/50 focus-visible:ring-green-400/30"
+									className="resize-none border-white/10 bg-white/5 text-white placeholder:text-white/30 focus:border-yellow-400/50 focus-visible:ring-yellow-400/30"
 									disabled={submitFeedback.isPending}
 									id="message"
 									name="message"
@@ -184,7 +184,7 @@ export default function FeedbackPage() {
 
 							{/* Submit Button */}
 							<Button
-								className="w-full bg-linear-to-r from-green-400 to-emerald-500 py-6 font-semibold text-black text-lg hover:from-green-500 hover:to-emerald-600 disabled:cursor-not-allowed disabled:opacity-50"
+								className="w-full bg-linear-to-r from-yellow-400 to-amber-500 py-6 font-semibold text-black text-lg hover:from-yellow-500 hover:to-amber-600 disabled:cursor-not-allowed disabled:opacity-50"
 								disabled={submitFeedback.isPending}
 								type="submit"
 							>

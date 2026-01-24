@@ -151,12 +151,12 @@ export function ProfileClient({ userId }: ProfileClientProps) {
                     <CardContent className="space-y-6">
                         <div className="space-y-2">
                             <div className="flex justify-between text-sm">
-                                <span className="text-emerald-400 font-medium italic">Easy</span>
+                                <span className="text-yellow-400 font-medium italic">Easy</span>
                                 <span className="text-white font-bold">{difficultyCounts.Easy} / {totalCounts.Easy}</span>
                             </div>
                             <div className="h-2 w-full rounded-full bg-neutral-800 overflow-hidden">
                                 <div
-                                    className="h-full bg-emerald-500 rounded-full transition-all duration-1000"
+                                    className="h-full bg-yellow-500 rounded-full transition-all duration-1000"
                                     style={{ width: `${getPercentage(difficultyCounts.Easy, totalCounts.Easy)}%` }}
                                 />
                             </div>

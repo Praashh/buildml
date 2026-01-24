@@ -13,7 +13,7 @@ export const metadata = createMetadata({
 
 export default async function LeaderboardPage() {
 	// Prefetching for better initial load
-	void api.user.getLeaderboard.prefetch();
+	await api.user.getLeaderboard.prefetch();
 
 	return (
 		<HydrateClient>
