@@ -15,7 +15,7 @@ export const env = createEnv({
     QSTASH_CURRENT_SIGNING_KEY: z.string(),
     QSTASH_NEXT_SIGNING_KEY: z.string(),
     QSTASH_TOKEN: z.string(),
-    QSTASH_URL: z.string(),
+    DEPLOYMENT_URL: z.string(),
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
@@ -36,7 +36,7 @@ export const env = createEnv({
     QSTASH_CURRENT_SIGNING_KEY: process.env.QSTASH_CURRENT_SIGNING_KEY,
     QSTASH_NEXT_SIGNING_KEY: process.env.QSTASH_NEXT_SIGNING_KEY,
     QSTASH_TOKEN: process.env.QSTASH_TOKEN,
-    QSTASH_URL: process.env.QSTASH_URL,
+    DEPLOYMENT_URL: process.env.DEPLOYMENT_URL || process.env.QSTASH_URL,
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
   emptyStringAsUndefined: true,
