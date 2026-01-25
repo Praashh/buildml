@@ -43,12 +43,41 @@ export default function PracticeProblemPage({
 	});
 
 	const runMutation = api.submission.run.useMutation({
-		onSuccess: (data) => setResult(data),
+		onSuccess: (data) => {
+			setResult(data);
+		},
 	});
 
 	const submitMutation = api.submission.submit.useMutation({
-		onSuccess: (data) => setResult(data),
+		onSuccess: (data) => {
+			setResult(data);
+		},
 	});
+
+	// Polling query
+	const { data: statusData } = api.submission.getStatus.useQuery(
+		{
+			runId: result?.runId,
+			submissionId: result?.id,
+		},
+		{
+			enabled: !!(result?.runId || (result?.id && result?.status === "PENDING")),
+			refetchInterval: (query) => {
+				const data = query.state.data;
+				if (data && data.status !== "PENDING") {
+					return false;
+				}
+				return 1000; // Poll every 1 second
+			},
+		},
+	);
+
+	// Update result when polling gets new data
+	useEffect(() => {
+		if (statusData && statusData.status !== "PENDING") {
+			setResult((prev: any) => ({ ...prev, ...statusData }));
+		}
+	}, [statusData]);
 
 	useEffect(() => {
 		if (problem) {
@@ -72,7 +101,11 @@ export default function PracticeProblemPage({
 		submitMutation.mutate({ problemId: problem.id, code });
 	};
 
-	const isExecuting = runMutation.isPending || submitMutation.isPending;
+	const isExecuting =
+		runMutation.isPending ||
+		submitMutation.isPending ||
+		(result?.status === "PENDING" && !statusData) ||
+		(statusData?.status === "PENDING");
 
 	// Find current problem index and adjacent problems
 	const currentIndex =
