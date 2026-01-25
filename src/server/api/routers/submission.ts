@@ -24,7 +24,7 @@ export const submissionRouter = createTRPCRouter({
 
 			// Publish to QStash
 			await qstash.publishJSON({
-				url: `${env.QSTASH_URL}/api/webhooks/process-piston`,
+				url: `${env.DEPLOYMENT_URL}/api/webhooks/process-piston`,
 				body: {
 					type: "RUN",
 					runId,
@@ -66,7 +66,7 @@ export const submissionRouter = createTRPCRouter({
 
 			// Publish to QStash
 			await qstash.publishJSON({
-				url: `${env.QSTASH_URL}/api/webhooks/process-piston`,
+				url: `${env.DEPLOYMENT_URL}/api/webhooks/process-piston`,
 				body: {
 					type: "SUBMIT",
 					submissionId: submission.id,
