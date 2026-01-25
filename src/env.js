@@ -36,7 +36,7 @@ export const env = createEnv({
     QSTASH_CURRENT_SIGNING_KEY: process.env.QSTASH_CURRENT_SIGNING_KEY,
     QSTASH_NEXT_SIGNING_KEY: process.env.QSTASH_NEXT_SIGNING_KEY,
     QSTASH_TOKEN: process.env.QSTASH_TOKEN,
-    DEPLOYMENT_URL: process.env.DEPLOYMENT_URL || process.env.QSTASH_URL,
+    DEPLOYMENT_URL: process.env.NEXT_PUBLIC_DEPLOYMENT_URL,
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
   emptyStringAsUndefined: true,
