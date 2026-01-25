@@ -1,5 +1,9 @@
 import { z } from "zod";
+import { runRateLimit, submitRateLimit } from "~/lib/rate-limiter";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import { redis } from "~/lib/redis";
+import { qstash } from "~/lib/qstash";
+import { env } from "~/env";
 
 export const submissionRouter = createTRPCRouter({
 	run: protectedProcedure
@@ -10,64 +14,30 @@ export const submissionRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			const problem = await ctx.prisma.problem.findUnique({
-				where: { id: input.problemId },
+			// Rate limit (per user)
+			const { success } = await runRateLimit.limit(ctx.session.user.id);
+			if (!success) {
+				throw new Error("Rate limit exceeded. Please wait a moment.");
+			}
+
+			const runId = crypto.randomUUID();
+
+			// Publish to QStash
+			await qstash.publishJSON({
+				url: `${env.QSTASH_URL}/api/webhooks/process-piston`,
+				body: {
+					type: "RUN",
+					runId,
+					userId: ctx.session.user.id,
+					problemId: input.problemId,
+					code: input.code,
+				},
 			});
 
-			if (!problem) {
-				throw new Error("Problem not found");
-			}
-
-			try {
-				const controller = new AbortController();
-				const timeoutId = setTimeout(() => controller.abort(), 10000);
-				console.log("[INPUT CODE]", input.code);
-				console.log("[PROBLEM CODE]", problem.testCode);
-				const response = await fetch("https://emkc.org/api/v2/piston/execute", {
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({
-						language: "py",
-						version: "3.10.0",
-						files: [
-							{ name: "user_code.py", content: input.code },
-							{ name: "test_code.py", content: problem.testCode },
-						],
-						run: {
-							args: ["-m", "unittest", "-v", "test_code.py"],
-						},
-						compile_timeout: 10000,
-						run_timeout: 3000,
-						compile_cpu_time: 10000,
-						run_cpu_time: 3000,
-						compile_memory_limit: -1,
-						run_memory_limit: -1,
-					}),
-					signal: controller.signal,
-				});
-				clearTimeout(timeoutId);
-
-				const result = (await response.json()) as any;
-
-				console.log("result", result);
-
-				let status = "FAIL";
-				if (result.run.code === 0) {
-					status = "PASS";
-				} else if (result.run.code !== 0 || result.run.stderr) {
-					status = "ERROR";
-				}
-
-				return {
-					status,
-					output: result.run.output,
-				};
-			} catch (error) {
-				return {
-					status: "ERROR",
-					output: error instanceof Error ? error.message : "Unknown error",
-				};
-			}
+			return {
+				runId,
+				status: "PENDING",
+			};
 		}),
 
 	submit: protectedProcedure
@@ -78,12 +48,10 @@ export const submissionRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			const problem = await ctx.prisma.problem.findUnique({
-				where: { id: input.problemId },
-			});
-
-			if (!problem) {
-				throw new Error("Problem not found");
+			// Rate limit (per user)
+			const { success } = await submitRateLimit.limit(ctx.session.user.id);
+			if (!success) {
+				throw new Error("Rate limit exceeded. Please wait a moment.");
 			}
 
 			// Create submission record
@@ -96,49 +64,43 @@ export const submissionRouter = createTRPCRouter({
 				},
 			});
 
-			try {
-				const controller = new AbortController();
-				const timeoutId = setTimeout(() => controller.abort(), 10000);
+			// Publish to QStash
+			await qstash.publishJSON({
+				url: `${env.QSTASH_URL}/api/webhooks/process-piston`,
+				body: {
+					type: "SUBMIT",
+					submissionId: submission.id,
+					userId: ctx.session.user.id,
+				},
+			});
 
-				const response = await fetch("https://emkc.org/api/v2/piston/execute", {
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({
-						language: "python",
-						version: "3.10.0",
-						files: [
-							{ name: "tests.py", content: problem.testCode },
-							{ name: "solution.py", content: input.code },
-						],
-					}),
-					signal: controller.signal,
+			return submission;
+		}),
+
+	getStatus: protectedProcedure
+		.input(
+			z.object({
+				submissionId: z.string().optional(),
+				runId: z.string().optional(),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			if (input.submissionId) {
+				const submission = await ctx.prisma.submission.findUnique({
+					where: { id: input.submissionId },
+					select: { status: true, output: true },
 				});
-				clearTimeout(timeoutId);
-
-				const result = (await response.json()) as any;
-
-				let status = "FAIL";
-				if (result.run.code === 0 && result.run.stdout.includes("SUCCESS")) {
-					status = "PASS";
-				} else if (result.run.code !== 0 || result.run.stderr) {
-					status = "ERROR";
-				}
-
-				return await ctx.prisma.submission.update({
-					where: { id: submission.id },
-					data: {
-						status,
-						output: result.run.output,
-					},
-				});
-			} catch (error) {
-				return await ctx.prisma.submission.update({
-					where: { id: submission.id },
-					data: {
-						status: "ERROR",
-						output: error instanceof Error ? error.message : "Unknown error",
-					},
-				});
+				return submission;
 			}
+
+			if (input.runId) {
+				const result = await redis.get(`run_result:${input.runId}`);
+				if (result) {
+					return result as { status: string; output: string };
+				}
+				return { status: "PENDING", output: null };
+			}
+
+			throw new Error("Either submissionId or runId must be provided");
 		}),
 });
