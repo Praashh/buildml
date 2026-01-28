@@ -77,7 +77,7 @@ export default function FeedbackPage() {
 						Feedback
 					</h1>
 					<p className="text-lg text-white/60 leading-relaxed">
-						Your feedback helps us improve 100xPractice. Share your thoughts,
+						Your feedback helps us improve buildml. Share your thoughts,
 						report bugs, or suggest new features.
 					</p>
 				</div>

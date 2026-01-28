@@ -8,7 +8,7 @@ import { redirect } from "next/navigation";
 
 export const metadata = createMetadata({
     title: "Profile",
-    description: "View your progress, solved problems, and activity on 100xPractice.",
+    description: "View your progress, solved problems, and activity on buildml.",
     pathname: "/profile",
 });
 

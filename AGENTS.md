@@ -1,10 +1,10 @@
-# Agent Instructions for 100xPractice
+# Agent Instructions for buildml
 
-This document provides comprehensive guidelines for AI coding agents working on the 100xPractice project.
+This document provides comprehensive guidelines for AI coding agents working on the buildml project.
 
 ## Project Overview
 
-100xPractice is a Next.js application built with the T3 Stack, featuring:
+buildml is a Next.js application built with the T3 Stack, featuring:
 - Next.js 15 with React 19
 - TypeScript with strict type checking
 - Prisma ORM with PostgreSQL
@@ -346,4 +346,4 @@ When committing changes:
 ---
 
 This document should be updated as the codebase evolves. When making significant changes to tooling or patterns, update this file accordingly.</content>
-<parameter name="filePath">/Users/prashantvarma/Desktop/100xpractice/AGENTS.md
+<parameter name="filePath">/Users/prashantvarma/Desktop/buildml/AGENTS.md

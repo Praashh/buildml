@@ -9,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
 				disallow: ["/api/", "/practice/*/edit"],
 			},
 		],
-		sitemap: "https://100xpractice.com/sitemap.xml",
+		sitemap: "https://buildml.com/sitemap.xml",
 	};
 }

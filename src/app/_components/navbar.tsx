@@ -140,10 +140,10 @@ export function Navbar() {
 					{/* Logo */}
 					<Link className="group flex items-center space-x-3" href="/">
 						<div className="flex h-8 w-8 rotate-3 items-center justify-center rounded-lg bg-linear-to-br from-yellow-400 to-amber-600 transition-transform duration-300 group-hover:rotate-0">
-							<span className="font-bold text-black text-lg">X</span>
+							<span className="font-bold text-black text-lg">ML</span>
 						</div>
-						<span className="bg-linear-to-r from-white via-white to-yellow-400 bg-clip-text font-bold text-transparent text-xl tracking-tight">
-							100xPractice
+						<span className="font-bold text-white text-xl tracking-tight">
+							buildml
 						</span>
 					</Link>
 
@@ -250,7 +250,7 @@ export function Navbar() {
 								<SheetHeader className="border-white/5 border-b p-6">
 									<SheetTitle className="text-left">
 										<span className="bg-linear-to-r from-yellow-400 to-amber-500 bg-clip-text font-bold text-transparent text-xl">
-											100xPractice
+											buildml
 										</span>
 									</SheetTitle>
 								</SheetHeader>

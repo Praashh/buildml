@@ -7,7 +7,7 @@ import { LeaderboardClient } from "./_components/LeaderboardClient";
 export const metadata = createMetadata({
 	title: "Leaderboard",
 	description:
-		"See the top performers on 100xPractice. Track your progress and compete with other AI/ML learners.",
+		"See the top performers on buildml. Track your progress and compete with other AI/ML learners.",
 	pathname: "/leaderboard",
 });
 

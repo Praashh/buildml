@@ -2,7 +2,7 @@
   "lockfileVersion": 1,
   "workspaces": {
     "": {
-      "name": "100xpractice",
+      "name": "buildml",
       "dependencies": {
         "@auth/prisma-adapter": "^2.7.2",
         "@monaco-editor/react": "^4.7.0",
