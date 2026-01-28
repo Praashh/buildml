@@ -6,7 +6,7 @@ import { Navbar } from "../_components/navbar";
 export const metadata = createMetadata({
 	title: "About",
 	description:
-		"Learn about 100xPractice - a platform for mastering AI/ML by implementing research papers from scratch. Built by praash with Next.js, TypeScript, tRPC, and Prisma.",
+		"Learn about buildml - a platform for mastering AI/ML by implementing research papers from scratch. Built by praash with Next.js, TypeScript, tRPC, and Prisma.",
 	pathname: "/about",
 });
 
@@ -26,10 +26,10 @@ export default async function AboutPage() {
 					{/* Header Section */}
 					<div className="mb-16">
 						<h1 className="mb-6 font-bold text-4xl text-white md:text-5xl">
-							About 100xPractice
+							About buildml
 						</h1>
 						<p className="text-lg text-white/60 leading-relaxed">
-							100xPractice is a platform for learning by implementing coding
+							buildml is a platform for learning by implementing coding
 							challenges from scratch. We believe that deep understanding comes
 							from hands-on implementation. Reading gives you the "what" and
 							"why", but coding gives you the "how".
@@ -40,7 +40,7 @@ export default async function AboutPage() {
 					<div className="mb-16">
 						<h2 className="mb-4 font-bold text-2xl text-white">Built By</h2>
 						<p className="text-white/60">
-							100xPractice is built and maintained by{" "}
+							buildml is built and maintained by{" "}
 							<span className="text-white">praash</span>.
 						</p>
 					</div>

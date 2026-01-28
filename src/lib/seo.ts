@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 
 export const siteConfig = {
-	name: "100xPractice",
+	name: "buildml",
 	description:
 		"Master AI/ML by implementing research papers from scratch. Practice coding challenges, understand algorithms, and build real skills through hands-on implementation.",
-	url: "https://100xpractice.com",
+	url: "https://buildml.com",
 	ogImage: "/og.png",
 	creator: "praash",
 	keywords: [
@@ -17,7 +17,7 @@ export const siteConfig = {
 		"algorithm practice",
 		"deep learning implementation",
 		"neural network coding",
-		"100xPractice",
+		"buildml",
 	],
 };
 

@@ -32,8 +32,8 @@ export function ProfileClient({ userId }: ProfileClientProps) {
         if (navigator.share) {
             try {
                 await navigator.share({
-                    title: `${user.name}'s Profile on 100xPractice`,
-                    text: `Check out ${user.name}'s progress on 100xPractice! They've solved ${solvedCount} problems.`,
+                    title: `${user.name}'s Profile on buildml`,
+                    text: `Check out ${user.name}'s progress on buildml! They've solved ${solvedCount} problems.`,
                     url: url,
                 });
             } catch (err) {

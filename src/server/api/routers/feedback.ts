@@ -74,7 +74,7 @@ export const feedbackRouter = createTRPCRouter({
 							},
 						],
 						footer: {
-							text: "100xPractice Feedback System",
+							text: "buildml Feedback System",
 						},
 						timestamp: new Date().toISOString(),
 					},

@@ -27,7 +27,7 @@ export default function RootLayout({
 	return (
 		<html className={`${geist.variable}`} lang="en" suppressHydrationWarning>
 			<head>
-				<link href="https://100xpractice.com" rel="canonical" />
+				<link href="https://buildml.com" rel="canonical" />
 				<meta content="#22c55e" name="theme-color" />
 				<meta content="yes" name="apple-mobile-web-app-capable" />
 				<meta

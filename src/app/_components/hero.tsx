@@ -93,20 +93,20 @@ export default function RainingLetters() {
 					{/* Left side - Text content */}
 					<div className="space-y-8">
 						<h1 className="font-bold text-5xl text-white leading-[1.1] tracking-tight md:text-6xl lg:text-7xl">
-							Don't just read
+							Start coding
 							<br />
-							the paper.
+							the models,
 							<br />
-							<span className="font-mono text-yellow-500">Compile it.</span>
+							<span className="font-mono text-yellow-500">from scratch.</span>
 						</h1>
 
 						<p className="max-w-md text-base text-gray-400 md:text-lg">
-							Bridge the gap between theory and reality. Implement
-							state-of-the-art models{" "}
+							Join builders and Implement the
+							models everyone talks about but{" "}
 							<span className="font-mono font-semibold text-white">
-								from scratch
+								few truly understand{" "}
 							</span>
-							, line by line.
+							Now.
 						</p>
 
 						<div className="flex flex-col gap-4 sm:flex-row sm:items-center">
@@ -115,7 +115,7 @@ export default function RainingLetters() {
 								className="w-fit rounded-full bg-white px-8 py-6 font-semibold text-base text-black transition-all hover:bg-yellow-500 hover:shadow-[0_0_20px_rgba(234,179,8,0.5)]"
 								size="lg"
 							>
-								<Link href="/practice">Start Coding</Link>
+								<Link href="/practice">Start Building</Link>
 							</Button>
 						</div>
 

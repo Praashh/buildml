@@ -1,8 +1,8 @@
-# 100xPractice - Project Context for Gemini
+# buildml - Project Context for Gemini
 
 ## Project Overview
 
-**100xPractice** is a full-stack web application built using the [T3 Stack](https://create.t3.gg/). It leverages the latest features of the Next.js ecosystem.
+**buildml** is a full-stack web application built using the [T3 Stack](https://create.t3.gg/). It leverages the latest features of the Next.js ecosystem.
 
 **Key Technologies:**
 *   **Framework:** Next.js 15 (App Router)
