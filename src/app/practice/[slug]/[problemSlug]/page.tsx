@@ -288,8 +288,8 @@ export default function PracticeProblemPage({
 										{result && (
 											<div className="flex items-center">
 												{result.status === "PASS" ? (
-													<span className="flex items-center font-bold text-[10px] text-yellow-500">
-														<div className="mr-2 h-1.5 w-1.5 animate-pulse rounded-full bg-yellow-500" />
+													<span className="flex items-center font-bold text-[10px] text-white">
+														<div className="mr-2 h-1.5 w-1.5 animate-pulse rounded-full bg-green-500" />
 														ALL TESTS PASSED
 													</span>
 												) : (
