@@ -1,12 +1,11 @@
 "use client";
 
-import { Github, Linkedin, Twitter } from "lucide-react";
+import { Github, Twitter } from "lucide-react";
 import Link from "next/link";
 
 const socialLinks = [
     { name: "GitHub", icon: Github, href: "https://github.com/Praashh" },
-    { name: "Twitter", icon: Twitter, href: "https://x.com/praashh" },
-    { name: "LinkedIn", icon: Linkedin, href: "https://linkedin.com/in/praashh" },
+    { name: "Twitter", icon: Twitter, href: "https://x.com/10xpraash" },
 ];
 
 export function Footer() {
