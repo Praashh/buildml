@@ -16,13 +16,13 @@ export async function middleware(req: NextRequest) {
 	// console.log('NEXTAUTH_SALT', process.env.NEXTAUTH_SALT);
 	// console.log('token', token);
 	if (!token) {
-		return NextResponse.redirect(new URL("/", req.url));
+		return NextResponse.redirect(new URL("/signin", req.url));
 	}
 
 	const now = Date.now() / 1000;
 	if (token.exp && now > token.exp) {
 		// console.log('TOKEN EXPIRED');
-		return NextResponse.redirect(new URL("/", req.url));
+		return NextResponse.redirect(new URL("/signin", req.url));
 	}
 
 	return NextResponse.next();

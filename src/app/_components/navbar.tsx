@@ -217,11 +217,13 @@ export function Navbar() {
 									key="login"
 								>
 									<Button
+										asChild
 										className="group relative overflow-hidden rounded-full bg-yellow-500 px-6 py-2 font-bold text-black shadow-[0_0_20px_rgba(234,179,8,0.2)] transition-all duration-300 hover:bg-yellow-400 hover:shadow-[0_0_25px_rgba(234,179,8,0.4)]"
-										onClick={() => signIn("google")}
 									>
-										<span className="relative z-10">Login</span>
-										<div className="absolute inset-0 -translate-x-full bg-linear-to-r from-white/0 via-white/20 to-white/0 transition-transform duration-1000 group-hover:translate-x-full" />
+										<Link href="/signin">
+											<span className="relative z-10">Login</span>
+											<div className="absolute inset-0 -translate-x-full bg-linear-to-r from-white/0 via-white/20 to-white/0 transition-transform duration-1000 group-hover:translate-x-full" />
+										</Link>
 									</Button>
 								</motion.div>
 							)}
@@ -312,10 +314,10 @@ export function Navbar() {
 											</div>
 										) : (
 											<Button
+												asChild
 												className="w-full rounded-xl bg-linear-to-r from-yellow-400 to-amber-500 py-6 font-bold text-black transition-all hover:shadow-[0_0_20px_rgba(234,179,8,0.3)]"
-												onClick={() => signIn("google")}
 											>
-												Login to Get Started
+												<Link href="/signin">Login to Get Started</Link>
 											</Button>
 										)}
 									</div>
