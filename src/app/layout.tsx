@@ -10,6 +10,8 @@ import {
 	generateWebsiteSchema,
 } from "~/lib/seo";
 import { TRPCReactProvider } from "~/trpc/react";
+import { Analytics } from "@vercel/analytics/next"
+
 
 export const metadata = createMetadata();
 
@@ -59,6 +61,7 @@ export default function RootLayout({
 							enableSystem
 						>
 							{children}
+							<Analytics />
 							<Toaster position="bottom-right" richColors />
 						</ThemeProvider>
 					</AuthProvider>
