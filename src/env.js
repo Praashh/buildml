@@ -19,6 +19,7 @@ export const env = createEnv({
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
+    JUDGE0_URL: z.string().url().default("https://judge0.codeiu.in"),
   },
 
   client: {
@@ -37,6 +38,7 @@ export const env = createEnv({
     QSTASH_NEXT_SIGNING_KEY: process.env.QSTASH_NEXT_SIGNING_KEY,
     QSTASH_TOKEN: process.env.QSTASH_TOKEN,
     DEPLOYMENT_URL: process.env.NEXT_PUBLIC_DEPLOYMENT_URL,
+    JUDGE0_URL: process.env.JUDGE0_URL,
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
   emptyStringAsUndefined: true,

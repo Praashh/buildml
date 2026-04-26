@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { receiver } from "~/lib/qstash";
 import { prisma } from "~/db/client";
 import { redis } from "~/lib/redis";
+import { env } from "~/env";
 
 export async function POST(req: NextRequest) {
     const signature = req.headers.get("upstash-signature");
@@ -48,33 +49,58 @@ export async function POST(req: NextRequest) {
             testCode = problem.testCode;
         }
 
-        const response = await fetch("https://emkc.org/api/v2/piston/execute", {
+        const judge0Url = `${env.JUDGE0_URL}/submissions/?wait=true`;
+        
+        // Prepare source code for Judge0 (Python specific injection)
+        const sourceCode = `
+import sys
+import types
+
+# Inject user solution so it can be imported as 'solution'
+solution_code = ${JSON.stringify(finalCode)}
+solution_module = types.ModuleType('solution')
+exec(solution_code, solution_module.__dict__)
+sys.modules['solution'] = solution_module
+
+# Execute tests
+${testCode}
+`;
+
+        const response = await fetch(judge0Url, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                language: "python",
-                version: "3.10.0",
-                files: [
-                    { name: "tests.py", content: testCode },
-                    { name: "solution.py", content: finalCode },
-                ],
+                language_id: 71, // Python 3
+                source_code: sourceCode,
             }),
         });
 
         const result = (await response.json()) as any;
         let status = "FAIL";
 
-        if (result.run) {
-            if (result.run.code === 0 && result.run.stdout.includes("SUCCESS")) {
-                status = "PASS";
-            } else if (result.run.code !== 0 || result.run.stderr) {
-                status = "ERROR";
-            }
+        const stdout = result.stdout || "";
+        const stderr = result.stderr || "";
+        const compileOutput = result.compile_output || "";
+        const statusDescription = result.status?.description || "Unknown Error";
+
+        if (result.status?.id === 3) {
+            status = stdout.includes("SUCCESS") ? "PASS" : "FAIL";
+        } else if (result.status?.id === 4) {
+            status = "FAIL";
         } else {
             status = "ERROR";
         }
 
-        const output = result.run?.output || result.message || "Unknown error";
+        let output = "";
+        if (status === "PASS") {
+            output = stdout;
+        } else if (result.status?.id === 6) {
+            output = compileOutput || "Compilation Error";
+        } else if (status === "FAIL") {
+            output = stderr ? `${stdout}\n${stderr}` : stdout;
+        } else {
+            output = `[${statusDescription}]\n${stderr || stdout || result.message || ""}`;
+        }
 
         if (type === "SUBMIT") {
             await prisma.submission.update({
