@@ -4,128 +4,158 @@ import { prisma } from "~/db/client";
 import { redis } from "~/lib/redis";
 import { env } from "~/env";
 
+interface ExecutorResponse {
+	passed: number;
+	total: number;
+	results: Array<{ name: string; passed: boolean; error?: string }>;
+	stdout: string;
+	stderr?: string;
+	error?: string;
+}
+
 export async function POST(req: NextRequest) {
-    const signature = req.headers.get("upstash-signature");
-    if (!signature) {
-        return new NextResponse("Unauthorized", { status: 401 });
-    }
+	const signature = req.headers.get("upstash-signature");
+	if (!signature) {
+		return new NextResponse("Unauthorized", { status: 401 });
+	}
 
-    const bodyText = await req.text();
-    const isValid = await receiver.verify({
-        body: bodyText,
-        signature,
-    });
+	const bodyText = await req.text();
+	const isValid = await receiver.verify({
+		body: bodyText,
+		signature,
+	});
 
-    if (!isValid) {
-        return new NextResponse("Invalid signature", { status: 401 });
-    }
+	if (!isValid) {
+		return new NextResponse("Invalid signature", { status: 401 });
+	}
 
-    const taskData = JSON.parse(bodyText);
-    const { type, submissionId, runId, problemId, code } = taskData;
+	const taskData = JSON.parse(bodyText);
+	const { type, submissionId, runId, problemId, code } = taskData;
 
-    console.log(`[QStash Webhook] Processing ${type}: ${submissionId || runId}`);
+	console.log(`[QStash Webhook] Processing ${type}: ${submissionId || runId}`);
 
-    try {
-        let finalCode = code;
-        let testCode = "";
+	try {
+		let problemSlug: string;
+		let problemSetSlug: string;
+		let userCode: string;
 
-        if (type === "SUBMIT") {
-            const submission = await prisma.submission.findUnique({
-                where: { id: submissionId },
-                include: { problem: true },
-            });
-            if (!submission) {
-                return NextResponse.json({ error: "Submission not found" });
-            }
-            finalCode = submission.code;
-            testCode = submission.problem.testCode;
-        } else {
-            const problem = await prisma.problem.findUnique({
-                where: { id: problemId },
-            });
-            if (!problem) {
-                return NextResponse.json({ error: "Problem not found" });
-            }
-            testCode = problem.testCode;
-        }
+		if (type === "SUBMIT") {
+			const submission = await prisma.submission.findUnique({
+				where: { id: submissionId },
+				include: {
+					problem: {
+						include: {
+							problemSet: true,
+						},
+					},
+				},
+			});
 
-        const judge0Url = `${env.JUDGE0_URL}/submissions/?wait=true`;
-        
-        // Prepare source code for Judge0 (Python specific injection)
-        const sourceCode = `
-import sys
-import types
+			if (!submission || !submission.problem.problemSet) {
+				throw new Error("Submission or Problem Set not found");
+			}
 
-# Inject user solution so it can be imported as 'solution'
-solution_code = ${JSON.stringify(finalCode)}
-solution_module = types.ModuleType('solution')
-exec(solution_code, solution_module.__dict__)
-sys.modules['solution'] = solution_module
+			problemSlug = submission.problem.slug;
+			problemSetSlug = submission.problem.problemSet.slug;
+			userCode = submission.code;
+		} else if (type === "RUN") {
+			const problem = await prisma.problem.findUnique({
+				where: { id: problemId },
+				include: { problemSet: true },
+			});
 
-# Execute tests
-${testCode}
-`;
+			if (!problem || !problem.problemSet) {
+				throw new Error("Problem or Problem Set not found");
+			}
 
-        const response = await fetch(judge0Url, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                language_id: 71, // Python 3
-                source_code: sourceCode,
-            }),
-        });
+			problemSlug = problem.slug;
+			problemSetSlug = problem.problemSet.slug;
+			userCode = code;
+		} else {
+			return NextResponse.json({ error: "Unknown task type" }, { status: 400 });
+		}
 
-        const result = (await response.json()) as any;
-        let status = "FAIL";
+		// Call the FastAPI executor
+		const response = await fetch(`${env.EXECUTOR_URL}/execute`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				"x-secret": env.EXECUTOR_SECRET,
+			},
+			body: JSON.stringify({
+				code: userCode,
+				task_id: problemSlug,
+				problem_set_slug: problemSetSlug,
+			}),
+		});
 
-        const stdout = result.stdout || "";
-        const stderr = result.stderr || "";
-        const compileOutput = result.compile_output || "";
-        const statusDescription = result.status?.description || "Unknown Error";
+		if (!response.ok) {
+			const errText = await response.text();
+			throw new Error(`Executor error (${response.status}): ${errText}`);
+		}
 
-        if (result.status?.id === 3) {
-            status = stdout.includes("SUCCESS") ? "PASS" : "FAIL";
-        } else if (result.status?.id === 4) {
-            status = "FAIL";
-        } else {
-            status = "ERROR";
-        }
+		const result = (await response.json()) as ExecutorResponse;
 
-        let output = "";
-        if (status === "PASS") {
-            output = stdout;
-        } else if (result.status?.id === 6) {
-            output = compileOutput || "Compilation Error";
-        } else if (status === "FAIL") {
-            output = stderr ? `${stdout}\n${stderr}` : stdout;
-        } else {
-            output = `[${statusDescription}]\n${stderr || stdout || result.message || ""}`;
-        }
+		// Determine status and build output string
+		let status = "FAIL";
+		if (result.error) {
+			status = "ERROR";
+		} else if (result.passed === result.total && result.total > 0) {
+			status = "PASS";
+		}
 
-        if (type === "SUBMIT") {
-            await prisma.submission.update({
-                where: { id: submissionId },
-                data: { status, output },
-            });
-        } else {
-            await redis.set(`run_result:${runId}`, JSON.stringify({ status, output }), {
-                ex: 300, // 5 minutes TTL
-            });
-        }
+		const lines: string[] = [`${result.passed}/${result.total} tests passed`];
+		for (const r of result.results) {
+			const icon = r.passed ? "✓" : "✗";
+			lines.push(`  ${icon} ${r.name}${r.error ? `: ${r.error}` : ""}`);
+		}
+		if (result.error) {
+			lines.push("", result.error);
+		}
+		if (result.stderr) {
+			lines.push("", "--- stderr ---", result.stderr);
+		}
 
-        return NextResponse.json({ success: true });
-    } catch (error) {
-        console.error(`[QStash Webhook] Error:`, error);
-        if (type === "SUBMIT") {
-            await prisma.submission.update({
-                where: { id: submissionId },
-                data: { status: "ERROR", output: error instanceof Error ? error.message : "Inner Webhook Error" },
-            });
-        } else {
-            await redis.set(`run_result:${runId}`, JSON.stringify({ status: "ERROR", output: "Inner Webhook Error" }), {
-                ex: 300,
-            });
-        }
-        return NextResponse.json({ error: "Failed to process" }, { status: 500 });
-    }
+		const output = lines.join("\n");
+
+		// Store results based on type
+		if (type === "SUBMIT") {
+			await prisma.submission.update({
+				where: { id: submissionId },
+				data: { status, output },
+			});
+		} else {
+			// RUN: store in Redis for 10 minutes
+			await redis.set(`run_result:${runId}`, {
+				status,
+				output,
+				passed: result.passed,
+				total: result.total,
+				results: result.results,
+			}, { ex: 600 });
+		}
+
+		return NextResponse.json({ success: true });
+	} catch (error) {
+		console.error(`[QStash Webhook] Error:`, error);
+		
+		const errorMessage = error instanceof Error ? error.message : "Processing error";
+
+		if (type === "SUBMIT") {
+			await prisma.submission.update({
+				where: { id: submissionId },
+				data: { status: "ERROR", output: errorMessage },
+			});
+		} else if (type === "RUN") {
+			await redis.set(`run_result:${runId}`, {
+				status: "ERROR",
+				output: errorMessage,
+				passed: 0,
+				total: 0,
+				results: [],
+			}, { ex: 600 });
+		}
+
+		return NextResponse.json({ error: "Failed to process" }, { status: 500 });
+	}
 }
