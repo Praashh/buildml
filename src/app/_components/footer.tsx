@@ -33,7 +33,7 @@ export function Footer() {
                     <p className="font-medium text-sm text-white/60">
                         built by{" "}
                         <span className="cursor-default text-white transition-colors hover:text-yellow-400">
-                            praash
+                            praash and team
                         </span>
                     </p>
 

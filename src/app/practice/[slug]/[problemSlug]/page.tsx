@@ -293,8 +293,8 @@ export default function PracticeProblemPage({
 														ALL TESTS PASSED
 													</span>
 												) : (
-													<span className="flex items-center font-bold text-[10px] text-red-500">
-														<div className="mr-2 h-1.5 w-1.5 animate-pulse rounded-full bg-red-500" />
+													<span className="flex items-center font-bold text-[10px] text-yellow-500">
+														<div className="mr-2 h-1.5 w-1.5 animate-pulse rounded-full bg-yellow-500" />
 														EXECUTION {result.status}
 													</span>
 												)}
@@ -319,7 +319,12 @@ export default function PracticeProblemPage({
 															PID: {Math.floor(Math.random() * 9000) + 1000}
 														</span>
 													</div>
-													<div className="rounded-lg border border-white/5 bg-zinc-900/40 p-3 font-light text-zinc-300">
+													<div
+														className={`rounded-lg border border-white/5 bg-zinc-900/40 p-3 font-light ${result.status !== "PASS"
+																? "text-red-400"
+																: "text-zinc-300"
+															}`}
+													>
 														<pre className="whitespace-pre-wrap break-all font-mono leading-relaxed">
 															{result.output || "(no output returned)"}
 														</pre>

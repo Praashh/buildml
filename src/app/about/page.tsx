@@ -41,7 +41,7 @@ export default async function AboutPage() {
 						<h2 className="mb-4 font-bold text-2xl text-white">Built By</h2>
 						<p className="text-white/60">
 							buildml is built and maintained by{" "}
-							<span className="text-white">praash</span>.
+							<span className="text-white">praash and team</span>.
 						</p>
 					</div>
 
@@ -55,6 +55,7 @@ export default async function AboutPage() {
 							<li>Prisma (ORM)</li>
 							<li>TailwindCSS (Styling)</li>
 							<li>React Query</li>
+							<li>Fastapi</li>
 						</ul>
 					</div>
 				</main>
