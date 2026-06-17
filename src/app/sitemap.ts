@@ -7,7 +7,7 @@ type ProblemSet = {
 };
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-	const baseUrl = "https://buildml.com";
+	const baseUrl = "https://buildml.website";
 
 	// Static pages
 	const staticPages: MetadataRoute.Sitemap = [

@@ -26,6 +26,207 @@ import {
 	ResizablePanelGroup,
 } from "~/components/ui/resizable";
 
+function ProblemHeaderBar({
+	setSlug,
+	problemSetTitle,
+	problemTitle,
+	difficulty,
+	prevProblemSlug,
+	nextProblemSlug,
+}: {
+	setSlug: string;
+	problemSetTitle: string;
+	problemTitle: string;
+	difficulty: string;
+	prevProblemSlug: string | null;
+	nextProblemSlug: string | null;
+}) {
+	return (
+		<div className="flex h-12 shrink-0 items-center justify-between border-[var(--line)] border-b bg-[var(--background)] px-4">
+			<div className="flex items-center space-x-3 overflow-hidden">
+				<div className="flex shrink-0 items-center space-x-1 font-medium text-xs text-zinc-500">
+					<Link
+						className="transition-colors hover:text-primary"
+						href="/practice"
+					>
+						Practice
+					</Link>
+					<ChevronRight className="h-3 w-3" />
+					<Link
+						className="transition-colors hover:text-primary"
+						href={`/practice/${setSlug}`}
+					>
+						{problemSetTitle}
+					</Link>
+					<ChevronRight className="h-3 w-3" />
+				</div>
+				<h1 className="max-w-[200px] truncate font-semibold text-[var(--ink)] text-sm tracking-tight sm:max-w-md">
+					{problemTitle}
+				</h1>
+				<span
+					className={cn(
+						"flex h-5 shrink-0 items-center justify-center rounded-[2px] px-2 py-0.5 font-medium font-mono text-[9px] uppercase tracking-[0.08em]",
+						difficulty === "Easy"
+							? "bg-[var(--tag-beginner-bg)] text-[var(--tag-beginner-ink)]"
+							: difficulty === "Medium"
+								? "bg-[var(--tag-intermediate-bg)] text-[var(--tag-intermediate-ink)]"
+								: "bg-[var(--tag-advanced-bg)] text-[var(--tag-advanced-ink)]",
+					)}
+				>
+					{difficulty}
+				</span>
+			</div>
+
+			{/* Problem Navigation */}
+			<div className="flex items-center gap-2">
+				{prevProblemSlug && (
+					<Link href={`/practice/${setSlug}/${prevProblemSlug}`}>
+						<Button
+							className="h-7 px-2 text-xs text-zinc-400 hover:text-white"
+							size="sm"
+							variant="ghost"
+						>
+							<ChevronLeft className="mr-1 h-3 w-3" />
+							Prev
+						</Button>
+					</Link>
+				)}
+				{nextProblemSlug && (
+					<Link href={`/practice/${setSlug}/${nextProblemSlug}`}>
+						<Button
+							className="h-7 px-2 text-xs text-zinc-400 hover:text-white"
+							size="sm"
+							variant="ghost"
+						>
+							Next
+							<ChevronRight className="ml-1 h-3 w-3" />
+						</Button>
+					</Link>
+				)}
+			</div>
+		</div>
+	);
+}
+
+function ConsolePanel({
+	isExecuting,
+	isRunPending,
+	isSubmitPending,
+	result,
+	onRun,
+	onSubmit,
+}: {
+	isExecuting: boolean;
+	isRunPending: boolean;
+	isSubmitPending: boolean;
+	result: any;
+	onRun: () => void;
+	onSubmit: () => void;
+}) {
+	return (
+		<div className="flex h-full flex-col font-mono">
+			<div className="flex h-9 shrink-0 items-center justify-between border-[var(--line)] border-b bg-[var(--panel)] px-4">
+				<div className="flex items-center space-x-4">
+					<div className="flex items-center space-x-2">
+						<TerminalIcon className="h-3 w-3 text-[var(--dim)]" />
+						<span className="font-bold text-[10px] text-[var(--dim)] uppercase tracking-widest">
+							Console
+						</span>
+					</div>
+
+					<div className="flex items-center space-x-1 border-[var(--line)] border-l pl-4">
+						<Button
+							className="h-6 rounded-[2px] px-2 font-bold font-mono text-[10px] text-[var(--dim)] hover:bg-[var(--raised)] hover:text-[var(--ink)]"
+							disabled={isExecuting}
+							onClick={onRun}
+							size="sm"
+							variant="ghost"
+						>
+							{isRunPending ? (
+								<Loader2 className="mr-1.5 h-2.5 w-2.5 animate-spin" />
+							) : (
+								<Play className="mr-1.5 h-2.5 w-2.5 fill-current text-primary" />
+							)}
+							RUN
+						</Button>
+						<Button
+							className="h-6 rounded-[2px] bg-primary/10 px-2 font-bold font-mono text-[10px] text-primary transition-all hover:bg-primary hover:text-white active:scale-95"
+							disabled={isExecuting}
+							onClick={onSubmit}
+							size="sm"
+						>
+							{isSubmitPending ? (
+								<Loader2 className="mr-1.5 h-2.5 w-2.5 animate-spin" />
+							) : (
+								<Send className="mr-1.5 h-2.5 w-2.5" />
+							)}
+							SUBMIT
+						</Button>
+					</div>
+				</div>
+
+				{result && (
+					<div className="flex items-center">
+						{result.status === "PASS" ? (
+							<span className="flex items-center font-bold font-mono text-[10px] text-[var(--tag-beginner-ink)]">
+								<div className="mr-2 h-1.5 w-1.5 animate-pulse rounded-full bg-[var(--tag-beginner-ink)]" />
+								ALL TESTS PASSED
+							</span>
+						) : (
+							<span className="flex items-center font-bold font-mono text-[10px] text-primary">
+								<div className="mr-2 h-1.5 w-1.5 animate-pulse rounded-full bg-primary" />
+								EXECUTION {result.status}
+							</span>
+						)}
+					</div>
+				)}
+			</div>
+
+			<div className="scrollbar-thin flex-1 select-text overflow-y-auto p-4 text-[13px] leading-relaxed">
+				{isExecuting && (
+					<div className="flex animate-pulse items-center text-[var(--dim)] italic">
+						<span className="mr-2 text-primary">➜</span>
+						Executing test suite...
+					</div>
+				)}
+
+				{result ? (
+					<div className="space-y-4">
+						<div className="group">
+							<div className="mb-2 flex justify-between border-[var(--line)] border-b pb-1 text-[var(--dim)]">
+								<span>Output Logs</span>
+								<span className="text-[10px] opacity-0 transition-opacity group-hover:opacity-100">
+									PID: {Math.floor(Math.random() * 9000) + 1000}
+								</span>
+							</div>
+							<div
+								className={`rounded-[2px] border border-[var(--line)] bg-[var(--panel)] p-3 font-light ${
+									result.status !== "PASS"
+										? "text-red-400"
+										: "text-[var(--ink)]"
+								}`}
+							>
+								<pre className="whitespace-pre-wrap break-all font-mono text-[12px] leading-relaxed">
+									{result.output || "(no output returned)"}
+								</pre>
+							</div>
+						</div>
+					</div>
+				) : (
+					!isExecuting && (
+						<div className="flex items-center text-[var(--dim)] italic">
+							<span className="mr-2.5 font-bold text-primary/30">
+								{"◆"}
+							</span>
+							Ready for execution. Click 'Run' to test your logic.
+						</div>
+					)
+				)}
+			</div>
+		</div>
+	);
+}
+
 export default function PracticeProblemPage({
 	params,
 }: {
@@ -125,70 +326,14 @@ export default function PracticeProblemPage({
 			<Navbar />
 
 			<div className="flex flex-1 flex-col overflow-hidden pt-16">
-				{/* Compact Header Bar */}
-				<div className="flex h-12 shrink-0 items-center justify-between border-[var(--line)] border-b bg-[var(--background)] px-4">
-					<div className="flex items-center space-x-3 overflow-hidden">
-						<div className="flex shrink-0 items-center space-x-1 font-medium text-xs text-zinc-500">
-							<Link
-								className="transition-colors hover:text-primary"
-								href="/practice"
-							>
-								Practice
-							</Link>
-							<ChevronRight className="h-3 w-3" />
-							<Link
-								className="transition-colors hover:text-primary"
-								href={`/practice/${setSlug}`}
-							>
-								{problemSet?.title || setSlug}
-							</Link>
-							<ChevronRight className="h-3 w-3" />
-						</div>
-						<h1 className="max-w-[200px] truncate font-semibold text-[var(--ink)] text-sm tracking-tight sm:max-w-md">
-							{problem.title}
-						</h1>
-						<span
-							className={cn(
-								"flex h-5 shrink-0 items-center justify-center rounded-[2px] px-2 py-0.5 font-medium font-mono text-[9px] uppercase tracking-[0.08em]",
-								problem.difficulty === "Easy"
-									? "bg-[var(--tag-beginner-bg)] text-[var(--tag-beginner-ink)]"
-									: problem.difficulty === "Medium"
-										? "bg-[var(--tag-intermediate-bg)] text-[var(--tag-intermediate-ink)]"
-										: "bg-[var(--tag-advanced-bg)] text-[var(--tag-advanced-ink)]",
-							)}
-						>
-							{problem.difficulty}
-						</span>
-					</div>
-
-					{/* Problem Navigation */}
-					<div className="flex items-center gap-2">
-						{prevProblem && (
-							<Link href={`/practice/${setSlug}/${prevProblem.slug}`}>
-								<Button
-									className="h-7 px-2 text-xs text-zinc-400 hover:text-white"
-									size="sm"
-									variant="ghost"
-								>
-									<ChevronLeft className="mr-1 h-3 w-3" />
-									Prev
-								</Button>
-							</Link>
-						)}
-						{nextProblem && (
-							<Link href={`/practice/${setSlug}/${nextProblem.slug}`}>
-								<Button
-									className="h-7 px-2 text-xs text-zinc-400 hover:text-white"
-									size="sm"
-									variant="ghost"
-								>
-									Next
-									<ChevronRight className="ml-1 h-3 w-3" />
-								</Button>
-							</Link>
-						)}
-					</div>
-				</div>
+				<ProblemHeaderBar
+					difficulty={problem.difficulty}
+					nextProblemSlug={nextProblem?.slug ?? null}
+					prevProblemSlug={prevProblem?.slug ?? null}
+					problemSetTitle={problemSet?.title || setSlug}
+					problemTitle={problem.title}
+					setSlug={setSlug}
+				/>
 
 				<ResizablePanelGroup
 					className="flex-1 overflow-hidden"
@@ -251,106 +396,14 @@ export default function PracticeProblemPage({
 								defaultSize={30}
 								minSize={10}
 							>
-								<div className="flex h-full flex-col font-mono">
-									<div className="flex h-9 shrink-0 items-center justify-between border-[var(--line)] border-b bg-[var(--panel)] px-4">
-										<div className="flex items-center space-x-4">
-											<div className="flex items-center space-x-2">
-												<TerminalIcon className="h-3 w-3 text-[var(--dim)]" />
-												<span className="font-bold text-[10px] text-[var(--dim)] uppercase tracking-widest">
-													Console
-												</span>
-											</div>
-
-											<div className="flex items-center space-x-1 border-[var(--line)] border-l pl-4">
-												<Button
-													className="h-6 rounded-[2px] px-2 font-bold font-mono text-[10px] text-[var(--dim)] hover:bg-[var(--raised)] hover:text-[var(--ink)]"
-													disabled={isExecuting}
-													onClick={handleRun}
-													size="sm"
-													variant="ghost"
-												>
-													{runMutation.isPending ? (
-														<Loader2 className="mr-1.5 h-2.5 w-2.5 animate-spin" />
-													) : (
-														<Play className="mr-1.5 h-2.5 w-2.5 fill-current text-primary" />
-													)}
-													RUN
-												</Button>
-												<Button
-													className="h-6 rounded-[2px] bg-primary/10 px-2 font-bold font-mono text-[10px] text-primary transition-all hover:bg-primary hover:text-white active:scale-95"
-													disabled={isExecuting}
-													onClick={handleSubmit}
-													size="sm"
-												>
-													{submitMutation.isPending ? (
-														<Loader2 className="mr-1.5 h-2.5 w-2.5 animate-spin" />
-													) : (
-														<Send className="mr-1.5 h-2.5 w-2.5" />
-													)}
-													SUBMIT
-												</Button>
-											</div>
-										</div>
-
-										{result && (
-											<div className="flex items-center">
-												{result.status === "PASS" ? (
-													<span className="flex items-center font-bold font-mono text-[10px] text-[var(--tag-beginner-ink)]">
-														<div className="mr-2 h-1.5 w-1.5 animate-pulse rounded-full bg-[var(--tag-beginner-ink)]" />
-														ALL TESTS PASSED
-													</span>
-												) : (
-													<span className="flex items-center font-bold font-mono text-[10px] text-primary">
-														<div className="mr-2 h-1.5 w-1.5 animate-pulse rounded-full bg-primary" />
-														EXECUTION {result.status}
-													</span>
-												)}
-											</div>
-										)}
-									</div>
-
-									<div className="scrollbar-thin flex-1 select-text overflow-y-auto p-4 text-[13px] leading-relaxed">
-										{isExecuting && (
-											<div className="flex animate-pulse items-center text-[var(--dim)] italic">
-												<span className="mr-2 text-primary">➜</span>
-												Executing test suite...
-											</div>
-										)}
-
-										{result ? (
-											<div className="space-y-4">
-												<div className="group">
-													<div className="mb-2 flex justify-between border-[var(--line)] border-b pb-1 text-[var(--dim)]">
-														<span>Output Logs</span>
-														<span className="text-[10px] opacity-0 transition-opacity group-hover:opacity-100">
-															PID: {Math.floor(Math.random() * 9000) + 1000}
-														</span>
-													</div>
-													<div
-														className={`rounded-[2px] border border-[var(--line)] bg-[var(--panel)] p-3 font-light ${
-															result.status !== "PASS"
-																? "text-red-400"
-																: "text-[var(--ink)]"
-														}`}
-													>
-														<pre className="whitespace-pre-wrap break-all font-mono text-[12px] leading-relaxed">
-															{result.output || "(no output returned)"}
-														</pre>
-													</div>
-												</div>
-											</div>
-										) : (
-											!isExecuting && (
-												<div className="flex items-center text-[var(--dim)] italic">
-													<span className="mr-2.5 font-bold text-primary/30">
-														{"◆"}
-													</span>
-													Ready for execution. Click 'Run' to test your logic.
-												</div>
-											)
-										)}
-									</div>
-								</div>
+								<ConsolePanel
+									isExecuting={isExecuting}
+									isRunPending={runMutation.isPending}
+									isSubmitPending={submitMutation.isPending}
+									onRun={handleRun}
+									onSubmit={handleSubmit}
+									result={result}
+								/>
 							</ResizablePanel>
 						</ResizablePanelGroup>
 					</ResizablePanel>

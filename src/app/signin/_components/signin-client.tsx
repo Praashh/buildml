@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { MotionConfig, motion } from "framer-motion";
 import { ChevronLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
@@ -39,6 +39,7 @@ export function SignInClient() {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 
 	return (
+		<MotionConfig reducedMotion="user">
 		<div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[var(--background)] px-4 transition-colors duration-[0.18s]">
 			{/* Decorative grid overlay matching homepage/leaderboard styling */}
 			<div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(224,104,48,0.015)_1px,transparent_1px),linear-gradient(90deg,rgba(224,104,48,0.015)_1px,transparent_1px)] bg-[size:100px_100px]" />
@@ -137,5 +138,6 @@ export function SignInClient() {
 				</motion.p>
 			</div>
 		</div>
+		</MotionConfig>
 	);
 }

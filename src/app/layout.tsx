@@ -9,6 +9,7 @@ import {
 	createMetadata,
 	generateOrganizationSchema,
 	generateWebsiteSchema,
+	safeJsonLd,
 } from "~/lib/seo";
 import { TRPCReactProvider } from "~/trpc/react";
 
@@ -37,8 +38,8 @@ const instrumentSerif = Instrument_Serif({
 export default function RootLayout({
 	children,
 }: Readonly<{ children: React.ReactNode }>) {
-	const organizationSchema = generateOrganizationSchema();
-	const websiteSchema = generateWebsiteSchema();
+	const organizationJsonLd = safeJsonLd(generateOrganizationSchema());
+	const websiteJsonLd = safeJsonLd(generateWebsiteSchema());
 
 	return (
 		<html
@@ -47,27 +48,19 @@ export default function RootLayout({
 			suppressHydrationWarning
 		>
 			<head>
-				<link href="https://buildml.com" rel="canonical" />
+				<link href="https://buildml.website" rel="canonical" />
 				<meta content="#0C0B09" name="theme-color" />
 				<meta content="yes" name="apple-mobile-web-app-capable" />
 				<meta
 					content="black-translucent"
 					name="apple-mobile-web-app-status-bar-style"
 				/>
-				<script
-					// biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD requires dangerouslySetInnerHTML
-					dangerouslySetInnerHTML={{
-						__html: JSON.stringify(organizationSchema),
-					}}
-					type="application/ld+json"
-				/>
-				<script
-					// biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD requires dangerouslySetInnerHTML
-					dangerouslySetInnerHTML={{
-						__html: JSON.stringify(websiteSchema),
-					}}
-					type="application/ld+json"
-				/>
+				<script type="application/ld+json">
+					{organizationJsonLd}
+				</script>
+				<script type="application/ld+json">
+					{websiteJsonLd}
+				</script>
 			</head>
 			<body>
 				<TRPCReactProvider>
