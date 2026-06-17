@@ -1,0 +1,38 @@
+# buildml
+
+> Master AI/ML by implementing research papers from scratch. Practice coding challenges, understand algorithms, and build real skills through hands-on implementation.
+
+buildml is an interactive ML education platform where users solve AI/ML coding challenges by writing real implementations. The learning model is: read a paper, write the code, pass the tests.
+
+## Pages
+
+- [Home](https://buildml.website): Landing page introducing the platform and its mission.
+- [Practice](https://buildml.website/practice): Browse all problem sets (NumPy, Neural Networks, etc.) and start solving challenges.
+- [Leaderboard](https://buildml.website/leaderboard): Ranked community leaderboard based on points earned from solved challenges.
+- [About](https://buildml.website/about): Mission, philosophy, FAQ, and team info.
+- [Sponsor](https://buildml.website/sponsor): Support the project.
+- [Sign In](https://buildml.website/signin): Google OAuth authentication to track progress and save solutions.
+
+## How It Works
+
+1. Users pick a problem set (e.g. NumPy Fundamentals, Neural Networks).
+2. Each problem set contains ordered challenges with a description, starter code template, and hidden test suite.
+3. Users write Python code in a browser-based Monaco editor.
+4. Code is executed server-side against the test suite. Results are PASS, FAIL, or ERROR.
+5. Solved problems earn points that appear on the leaderboard.
+
+## Problem Sets
+
+Problem sets cover topics from basic NumPy operations to neural network implementations. Each problem has a difficulty rating (Easy, Medium, Hard) and belongs to a set that teaches a progression of concepts.
+
+## API
+
+The platform uses tRPC for its API layer. Key endpoints handle:
+- Problem and problem set retrieval
+- Code submission (run for testing, submit for grading)
+- User profiles and leaderboard data
+- Submission status polling
+
+## Optional
+
+- [Sitemap](https://buildml.website/sitemap.xml)

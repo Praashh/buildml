@@ -4,7 +4,7 @@ export const siteConfig = {
 	name: "buildml",
 	description:
 		"Master AI/ML by implementing research papers from scratch. Practice coding challenges, understand algorithms, and build real skills through hands-on implementation.",
-	url: "https://buildml.com",
+	url: "https://buildml.website",
 	ogImage: "/og.png",
 	creator: "praash",
 	keywords: [
@@ -91,6 +91,14 @@ export function createMetadata({
 		},
 		manifest: "/manifest.json",
 	};
+}
+
+/** HTML-safe JSON-LD serializer — escapes characters that could break out of a script tag */
+export function safeJsonLd(data: unknown): string {
+	return JSON.stringify(data)
+		.replaceAll("&", "\\u0026")
+		.replaceAll("<", "\\u003c")
+		.replaceAll(">", "\\u003e");
 }
 
 // JSON-LD Structured Data helpers
