@@ -1,18 +1,18 @@
 {
-  "name": "buildml - AI/ML Coding Challenges",
-  "short_name": "buildml",
-  "description": "Master AI/ML by implementing research papers from scratch. Practice coding challenges, understand algorithms, and build real skills.",
-  "start_url": "/",
-  "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#22c55e",
-  "orientation": "portrait-primary",
-  "icons": [
-    {
-      "src": "/favicon.ico",
-      "sizes": "48x48",
-      "type": "image/x-icon"
-    }
-  ],
-  "categories": ["education", "productivity", "developer tools"]
+	"name": "buildml - AI/ML Coding Challenges",
+	"short_name": "buildml",
+	"description": "Master AI/ML by implementing research papers from scratch. Practice coding challenges, understand algorithms, and build real skills.",
+	"start_url": "/",
+	"display": "standalone",
+	"background_color": "#000000",
+	"theme_color": "#22c55e",
+	"orientation": "portrait-primary",
+	"icons": [
+		{
+			"src": "/favicon.ico",
+			"sizes": "48x48",
+			"type": "image/x-icon"
+		}
+	],
+	"categories": ["education", "productivity", "developer tools"]
 }

@@ -1,6 +1,4 @@
-import { Award, Crown, Heart, Server } from "lucide-react";
 import Link from "next/link";
-import { Button } from "~/components/ui/button";
 import { createMetadata } from "~/lib/seo";
 import { HydrateClient } from "~/trpc/server";
 import { Footer } from "../_components/footer";
@@ -14,44 +12,47 @@ export const metadata = createMetadata({
 	pathname: "/sponsor",
 });
 
-const benefits = [
-	{
-		title: "Premium for Life",
-		description:
-			"Early sponsors become premium members for life when we launch premium features",
-		icon: Crown,
-	},
-	{
-		title: "Keep Servers Running",
-		description:
-			"Your support helps cover hosting costs, database infrastructure, and API services",
-		icon: Server,
-		highlighted: true,
-	},
-	{
-		title: "Sponsor Badge",
-		description:
-			"Get a special sponsor badge on your profile and leaderboard entries",
-		icon: Award,
-	},
-];
 
 export default async function SponsorPage() {
 	return (
 		<HydrateClient>
-			<div className="relative flex min-h-screen flex-col bg-black">
+			<div className="relative flex min-h-screen flex-col bg-[var(--background)]">
 				<Navbar />
-				<div className="pointer-events-none absolute inset-0 overflow-hidden">
-					<div className="absolute top-[10%] left-[20%] h-[40%] w-[40%] rounded-full bg-primary/10 blur-[120px]" />
-					<div className="absolute right-[20%] bottom-[10%] h-[40%] w-[40%] rounded-full bg-purple-500/10 blur-[120px]" />
-				</div>
-				<main className="container mx-auto max-w-5xl flex-1 px-6 pt-32 pb-20 lg:px-8">
-					<div className="flex flex-col items-center gap-6">
-						<h1 className="text-4xl font-bold">Become a Sponsor</h1>
+
+				<div className="animate-fade-in pt-[58px]">
+					<div className="grid grid-cols-1 border-[var(--line)] border-b lg:grid-cols-2">
+						<div className="border-[var(--line)] border-b px-6 py-16 md:px-[52px] md:py-20 lg:border-r lg:border-b-0">
+							<div className="mb-4 flex items-center gap-3 text-[10px] text-[var(--dim)] uppercase tracking-[0.18em]">
+								Sponsor
+								<span className="h-px flex-1 bg-[var(--line)]" />
+							</div>
+							<h1 className="mb-6 font-display font-extrabold text-[clamp(40px,5vw,68px)] leading-[0.92] tracking-[-0.03em]">
+								Support real ML
+								<br />
+								<span className="font-normal font-serif text-primary italic">
+									education.
+								</span>
+							</h1>
+							<p className="mb-8 text-[13px] text-[var(--sub)] leading-[1.85]">
+								buildml reaches thousands of ML engineers and students who care
+								deeply about fundamentals. Your company gets in front of exactly
+								the people you want to hire.
+							</p>
+							<Link
+								className="inline-block rounded-[2px] bg-primary px-6 py-[11px] font-medium font-sans text-[11px] text-white uppercase tracking-[0.07em] shadow-[0_2px_12px_rgba(200,75,31,0.25)] transition-all duration-[0.18s] hover:translate-y-[-1px] hover:opacity-88"
+								href="https://x.com/10xpraash"
+								target="_blank"
+							>
+								Get in Touch →
+							</Link>
+						</div>
+
+						<div className="bg-[var(--panel)] px-6 py-16 md:px-[52px]">
+							<BuyMeCoffee />
+						</div>
 					</div>
-					<BuyMeCoffee />
-				</main>
-				<Footer />
+					<Footer />
+				</div>
 			</div>
 		</HydrateClient>
 	);

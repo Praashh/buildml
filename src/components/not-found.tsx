@@ -170,6 +170,7 @@ export default function NotFoundComponent() {
 					{[...Array(5)].map((_, i) => (
 						<div
 							className="h-2 w-2 rounded-full bg-green-500/50"
+							// biome-ignore lint/suspicious/noArrayIndexKey: decorative indicators are static and order-stable
 							key={i}
 							style={{
 								animation: `pulse 1.5s ease-in-out ${i * 0.15}s infinite`,

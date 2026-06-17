@@ -1,141 +1,125 @@
 "use client";
 
-import { Users } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useRef } from "react";
-import { Button } from "~/components/ui/button";
 import { api } from "~/trpc/react";
-import { NeuralNetwork } from "./neural-network";
+import { TerminalPreview } from "./terminal-preview";
 
-function MatrixRain() {
-	const canvasRef = useRef<HTMLCanvasElement>(null);
+const pills = [
+	"Transformers",
+	"Diffusion",
+	"RL",
+	"LSTMs",
+	"CNNs",
+	"VAEs",
+	"Graphs",
+];
 
-	useEffect(() => {
-		const canvas = canvasRef.current;
-		if (!canvas) return;
-
-		const ctx = canvas.getContext("2d");
-		if (!ctx) return;
-
-		const resizeCanvas = () => {
-			canvas.width = window.innerWidth;
-			canvas.height = window.innerHeight;
-		};
-
-		resizeCanvas();
-		window.addEventListener("resize", resizeCanvas);
-
-		const chars =
-			"アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789";
-		const charArray = chars.split("");
-		const fontSize = 16;
-		const columns = Math.floor(canvas.width / fontSize);
-		const drops: number[] = [];
-
-		for (let i = 0; i < columns; i++) {
-			drops[i] = Math.random() * -100;
-		}
-
-		const draw = () => {
-			ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-			ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-			ctx.font = `${fontSize}px monospace`;
-
-			for (let i = 0; i < drops.length; i++) {
-				const char = charArray[Math.floor(Math.random() * charArray.length)];
-				const x = i * fontSize;
-				const y = drops[i]! * fontSize;
-
-				// Varying gold/amber shades for depth
-				const brightness = Math.random() * 155 + 100;
-				ctx.fillStyle = `rgba(${brightness}, ${brightness * 0.8}, 0, 0.8)`;
-				ctx.fillText(char!, x, y);
-
-				if (y > canvas.height && Math.random() > 0.975) {
-					drops[i] = 0;
-				}
-				drops[i]! += 0.5;
-			}
-		};
-
-		const interval = setInterval(draw, 50);
-
-		return () => {
-			clearInterval(interval);
-			window.removeEventListener("resize", resizeCanvas);
-		};
-	}, []);
-
-	return (
-		<canvas
-			className="pointer-events-none absolute inset-0 opacity-40"
-			ref={canvasRef}
-		/>
-	);
-}
-
-export default function RainingLetters() {
+export default function HeroSection() {
 	const { data: users, isPending } = api.user.getAllUsers.useQuery();
 
 	return (
-		<section className="relative flex min-h-[calc(100vh-80px)] items-center overflow-hidden bg-black">
-			{/* Background Effects */}
-			<div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(234,179,8,0.05),transparent_50%)]" />
-			<div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-yellow-500/20 to-transparent" />
+		<section className="grid min-h-[calc(100vh-58px)] grid-cols-1 border-[var(--line)] border-b lg:grid-cols-2">
+			{/* Left — Text Content */}
+			<div className="relative flex flex-col justify-center overflow-hidden border-[var(--line)] border-b px-6 py-16 md:px-[52px] md:py-20 lg:border-r lg:border-b-0">
+				{/* Glow */}
+				<div className="pointer-events-none absolute -bottom-[120px] -left-[80px] h-[400px] w-[400px] rounded-full bg-[radial-gradient(circle,var(--glow)_0%,transparent_70%)]" />
 
-			{/* Matrix Rain Background */}
-			<MatrixRain />
+				{/* Kicker */}
+				<div className="relative mb-[22px] flex items-center gap-[10px] text-[10px] text-primary uppercase tracking-[0.2em]">
 
-			{/* Content */}
-			<div className="relative z-10 mx-auto w-full max-w-7xl px-6 lg:px-8">
-				<div className="grid w-full grid-cols-1 items-center gap-8 lg:grid-cols-2">
-					{/* Left side - Text content */}
-					<div className="space-y-8">
-						<h1 className="font-bold text-5xl text-white leading-[1.1] tracking-tight md:text-6xl lg:text-7xl">
-							Start coding
-							<br />
-							the models,
-							<br />
-							<span className="font-mono text-yellow-500">from scratch.</span>
-						</h1>
+					AI / ML Coding Challenges
+				</div>
 
-						<p className="max-w-md text-base text-gray-400 md:text-lg">
-							Join builders and Implement the
-							models everyone talks about but{" "}
-							<span className="font-mono font-semibold text-white">
-								few truly understand{" "}
-							</span>
-							Now.
-						</p>
+				{/* Title */}
+				<h1 className="relative mb-[26px] font-display font-extrabold text-[clamp(44px,5.5vw,76px)] leading-[0.91] tracking-[-0.035em]">
+					Code the models,
+					<br />
+					<span className="font-normal font-serif text-primary italic">
+						from scratch.
+					</span>
+				</h1>
 
-						<div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-							<Button
-								asChild
-								className="w-fit rounded-full bg-white px-8 py-6 font-semibold text-base text-black transition-all hover:bg-yellow-500 hover:shadow-[0_0_20px_rgba(234,179,8,0.5)]"
-								size="lg"
-							>
-								<Link href="/practice">Start Building</Link>
-							</Button>
-						</div>
+				{/* Body */}
+				<p className="relative mb-9 max-w-xl text-[13px] text-[var(--sub)] leading-[1.85]">
+					Implement the architectures everyone talks about but few truly
+					understand. Go from paper to working code — one challenge at a time.
+				</p>
 
-						<div className="flex items-center gap-2 text-gray-500">
-							<Users className="h-4 w-4" />
-							<span className="text-sm">
-								<span className="font-semibold text-yellow-500">
-									{isPending ? "Loading..." : users}
-								</span>{" "}
-								people coding now
-							</span>
-						</div>
+				{/* CTAs */}
+				<div className="relative flex flex-wrap gap-[10px]">
+					<Link
+						className="rounded-[2px] bg-primary px-6 py-[11px] font-medium font-sans text-[11px] text-white uppercase tracking-[0.07em] shadow-[0_2px_12px_rgba(200,75,31,0.25)] transition-all duration-[0.18s] hover:translate-y-[-1px] hover:opacity-88 hover:shadow-[0_4px_20px_rgba(200,75,31,0.35)]"
+						href="/practice"
+					>
+						Start Building →
+					</Link>
+					<Link
+						className="rounded-[2px] border border-[var(--line)] bg-transparent px-[22px] py-[11px] font-sans text-[11px] text-[var(--sub)] uppercase tracking-[0.07em] transition-all duration-[0.18s] hover:border-[var(--ink)] hover:text-[var(--ink)]"
+						href="/leaderboard"
+					>
+						Leaderboard
+					</Link>
+				</div>
+
+				{/* Stats */}
+				<div className="relative mt-[52px] flex gap-9 border-[var(--line)] border-t pt-6">
+					<div>
+						<span className="block font-display font-extrabold text-[28px] text-[var(--ink)] tracking-[-0.025em]">
+							{isPending ? "..." : (users ?? "2,400+")}
+						</span>
+						<span className="text-[10px] text-[var(--dim)] uppercase tracking-[0.1em]">
+							Builders
+						</span>
 					</div>
-
-					{/* Right side - Neural Network */}
-					<div className="relative hidden h-112.5 w-full lg:block">
-						<NeuralNetwork />
+					<div>
+						<span className="block font-display font-extrabold text-[28px] text-[var(--ink)] tracking-[-0.025em]">
+							20+
+						</span>
+						<span className="text-[10px] text-[var(--dim)] uppercase tracking-[0.1em]">
+							Problems
+						</span>
+					</div>
+					<div>
+						<span className="block font-display font-extrabold text-[28px] text-[var(--ink)] tracking-[-0.025em]">
+							500+
+						</span>
+						<span className="text-[10px] text-[var(--dim)] uppercase tracking-[0.1em]">
+							Submissions
+						</span>
 					</div>
 				</div>
 			</div>
-		</section >
+
+			{/* Right — Terminal + Pills */}
+			<div className="relative flex flex-col justify-center overflow-hidden bg-[var(--panel)] px-6 py-12 md:px-[52px]">
+				{/* Blue glow */}
+				<div className="pointer-events-none absolute -top-[60px] -right-[60px] h-[300px] w-[300px] rounded-full bg-[radial-gradient(circle,rgba(91,130,240,0.07)_0%,transparent_70%)]" />
+
+				<div className="relative">
+					<TerminalPreview />
+				</div>
+
+				{/* Pills */}
+				<div className="relative mt-[22px] flex flex-wrap gap-[6px]">
+					{pills.map((pill, i) => (
+						<div
+							className={cn(
+								"rounded-[2px] border px-3 py-[5px] font-sans text-[10px] uppercase tracking-[0.07em] transition-all duration-[0.18s]",
+								i === 0
+									? "cursor-pointer border-primary bg-primary/[0.07] text-primary"
+									: "border-[var(--line)] bg-[var(--background)] cursor-not-allowed text-[var(--dim)] hover:border-[var(--sub)] hover:text-[var(--sub)]",
+							)}
+							key={pill}
+						>
+							{pill}
+						</div>
+					))}
+				</div>
+			</div>
+		</section>
 	);
+}
+
+function cn(...classes: (string | boolean | undefined)[]) {
+	return classes.filter(Boolean).join(" ");
 }

@@ -14,8 +14,8 @@ import ReactMarkdown from "react-markdown";
 import rehypeKatex from "rehype-katex";
 import remarkMath from "remark-math";
 import CodeEditor from "~/app/_components/editor";
-import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
+import { cn } from "~/lib/utils";
 import { api } from "~/trpc/react";
 import "katex/dist/katex.min.css";
 import Link from "next/link";
@@ -61,7 +61,10 @@ export default function PracticeProblemPage({
 			submissionId: result?.id,
 		},
 		{
-			enabled: !!(result?.runId || (result?.id && result?.status === "PENDING")),
+			enabled: !!(
+				result?.runId ||
+				(result?.id && result?.status === "PENDING")
+			),
 			refetchInterval: (query) => {
 				const data = query.state.data;
 				if (data && data.status !== "PENDING") {
@@ -87,8 +90,8 @@ export default function PracticeProblemPage({
 
 	if (isLoading || !problem) {
 		return (
-			<div className="flex min-h-screen items-center justify-center bg-black">
-				<Loader2 className="h-8 w-8 animate-spin text-yellow-500" />
+			<div className="flex min-h-screen items-center justify-center bg-[var(--background)]">
+				<Loader2 className="h-8 w-8 animate-spin text-primary" />
 			</div>
 		);
 	}
@@ -105,7 +108,7 @@ export default function PracticeProblemPage({
 		runMutation.isPending ||
 		submitMutation.isPending ||
 		(result?.status === "PENDING" && !statusData) ||
-		(statusData?.status === "PENDING");
+		statusData?.status === "PENDING";
 
 	// Find current problem index and adjacent problems
 	const currentIndex =
@@ -118,44 +121,44 @@ export default function PracticeProblemPage({
 			: null;
 
 	return (
-		<div className="flex h-screen flex-col overflow-hidden bg-black">
+		<div className="flex h-screen flex-col overflow-hidden bg-[var(--background)]">
 			<Navbar />
 
 			<div className="flex flex-1 flex-col overflow-hidden pt-16">
 				{/* Compact Header Bar */}
-				<div className="flex h-12 shrink-0 items-center justify-between border-white/10 border-b bg-zinc-950 px-4">
+				<div className="flex h-12 shrink-0 items-center justify-between border-[var(--line)] border-b bg-[var(--background)] px-4">
 					<div className="flex items-center space-x-3 overflow-hidden">
 						<div className="flex shrink-0 items-center space-x-1 font-medium text-xs text-zinc-500">
 							<Link
-								className="transition-colors hover:text-yellow-400"
+								className="transition-colors hover:text-primary"
 								href="/practice"
 							>
 								Practice
 							</Link>
 							<ChevronRight className="h-3 w-3" />
 							<Link
-								className="transition-colors hover:text-yellow-400"
+								className="transition-colors hover:text-primary"
 								href={`/practice/${setSlug}`}
 							>
 								{problemSet?.title || setSlug}
 							</Link>
 							<ChevronRight className="h-3 w-3" />
 						</div>
-						<h1 className="max-w-[200px] truncate font-semibold text-sm text-white tracking-tight sm:max-w-md">
+						<h1 className="max-w-[200px] truncate font-semibold text-[var(--ink)] text-sm tracking-tight sm:max-w-md">
 							{problem.title}
 						</h1>
-						<Badge
-							className="h-5 px-1.5 text-[10px] uppercase tracking-wider"
-							variant={
+						<span
+							className={cn(
+								"flex h-5 shrink-0 items-center justify-center rounded-[2px] px-2 py-0.5 font-medium font-mono text-[9px] uppercase tracking-[0.08em]",
 								problem.difficulty === "Easy"
-									? "success"
+									? "bg-[var(--tag-beginner-bg)] text-[var(--tag-beginner-ink)]"
 									: problem.difficulty === "Medium"
-										? "warning"
-										: "destructive"
-							}
+										? "bg-[var(--tag-intermediate-bg)] text-[var(--tag-intermediate-ink)]"
+										: "bg-[var(--tag-advanced-bg)] text-[var(--tag-advanced-ink)]",
+							)}
 						>
 							{problem.difficulty}
-						</Badge>
+						</span>
 					</div>
 
 					{/* Problem Navigation */}
@@ -192,16 +195,20 @@ export default function PracticeProblemPage({
 					orientation="horizontal"
 				>
 					{/* Left Panel: Description */}
-					<ResizablePanel className="bg-zinc-950" defaultSize={40} minSize={25}>
+					<ResizablePanel
+						className="bg-[var(--background)]"
+						defaultSize={40}
+						minSize={25}
+					>
 						<div className="flex h-full flex-col">
-							<div className="flex h-9 shrink-0 items-center border-white/5 border-b px-4">
-								<span className="flex items-center font-bold text-[10px] text-zinc-500 uppercase tracking-widest">
-									<BookOpen className="mr-2 h-3 w-3 text-yellow-500" />
+							<div className="flex h-9 shrink-0 items-center border-[var(--line)] border-b bg-[var(--panel)] px-4">
+								<span className="flex items-center font-bold font-mono text-[10px] text-[var(--dim)] uppercase tracking-widest">
+									<BookOpen className="mr-2 h-3.5 w-3.5 text-primary" />
 									Problem Statement
 								</span>
 							</div>
 							<div className="scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent flex-1 overflow-y-auto p-6">
-								<div className="prose prose-sm prose-invert max-w-none prose-code:rounded prose-pre:border prose-pre:border-white/10 prose-code:bg-amber-400/10 prose-pre:bg-black/50 prose-code:px-1.5 prose-code:py-0.5 prose-headings:font-bold prose-a:text-yellow-400 prose-code:text-amber-400 prose-headings:text-white prose-p:text-zinc-400 prose-strong:text-white prose-p:leading-relaxed prose-headings:tracking-tight transition-colors prose-code:before:content-none prose-code:after:content-none hover:prose-a:text-yellow-300">
+								<div className="prose prose-sm prose-invert max-w-none prose-code:rounded prose-pre:border prose-pre:border-[var(--line)] prose-code:bg-primary/10 prose-pre:bg-[var(--panel)] prose-code:px-1.5 prose-code:py-0.5 prose-headings:font-bold prose-a:text-primary prose-code:text-primary prose-headings:text-[var(--ink)] prose-p:text-[var(--sub)] prose-strong:text-[var(--ink)] prose-p:leading-relaxed prose-headings:tracking-tight transition-colors prose-code:before:content-none prose-code:after:content-none hover:prose-a:text-primary/80">
 									<ReactMarkdown
 										rehypePlugins={[rehypeKatex]}
 										remarkPlugins={[remarkMath]}
@@ -214,19 +221,19 @@ export default function PracticeProblemPage({
 					</ResizablePanel>
 
 					<ResizableHandle
-						className="w-1.5 cursor-col-resize border-white/5 border-x bg-black transition-colors hover:bg-zinc-800"
+						className="w-1.5 cursor-col-resize border-[var(--line)] border-x bg-[var(--background)] transition-colors hover:bg-[var(--line)]"
 						withHandle
 					/>
 
 					{/* Right Panel: Editor & Terminal */}
-					<ResizablePanel className="bg-zinc-950" defaultSize={60}>
+					<ResizablePanel className="bg-[var(--background)]" defaultSize={60}>
 						<ResizablePanelGroup orientation="vertical">
 							<ResizablePanel
 								className="relative overflow-hidden"
 								defaultSize={70}
 								minSize={20}
 							>
-								<div className="relative h-full bg-black">
+								<div className="relative h-full border-[var(--line)] border-b bg-[var(--background)]">
 									<CodeEditor
 										onChange={(val) => setCode(val || "")}
 										value={code}
@@ -235,28 +242,28 @@ export default function PracticeProblemPage({
 							</ResizablePanel>
 
 							<ResizableHandle
-								className="h-1.5 cursor-row-resize border-white/5 border-y bg-black transition-colors hover:bg-zinc-800"
+								className="h-1.5 cursor-row-resize border-[var(--line)] border-y bg-[var(--background)] transition-colors hover:bg-[var(--line)]"
 								withHandle
 							/>
 
 							<ResizablePanel
-								className="bg-black"
+								className="bg-[var(--background)]"
 								defaultSize={30}
 								minSize={10}
 							>
 								<div className="flex h-full flex-col font-mono">
-									<div className="flex h-9 shrink-0 items-center justify-between border-white/5 border-b bg-zinc-950 px-4">
+									<div className="flex h-9 shrink-0 items-center justify-between border-[var(--line)] border-b bg-[var(--panel)] px-4">
 										<div className="flex items-center space-x-4">
 											<div className="flex items-center space-x-2">
-												<TerminalIcon className="h-3 w-3 text-zinc-500" />
-												<span className="font-bold text-[10px] text-zinc-500 uppercase tracking-widest">
+												<TerminalIcon className="h-3 w-3 text-[var(--dim)]" />
+												<span className="font-bold text-[10px] text-[var(--dim)] uppercase tracking-widest">
 													Console
 												</span>
 											</div>
 
-											<div className="flex items-center space-x-1 border-white/10 border-l pl-4">
+											<div className="flex items-center space-x-1 border-[var(--line)] border-l pl-4">
 												<Button
-													className="h-6 px-2 font-bold text-[10px] text-zinc-400 hover:bg-white/5 hover:text-white"
+													className="h-6 rounded-[2px] px-2 font-bold font-mono text-[10px] text-[var(--dim)] hover:bg-[var(--raised)] hover:text-[var(--ink)]"
 													disabled={isExecuting}
 													onClick={handleRun}
 													size="sm"
@@ -265,12 +272,12 @@ export default function PracticeProblemPage({
 													{runMutation.isPending ? (
 														<Loader2 className="mr-1.5 h-2.5 w-2.5 animate-spin" />
 													) : (
-														<Play className="mr-1.5 h-2.5 w-2.5 fill-current text-yellow-500" />
+														<Play className="mr-1.5 h-2.5 w-2.5 fill-current text-primary" />
 													)}
 													RUN
 												</Button>
 												<Button
-													className="h-6 rounded bg-yellow-500/10 px-2 font-bold text-[10px] text-yellow-500 transition-all hover:bg-yellow-500 hover:text-black active:scale-95"
+													className="h-6 rounded-[2px] bg-primary/10 px-2 font-bold font-mono text-[10px] text-primary transition-all hover:bg-primary hover:text-white active:scale-95"
 													disabled={isExecuting}
 													onClick={handleSubmit}
 													size="sm"
@@ -288,13 +295,13 @@ export default function PracticeProblemPage({
 										{result && (
 											<div className="flex items-center">
 												{result.status === "PASS" ? (
-													<span className="flex items-center font-bold text-[10px] text-white">
-														<div className="mr-2 h-1.5 w-1.5 animate-pulse rounded-full bg-green-500" />
+													<span className="flex items-center font-bold font-mono text-[10px] text-[var(--tag-beginner-ink)]">
+														<div className="mr-2 h-1.5 w-1.5 animate-pulse rounded-full bg-[var(--tag-beginner-ink)]" />
 														ALL TESTS PASSED
 													</span>
 												) : (
-													<span className="flex items-center font-bold text-[10px] text-yellow-500">
-														<div className="mr-2 h-1.5 w-1.5 animate-pulse rounded-full bg-yellow-500" />
+													<span className="flex items-center font-bold font-mono text-[10px] text-primary">
+														<div className="mr-2 h-1.5 w-1.5 animate-pulse rounded-full bg-primary" />
 														EXECUTION {result.status}
 													</span>
 												)}
@@ -302,10 +309,10 @@ export default function PracticeProblemPage({
 										)}
 									</div>
 
-									<div className="scrollbar-thin scrollbar-thumb-zinc-800 flex-1 select-text overflow-y-auto p-4 text-[13px] leading-relaxed">
+									<div className="scrollbar-thin flex-1 select-text overflow-y-auto p-4 text-[13px] leading-relaxed">
 										{isExecuting && (
-											<div className="flex animate-pulse items-center text-zinc-500 italic">
-												<span className="mr-2 text-yellow-500">➜</span>
+											<div className="flex animate-pulse items-center text-[var(--dim)] italic">
+												<span className="mr-2 text-primary">➜</span>
 												Executing test suite...
 											</div>
 										)}
@@ -313,19 +320,20 @@ export default function PracticeProblemPage({
 										{result ? (
 											<div className="space-y-4">
 												<div className="group">
-													<div className="mb-2 flex justify-between border-zinc-800/50 border-b pb-1 text-zinc-600">
+													<div className="mb-2 flex justify-between border-[var(--line)] border-b pb-1 text-[var(--dim)]">
 														<span>Output Logs</span>
 														<span className="text-[10px] opacity-0 transition-opacity group-hover:opacity-100">
 															PID: {Math.floor(Math.random() * 9000) + 1000}
 														</span>
 													</div>
 													<div
-														className={`rounded-lg border border-white/5 bg-zinc-900/40 p-3 font-light ${result.status !== "PASS"
+														className={`rounded-[2px] border border-[var(--line)] bg-[var(--panel)] p-3 font-light ${
+															result.status !== "PASS"
 																? "text-red-400"
-																: "text-zinc-300"
-															}`}
+																: "text-[var(--ink)]"
+														}`}
 													>
-														<pre className="whitespace-pre-wrap break-all font-mono leading-relaxed">
+														<pre className="whitespace-pre-wrap break-all font-mono text-[12px] leading-relaxed">
 															{result.output || "(no output returned)"}
 														</pre>
 													</div>
@@ -333,9 +341,9 @@ export default function PracticeProblemPage({
 											</div>
 										) : (
 											!isExecuting && (
-												<div className="flex items-center text-zinc-700 italic">
-													<span className="mr-2 text-zinc-800 tracking-tighter opacity-30">
-														{"||||"}
+												<div className="flex items-center text-[var(--dim)] italic">
+													<span className="mr-2.5 font-bold text-primary/30">
+														{"◆"}
 													</span>
 													Ready for execution. Click 'Run' to test your logic.
 												</div>
