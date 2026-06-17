@@ -6,12 +6,12 @@ buildml is an interactive ML education platform where users solve AI/ML coding c
 
 ## Pages
 
-- [Home](https://buildml.website): Landing page introducing the platform and its mission.
-- [Practice](https://buildml.website/practice): Browse all problem sets (NumPy, Neural Networks, etc.) and start solving challenges.
-- [Leaderboard](https://buildml.website/leaderboard): Ranked community leaderboard based on points earned from solved challenges.
-- [About](https://buildml.website/about): Mission, philosophy, FAQ, and team info.
-- [Sponsor](https://buildml.website/sponsor): Support the project.
-- [Sign In](https://buildml.website/signin): Google OAuth authentication to track progress and save solutions.
+- [Home](https://www.buildml.website): Landing page introducing the platform and its mission.
+- [Practice](https://www.buildml.website/practice): Browse all problem sets (NumPy, Neural Networks, etc.) and start solving challenges.
+- [Leaderboard](https://www.buildml.website/leaderboard): Ranked community leaderboard based on points earned from solved challenges.
+- [About](https://www.buildml.website/about): Mission, philosophy, FAQ, and team info.
+- [Sponsor](https://www.buildml.website/sponsor): Support the project.
+- [Sign In](https://www.buildml.website/signin): Google OAuth authentication to track progress and save solutions.
 
 ## How It Works
 
@@ -35,4 +35,4 @@ The platform uses tRPC for its API layer. Key endpoints handle:
 
 ## Optional
 
-- [Sitemap](https://buildml.website/sitemap.xml)
+- [Sitemap](https://www.buildml.website/sitemap.xml)

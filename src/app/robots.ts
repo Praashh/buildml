@@ -9,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
 				disallow: ["/api/", "/practice/*/edit"],
 			},
 		],
-		sitemap: "https://buildml.website/sitemap.xml",
+		sitemap: "https://www.buildml.website/sitemap.xml",
 	};
 }
