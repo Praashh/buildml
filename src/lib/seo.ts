@@ -4,7 +4,7 @@ export const siteConfig = {
 	name: "buildml",
 	description:
 		"Master AI/ML by implementing research papers from scratch. Practice coding challenges, understand algorithms, and build real skills through hands-on implementation.",
-	url: "https://buildml.website",
+	url: "https://www.buildml.website",
 	ogImage: "/og.png",
 	creator: "praash",
 	keywords: [

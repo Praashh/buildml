@@ -48,7 +48,7 @@ export default function RootLayout({
 			suppressHydrationWarning
 		>
 			<head>
-				<link href="https://buildml.website" rel="canonical" />
+				<link href="https://www.buildml.website" rel="canonical" />
 				<meta content="#0C0B09" name="theme-color" />
 				<meta content="yes" name="apple-mobile-web-app-capable" />
 				<meta
