@@ -1,36 +1,35 @@
 // Problem Set: NumPy Fundamentals
 // Distribution: 3 Easy, 3 Medium, 3 Hard (Total 9 problems)
 
-
 import { prisma } from "~/db";
 
 async function main() {
-    const numpyProblemSet = await prisma.problemSet.upsert({
-        where: { slug: "numpy-fundamentals" },
-        update: {
-            title: "NumPy Fundamentals",
-            description:
-                "Essential exercises to master NumPy for data science and machine learning. Covers array manipulation, broadcasting, and vectorization.",
-        },
-        create: {
-            title: "NumPy Fundamentals",
-            slug: "numpy-fundamentals",
-            description:
-                "Essential exercises to master NumPy for data science and machine learning. Covers array manipulation, broadcasting, and vectorization.",
-        },
-    });
+	const numpyProblemSet = await prisma.problemSet.upsert({
+		where: { slug: "numpy-fundamentals" },
+		update: {
+			title: "NumPy Fundamentals",
+			description:
+				"Essential exercises to master NumPy for data science and machine learning. Covers array manipulation, broadcasting, and vectorization.",
+		},
+		create: {
+			title: "NumPy Fundamentals",
+			slug: "numpy-fundamentals",
+			description:
+				"Essential exercises to master NumPy for data science and machine learning. Covers array manipulation, broadcasting, and vectorization.",
+		},
+	});
 
-    console.log(`Created problem set: ${numpyProblemSet.title}`);
+	console.log(`Created problem set: ${numpyProblemSet.title}`);
 
-    const problems = [
-        // === EASY PROBLEMS ===
-        {
-            title: "Create and Reshape",
-            slug: "numpy-create-reshape",
-            difficulty: "Easy",
-            order: 1,
-            problemSetId: numpyProblemSet.id,
-            description: `
+	const problems = [
+		// === EASY PROBLEMS ===
+		{
+			title: "Create and Reshape",
+			slug: "numpy-create-reshape",
+			difficulty: "Easy",
+			order: 1,
+			problemSetId: numpyProblemSet.id,
+			description: `
 Create a 1D NumPy array of integers ranging from 0 to $N-1$ (inclusive), and then reshape it into a 2D array with the specified number of \`rows\` and \`cols\`.
 
 ### Function Signature
@@ -44,7 +43,7 @@ def create_and_reshape(N, rows, cols):
     """
 \`\`\`
 `,
-            templateCode: `import numpy as np
+			templateCode: `import numpy as np
 
 def create_and_reshape(N, rows, cols):
     """
@@ -56,7 +55,7 @@ def create_and_reshape(N, rows, cols):
     # Your code here
     pass
 `,
-            testCode: `
+			testCode: `
 import numpy as np
 from solution import create_and_reshape
 
@@ -114,14 +113,14 @@ def test():
 if __name__ == "__main__":
     test()
 `,
-        },
-        {
-            title: "Replace Odd Numbers",
-            slug: "numpy-replace-odd",
-            difficulty: "Easy",
-            order: 2,
-            problemSetId: numpyProblemSet.id,
-            description: `
+		},
+		{
+			title: "Replace Odd Numbers",
+			slug: "numpy-replace-odd",
+			difficulty: "Easy",
+			order: 2,
+			problemSetId: numpyProblemSet.id,
+			description: `
 Given a 1D array of integers, replace all odd numbers with -1 without changing the original array (return a new array).
 
 ### Function Signature
@@ -133,7 +132,7 @@ def replace_odd(arr):
     """
 \`\`\`
 `,
-            templateCode: `import numpy as np
+			templateCode: `import numpy as np
 
 def replace_odd(arr):
     """
@@ -143,7 +142,7 @@ def replace_odd(arr):
     # Your code here
     pass
 `,
-            testCode: `
+			testCode: `
 import numpy as np
 from solution import replace_odd
 
@@ -205,14 +204,14 @@ def test():
 if __name__ == "__main__":
     test()
 `,
-        },
-        {
-            title: "Reverse Array",
-            slug: "numpy-reverse-array",
-            difficulty: "Easy",
-            order: 3,
-            problemSetId: numpyProblemSet.id,
-            description: `
+		},
+		{
+			title: "Reverse Array",
+			slug: "numpy-reverse-array",
+			difficulty: "Easy",
+			order: 3,
+			problemSetId: numpyProblemSet.id,
+			description: `
 Reverse a 1D NumPy array.
 
 ### Function Signature
@@ -224,7 +223,7 @@ def reverse_array(arr):
     """
 \`\`\`
 `,
-            templateCode: `import numpy as np
+			templateCode: `import numpy as np
 
 def reverse_array(arr):
     """
@@ -234,7 +233,7 @@ def reverse_array(arr):
     # Your code here
     pass
 `,
-            testCode: `
+			testCode: `
 import numpy as np
 from solution import reverse_array
 
@@ -294,16 +293,16 @@ def test():
 if __name__ == "__main__":
     test()
 `,
-        },
+		},
 
-        // === MEDIUM PROBLEMS ===
-        {
-            title: "Matrix Normalization",
-            slug: "numpy-matrix-normalization",
-            difficulty: "Medium",
-            order: 4,
-            problemSetId: numpyProblemSet.id,
-            description: `
+		// === MEDIUM PROBLEMS ===
+		{
+			title: "Matrix Normalization",
+			slug: "numpy-matrix-normalization",
+			difficulty: "Medium",
+			order: 4,
+			problemSetId: numpyProblemSet.id,
+			description: `
 Normalize a 2D matrix. Normalization involves subtracting the mean and dividing by the standard deviation (Z-score normalization).
 
 $$X_{norm} = \\\\frac{X - \\\\mu}{\\\\sigma}$$
@@ -319,7 +318,7 @@ def normalize(matrix):
     """
 \`\`\`
 `,
-            templateCode: `import numpy as np
+			templateCode: `import numpy as np
 
 def normalize(matrix):
     """
@@ -329,7 +328,7 @@ def normalize(matrix):
     # Your code here
     pass
 `,
-            testCode: `
+			testCode: `
 import numpy as np
 from solution import normalize
 
@@ -397,14 +396,14 @@ def test():
 if __name__ == "__main__":
     test()
 `,
-        },
-        {
-            title: "Common Elements",
-            slug: "numpy-common-elements",
-            difficulty: "Medium",
-            order: 5,
-            problemSetId: numpyProblemSet.id,
-            description: `
+		},
+		{
+			title: "Common Elements",
+			slug: "numpy-common-elements",
+			difficulty: "Medium",
+			order: 5,
+			problemSetId: numpyProblemSet.id,
+			description: `
 Get the common items between two arrays. Return the **unique** common elements as a sorted 1D array.
 
 ### Function Signature
@@ -417,7 +416,7 @@ def common_elements(a, b):
     """
 \`\`\`
 `,
-            templateCode: `import numpy as np
+			templateCode: `import numpy as np
 
 def common_elements(a, b):
     """
@@ -428,7 +427,7 @@ def common_elements(a, b):
     # Your code here
     pass
 `,
-            testCode: `
+			testCode: `
 import numpy as np
 from solution import common_elements
 
@@ -496,14 +495,14 @@ def test():
 if __name__ == "__main__":
     test()
 `,
-        },
-        {
-            title: "Closest Value",
-            slug: "numpy-closest-value",
-            difficulty: "Medium",
-            order: 6,
-            problemSetId: numpyProblemSet.id,
-            description: `
+		},
+		{
+			title: "Closest Value",
+			slug: "numpy-closest-value",
+			difficulty: "Medium",
+			order: 6,
+			problemSetId: numpyProblemSet.id,
+			description: `
 Find the value in a 1D NumPy array \`arr\` that is closest to a given scalar \`v\`. If two values are equidistant, return the first one encountered.
 
 ### Function Signature
@@ -516,7 +515,7 @@ def find_closest(arr, v):
     """
 \`\`\`
 `,
-            templateCode: `import numpy as np
+			templateCode: `import numpy as np
 
 def find_closest(arr, v):
     """
@@ -527,7 +526,7 @@ def find_closest(arr, v):
     # Your code here
     pass
 `,
-            testCode: `
+			testCode: `
 import numpy as np
 from solution import find_closest
 
@@ -597,16 +596,16 @@ def test():
 if __name__ == "__main__":
     test()
 `,
-        },
+		},
 
-        // === HARD PROBLEMS ===
-        {
-            title: "One-Hot Encoding",
-            slug: "numpy-one-hot",
-            difficulty: "Hard",
-            order: 7,
-            problemSetId: numpyProblemSet.id,
-            description: `
+		// === HARD PROBLEMS ===
+		{
+			title: "One-Hot Encoding",
+			slug: "numpy-one-hot",
+			difficulty: "Hard",
+			order: 7,
+			problemSetId: numpyProblemSet.id,
+			description: `
 Convert a 1D array of integer labels to a one-hot encoded 2D matrix.
 The input array \`labels\` contains integers from \`0\` to \`num_classes - 1\`.
 The output should be a matrix of shape \`(len(labels), num_classes)\` with float dtype.
@@ -621,7 +620,7 @@ def one_hot(labels, num_classes):
     """
 \`\`\`
 `,
-            templateCode: `import numpy as np
+			templateCode: `import numpy as np
 
 def one_hot(labels, num_classes):
     """
@@ -632,7 +631,7 @@ def one_hot(labels, num_classes):
     # Your code here
     pass
 `,
-            testCode: `
+			testCode: `
 import numpy as np
 from solution import one_hot
 
@@ -702,14 +701,14 @@ def test():
 if __name__ == "__main__":
     test()
 `,
-        },
-        {
-            title: "Moving Average",
-            slug: "numpy-moving-average",
-            difficulty: "Hard",
-            order: 8,
-            problemSetId: numpyProblemSet.id,
-            description: `
+		},
+		{
+			title: "Moving Average",
+			slug: "numpy-moving-average",
+			difficulty: "Hard",
+			order: 8,
+			problemSetId: numpyProblemSet.id,
+			description: `
 Compute the moving average of a 1D array using a window size \`n\` (vectorized, no loops).
 The output array should have size \`len(arr) - n + 1\`.
 
@@ -723,7 +722,7 @@ def moving_average(arr, n):
     """
 \`\`\`
 `,
-            templateCode: `import numpy as np
+			templateCode: `import numpy as np
 
 def moving_average(arr, n):
     """
@@ -734,7 +733,7 @@ def moving_average(arr, n):
     # Your code here
     pass
 `,
-            testCode: `
+			testCode: `
 import numpy as np
 from solution import moving_average
 
@@ -805,14 +804,14 @@ def test():
 if __name__ == "__main__":
     test()
 `,
-        },
-        {
-            title: "Find Local Maxima",
-            slug: "numpy-local-maxima",
-            difficulty: "Hard",
-            order: 9,
-            problemSetId: numpyProblemSet.id,
-            description: `
+		},
+		{
+			title: "Find Local Maxima",
+			slug: "numpy-local-maxima",
+			difficulty: "Hard",
+			order: 9,
+			problemSetId: numpyProblemSet.id,
+			description: `
 Find all the local maxima in a 1D array. A local maximum is defined as a value that is strictly greater than its neighbors.
 - For first element: compare only with second element
 - For last element: compare only with second-to-last element
@@ -829,7 +828,7 @@ def find_local_maxima(arr):
     """
 \`\`\`
 `,
-            templateCode: `import numpy as np
+			templateCode: `import numpy as np
 
 def find_local_maxima(arr):
     """
@@ -839,7 +838,7 @@ def find_local_maxima(arr):
     # Your code here
     pass
 `,
-            testCode: `
+			testCode: `
 import numpy as np
 from solution import find_local_maxima
 
@@ -908,26 +907,28 @@ def test():
 if __name__ == "__main__":
     test()
 `,
-        },
-    ];
+		},
+	];
 
-    for (const problem of problems) {
-        await prisma.problem.upsert({
-            where: { slug: problem.slug },
-            update: problem,
-            create: problem,
-        });
-    }
+	for (const problem of problems) {
+		await prisma.problem.upsert({
+			where: { slug: problem.slug },
+			update: problem,
+			create: problem,
+		});
+	}
 
-    console.log(`Seeded ${problems.length} NumPy problems (3 Easy, 3 Medium, 3 Hard)`);
-    console.log("Seed successful");
+	console.log(
+		`Seeded ${problems.length} NumPy problems (3 Easy, 3 Medium, 3 Hard)`,
+	);
+	console.log("Seed successful");
 }
 
 main()
-    .catch((e) => {
-        console.error(e);
-        process.exit(1);
-    })
-    .finally(async () => {
-        await prisma.$disconnect();
-    });
+	.catch((e) => {
+		console.error(e);
+		process.exit(1);
+	})
+	.finally(async () => {
+		await prisma.$disconnect();
+	});

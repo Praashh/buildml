@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
-import { receiver } from "~/lib/qstash";
+import { type NextRequest, NextResponse } from "next/server";
 import { prisma } from "~/db/client";
-import { redis } from "~/lib/redis";
 import { env } from "~/env";
+import { receiver } from "~/lib/qstash";
+import { redis } from "~/lib/redis";
 
 interface ExecutorResponse {
 	passed: number;
@@ -126,20 +126,25 @@ export async function POST(req: NextRequest) {
 			});
 		} else {
 			// RUN: store in Redis for 10 minutes
-			await redis.set(`run_result:${runId}`, {
-				status,
-				output,
-				passed: result.passed,
-				total: result.total,
-				results: result.results,
-			}, { ex: 600 });
+			await redis.set(
+				`run_result:${runId}`,
+				{
+					status,
+					output,
+					passed: result.passed,
+					total: result.total,
+					results: result.results,
+				},
+				{ ex: 600 },
+			);
 		}
 
 		return NextResponse.json({ success: true });
 	} catch (error) {
 		console.error(`[QStash Webhook] Error:`, error);
-		
-		const errorMessage = error instanceof Error ? error.message : "Processing error";
+
+		const errorMessage =
+			error instanceof Error ? error.message : "Processing error";
 
 		if (type === "SUBMIT") {
 			await prisma.submission.update({
@@ -147,13 +152,17 @@ export async function POST(req: NextRequest) {
 				data: { status: "ERROR", output: errorMessage },
 			});
 		} else if (type === "RUN") {
-			await redis.set(`run_result:${runId}`, {
-				status: "ERROR",
-				output: errorMessage,
-				passed: 0,
-				total: 0,
-				results: [],
-			}, { ex: 600 });
+			await redis.set(
+				`run_result:${runId}`,
+				{
+					status: "ERROR",
+					output: errorMessage,
+					passed: 0,
+					total: 0,
+					results: [],
+				},
+				{ ex: 600 },
+			);
 		}
 
 		return NextResponse.json({ error: "Failed to process" }, { status: 500 });

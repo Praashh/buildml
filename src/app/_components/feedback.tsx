@@ -1,19 +1,7 @@
 "use client";
+import type * as React from "react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Navbar } from "~/app/_components/navbar";
-import { Button } from "~/components/ui/button";
-import { Card, CardContent } from "~/components/ui/card";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "~/components/ui/select";
-import { Textarea } from "~/components/ui/textarea";
 import { api } from "~/trpc/react";
 
 type FeedbackType = "general" | "bug" | "feature" | "improvement";
@@ -68,132 +56,125 @@ export default function FeedbackPage() {
 	};
 
 	return (
-		<div className="relative -mt-36 flex min-h-screen flex-col">
-			<Navbar />
-			<main className="container relative z-10 mx-auto max-w-2xl flex-1 px-6 pt-32 pb-20 lg:px-8">
-				{/* Header Section */}
-				<div className="mb-12">
-					<h1 className="mb-6 font-bold text-4xl text-white md:text-5xl">
+		<section className="border-[var(--line)] border-b">
+			<div className="grid grid-cols-1 lg:grid-cols-2">
+				{/* Left — Header */}
+				<div className="flex flex-col justify-center border-[var(--line)] border-b px-6 py-16 md:px-[52px] md:py-20 lg:border-r lg:border-b-0">
+					<div className="mb-4 flex items-center gap-3 text-[10px] text-[var(--dim)] uppercase tracking-[0.18em]">
 						Feedback
-					</h1>
-					<p className="text-lg text-white/60 leading-relaxed">
-						Your feedback helps us improve buildml. Share your thoughts,
-						report bugs, or suggest new features.
+						<span className="h-px flex-1 bg-[var(--line)]" />
+					</div>
+					<h2 className="mb-4 font-display font-extrabold text-[clamp(28px,3.5vw,46px)] leading-[0.93] tracking-[-0.025em]">
+						Help us{" "}
+						<span className="font-normal font-serif text-primary italic">
+							improve.
+						</span>
+					</h2>
+					<p className="max-w-[380px] text-[13px] text-[var(--sub)] leading-[1.85]">
+						Your feedback helps us improve buildml. Share your thoughts, report
+						bugs, or suggest new features.
 					</p>
 				</div>
 
-				{/* Feedback Form Card */}
-				<Card className="mb-16 border-white/10 bg-white/5 backdrop-blur-sm">
-					<CardContent className="p-6 md:p-8">
-						<form className="space-y-6" onSubmit={handleSubmit}>
-							{/* Name */}
-							<div className="space-y-2">
-								<Label className="text-white/80" htmlFor="name">
-									Name (optional)
-								</Label>
-								<Input
-									className="border-white/10 bg-white/5 text-white placeholder:text-white/30 focus:border-yellow-400/50 focus-visible:ring-yellow-400/30"
-									disabled={submitFeedback.isPending}
-									id="name"
-									name="name"
-									onChange={(e) => setName(e.target.value)}
-									placeholder="Your name"
-									type="text"
-									value={name}
-								/>
-							</div>
-
-							{/* Email */}
-							<div className="space-y-2">
-								<Label className="text-white/80" htmlFor="email">
-									Email
-								</Label>
-								<Input
-									className="border-white/10 bg-white/5 text-white placeholder:text-white/30 focus:border-yellow-400/50 focus-visible:ring-yellow-400/30"
-									disabled={submitFeedback.isPending}
-									id="email"
-									name="email"
-									onChange={(e) => setEmail(e.target.value)}
-									placeholder="your@email.com"
-									required
-									type="email"
-									value={email}
-								/>
-							</div>
-
-							{/* Feedback Type */}
-							<div className="space-y-2">
-								<Label className="text-white/80" htmlFor="type">
-									Feedback Type
-								</Label>
-								<Select
-									disabled={submitFeedback.isPending}
-									name="type"
-									onValueChange={(value: FeedbackType) => setType(value)}
-									value={type}
-								>
-									<SelectTrigger className="border-white/10 bg-white/5 text-white focus:ring-yellow-400/30">
-										<SelectValue placeholder="Select feedback type" />
-									</SelectTrigger>
-									<SelectContent className="border-white/10 bg-zinc-900">
-										<SelectItem
-											className="text-white hover:bg-white/10 focus:bg-white/10"
-											value="general"
-										>
-											General Feedback
-										</SelectItem>
-										<SelectItem
-											className="text-white hover:bg-white/10 focus:bg-white/10"
-											value="bug"
-										>
-											Bug Report
-										</SelectItem>
-										<SelectItem
-											className="text-white hover:bg-white/10 focus:bg-white/10"
-											value="feature"
-										>
-											Feature Request
-										</SelectItem>
-										<SelectItem
-											className="text-white hover:bg-white/10 focus:bg-white/10"
-											value="improvement"
-										>
-											Improvement Suggestion
-										</SelectItem>
-									</SelectContent>
-								</Select>
-							</div>
-
-							{/* Message */}
-							<div className="space-y-2">
-								<Label className="text-white/80" htmlFor="message">
-									Message
-								</Label>
-								<Textarea
-									className="resize-none border-white/10 bg-white/5 text-white placeholder:text-white/30 focus:border-yellow-400/50 focus-visible:ring-yellow-400/30"
-									disabled={submitFeedback.isPending}
-									id="message"
-									name="message"
-									onChange={(e) => setMessage(e.target.value)}
-									placeholder="Tell us what's on your mind..."
-									required
-									rows={6}
-									value={message}
-								/>
-							</div>
-
-							{/* Submit Button */}
-							<Button
-								className="w-full bg-linear-to-r from-yellow-400 to-amber-500 py-6 font-semibold text-black text-lg hover:from-yellow-500 hover:to-amber-600 disabled:cursor-not-allowed disabled:opacity-50"
-								disabled={submitFeedback.isPending}
-								type="submit"
+				{/* Right — Form */}
+				<div className="bg-[var(--panel)] px-6 py-12 md:px-[52px] md:py-16">
+					<form className="space-y-5" onSubmit={handleSubmit}>
+						{/* Name */}
+						<div>
+							<label
+								className="mb-[5px] block text-[10px] text-[var(--dim)] uppercase tracking-[0.1em]"
+								htmlFor="feedback-name"
 							>
-								{submitFeedback.isPending ? "Sending..." : "Send Feedback"}
-							</Button>
-						</form>
-					</CardContent>
-				</Card>
-			</main>
-		</div>
+								Name (optional)
+							</label>
+							<input
+								className="w-full rounded-[2px] border border-[var(--line)] bg-[var(--panel)] px-3 py-[10px] font-sans text-[13px] text-[var(--ink)] outline-none transition-colors duration-[0.18s] placeholder:text-[var(--dim)] focus:border-primary"
+								disabled={submitFeedback.isPending}
+								id="feedback-name"
+								name="name"
+								onChange={(e) => setName(e.target.value)}
+								placeholder="Your name"
+								type="text"
+								value={name}
+							/>
+						</div>
+
+						{/* Email */}
+						<div>
+							<label
+								className="mb-[5px] block text-[10px] text-[var(--dim)] uppercase tracking-[0.1em]"
+								htmlFor="feedback-email"
+							>
+								Email
+							</label>
+							<input
+								className="w-full rounded-[2px] border border-[var(--line)] bg-[var(--panel)] px-3 py-[10px] font-sans text-[13px] text-[var(--ink)] outline-none transition-colors duration-[0.18s] placeholder:text-[var(--dim)] focus:border-primary"
+								disabled={submitFeedback.isPending}
+								id="feedback-email"
+								name="email"
+								onChange={(e) => setEmail(e.target.value)}
+								placeholder="you@domain.com"
+								required
+								type="email"
+								value={email}
+							/>
+						</div>
+
+						{/* Feedback Type */}
+						<div>
+							<label
+								className="mb-[5px] block text-[10px] text-[var(--dim)] uppercase tracking-[0.1em]"
+								htmlFor="feedback-type"
+							>
+								Feedback Type
+							</label>
+							<select
+								className="w-full rounded-[2px] border border-[var(--line)] bg-[var(--panel)] px-3 py-[10px] font-sans text-[13px] text-[var(--ink)] outline-none transition-colors duration-[0.18s] focus:border-primary"
+								disabled={submitFeedback.isPending}
+								id="feedback-type"
+								name="type"
+								onChange={(e) => setType(e.target.value as FeedbackType)}
+								value={type}
+							>
+								<option value="general">General Feedback</option>
+								<option value="bug">Bug Report</option>
+								<option value="feature">Feature Request</option>
+								<option value="improvement">Improvement Suggestion</option>
+							</select>
+						</div>
+
+						{/* Message */}
+						<div>
+							<label
+								className="mb-[5px] block text-[10px] text-[var(--dim)] uppercase tracking-[0.1em]"
+								htmlFor="feedback-message"
+							>
+								Message
+							</label>
+							<textarea
+								className="w-full resize-none rounded-[2px] border border-[var(--line)] bg-[var(--panel)] px-3 py-[10px] font-sans text-[13px] text-[var(--ink)] outline-none transition-colors duration-[0.18s] placeholder:text-[var(--dim)] focus:border-primary"
+								disabled={submitFeedback.isPending}
+								id="feedback-message"
+								name="message"
+								onChange={(e) => setMessage(e.target.value)}
+								placeholder="Tell us what's on your mind..."
+								required
+								rows={5}
+								value={message}
+							/>
+						</div>
+
+						{/* Submit */}
+						<button
+							className="w-full rounded-[2px] bg-primary px-6 py-3 font-sans font-semibold text-[11px] text-white uppercase tracking-[0.07em] transition-all duration-[0.18s] hover:translate-y-[-1px] hover:opacity-88 disabled:cursor-not-allowed disabled:opacity-50"
+							disabled={submitFeedback.isPending}
+							type="submit"
+						>
+							{submitFeedback.isPending ? "Sending..." : "Send Feedback →"}
+						</button>
+					</form>
+				</div>
+			</div>
+		</section>
 	);
 }

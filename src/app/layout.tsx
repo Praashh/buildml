@@ -1,6 +1,7 @@
 import "~/styles/globals.css";
 
-import { Geist } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
+import { IBM_Plex_Mono, Instrument_Serif, Syne } from "next/font/google";
 import { Toaster } from "sonner";
 import { AuthProvider } from "~/components/session-provider";
 import { ThemeProvider } from "~/components/theme-provider";
@@ -10,14 +11,27 @@ import {
 	generateWebsiteSchema,
 } from "~/lib/seo";
 import { TRPCReactProvider } from "~/trpc/react";
-import { Analytics } from "@vercel/analytics/next"
-
 
 export const metadata = createMetadata();
 
-const geist = Geist({
+const syne = Syne({
 	subsets: ["latin"],
-	variable: "--font-geist-sans",
+	variable: "--font-syne",
+	weight: ["400", "500", "700", "800"],
+});
+
+const ibmPlexMono = IBM_Plex_Mono({
+	subsets: ["latin"],
+	variable: "--font-ibm-plex-mono",
+	weight: ["300", "400", "500", "600"],
+	style: ["normal", "italic"],
+});
+
+const instrumentSerif = Instrument_Serif({
+	subsets: ["latin"],
+	variable: "--font-instrument-serif",
+	weight: "400",
+	style: ["normal", "italic"],
 });
 
 export default function RootLayout({
@@ -27,27 +41,31 @@ export default function RootLayout({
 	const websiteSchema = generateWebsiteSchema();
 
 	return (
-		<html className={`${geist.variable}`} lang="en" suppressHydrationWarning>
+		<html
+			className={`${syne.variable} ${ibmPlexMono.variable} ${instrumentSerif.variable}`}
+			lang="en"
+			suppressHydrationWarning
+		>
 			<head>
 				<link href="https://buildml.com" rel="canonical" />
-				<meta content="#22c55e" name="theme-color" />
+				<meta content="#0C0B09" name="theme-color" />
 				<meta content="yes" name="apple-mobile-web-app-capable" />
 				<meta
 					content="black-translucent"
 					name="apple-mobile-web-app-status-bar-style"
 				/>
 				<script
+					// biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD requires dangerouslySetInnerHTML
 					dangerouslySetInnerHTML={{
 						__html: JSON.stringify(organizationSchema),
 					}}
-					// biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD requires dangerouslySetInnerHTML
 					type="application/ld+json"
 				/>
 				<script
+					// biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD requires dangerouslySetInnerHTML
 					dangerouslySetInnerHTML={{
 						__html: JSON.stringify(websiteSchema),
 					}}
-					// biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD requires dangerouslySetInnerHTML
 					type="application/ld+json"
 				/>
 			</head>

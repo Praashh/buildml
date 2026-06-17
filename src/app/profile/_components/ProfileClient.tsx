@@ -1,238 +1,242 @@
 "use client";
 
-import { api } from "~/trpc/react";
-import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
-import { Badge } from "~/components/ui/badge";
-import { Button } from "~/components/ui/button";
-import { Skeleton } from "~/components/ui/skeleton";
-import { Heatmap } from "./Heatmap";
-import { Share2, Trophy, Zap, Target, Award } from "lucide-react";
+import { Award, Share2, Target, Trophy, Zap } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
+import { Skeleton } from "~/components/ui/skeleton";
+import { api } from "~/trpc/react";
+import { Heatmap } from "./Heatmap";
 
 interface ProfileClientProps {
-    userId: string;
+	userId: string;
 }
 
 export function ProfileClient({ userId }: ProfileClientProps) {
-    const [profile] = api.user.getProfile.useSuspenseQuery({ userId });
+	const [profile] = api.user.getProfile.useSuspenseQuery({ userId });
+	const [isSharing, setIsSharing] = useState(false);
 
-    if (!profile) {
-        return (
-            <div className="text-center text-neutral-400">
-                <p>Profile not found or you're not logged in.</p>
-            </div>
-        );
-    }
+	if (!profile) {
+		return (
+			<div className="py-20 text-center font-mono text-[11px] text-[var(--sub)] uppercase tracking-[0.05em]">
+				<p>Profile not found or you're not logged in.</p>
+			</div>
+		);
+	}
 
-    const { user, difficultyCounts, totalCounts, solvedCount, history } = profile;
+	const { user, difficultyCounts, totalCounts, solvedCount, history } = profile;
 
-    const handleShare = async () => {
-        const url = `${window.location.origin}/profile?userId=${user.id}`;
-        if (navigator.share) {
-            try {
-                await navigator.share({
-                    title: `${user.name}'s Profile on buildml`,
-                    text: `Check out ${user.name}'s progress on buildml! They've solved ${solvedCount} problems.`,
-                    url: url,
-                });
-            } catch (err) {
-                console.error(err);
-            }
-        } else {
-            await navigator.clipboard.writeText(url);
-            toast.success("Profile link copied to clipboard!");
-        }
-    };
+	const handleShare = async () => {
+		const url = `${window.location.origin}/profile?userId=${user.id}`;
+		setIsSharing(true);
+		if (navigator.share) {
+			try {
+				await navigator.share({
+					title: `${user.name}'s Profile on buildml`,
+					text: `Check out ${user.name}'s progress on buildml! They've solved ${solvedCount} problems.`,
+					url: url,
+				});
+			} catch (err) {
+				console.error(err);
+			} finally {
+				setIsSharing(false);
+			}
+		} else {
+			try {
+				await navigator.clipboard.writeText(url);
+				toast.success("Profile link copied to clipboard!");
+			} catch (err) {
+				console.error(err);
+			} finally {
+				setIsSharing(false);
+			}
+		}
+	};
 
-    const getPercentage = (count: number, total: number) =>
-        total > 0 ? Math.min((count / total) * 100, 100) : 0;
+	const getPercentage = (count: number, total: number) =>
+		total > 0 ? Math.min((count / total) * 100, 100) : 0;
 
-    return (
-        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            {/* Profile Header */}
-            <div className="flex flex-col items-center gap-6 md:flex-row md:items-end md:justify-between">
-                <div className="flex flex-col items-center gap-6 md:flex-row md:items-center">
-                    <div className="relative">
-                        <div className="absolute -inset-4 rounded-full bg-primary/20 blur-xl animate-pulse" />
-                        <Avatar className="h-24 w-24 border-2 border-primary/20 md:h-32 md:w-32">
-                            <AvatarImage src={user.image ?? ""} alt={user.name ?? "User"} />
-                            <AvatarFallback className="text-2xl font-bold bg-neutral-900 text-white">
-                                {user.name?.[0] ?? "U"}
-                            </AvatarFallback>
-                        </Avatar>
-                    </div>
-                    <div className="text-center md:text-left">
-                        <h2 className="mb-2 font-black text-3xl text-white tracking-tight md:text-4xl">
-                            {user.name ?? "Anonymous"}
-                        </h2>
-                        <div className="flex flex-wrap items-center justify-center gap-2 md:justify-start">
-                            <Badge className="bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 transition-colors">
-                                Level {Math.floor(solvedCount / 10) + 1}
-                            </Badge>
-                            <Badge variant="outline" className="text-neutral-400 border-neutral-800">
-                                Joined {new Date().toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}
-                            </Badge>
-                        </div>
-                    </div>
-                </div>
-                <Button
-                    onClick={handleShare}
-                    variant="outline"
-                    className="group relative overflow-hidden border-neutral-800 bg-neutral-900/50 hover:bg-neutral-800 hover:text-white transition-all duration-300"
-                >
-                    <Share2 className="mr-2 h-4 w-4 group-hover:scale-110 transition-transform" />
-                    Share Profile
-                    <div className="absolute inset-x-0 bottom-0 h-px bg-linear-to-r from-transparent via-primary/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                </Button>
-            </div>
+	return (
+		<div className="space-y-10">
+			{/* Profile Header */}
+			<div className="flex flex-col items-center gap-6 border-[var(--line)] border-b pb-8 md:flex-row md:items-center md:justify-between">
+				<div className="flex flex-col items-center gap-6 md:flex-row md:items-center">
+					<Avatar className="h-20 w-20 rounded-[2px] border border-[var(--line)] md:h-24 md:w-24">
+						<AvatarImage alt={user.name ?? "User"} src={user.image ?? ""} />
+						<AvatarFallback className="rounded-[2px] bg-[var(--panel)] font-display font-extrabold text-[var(--ink)] text-xl">
+							{user.name?.[0] ?? "U"}
+						</AvatarFallback>
+					</Avatar>
+					<div className="text-center md:text-left">
+						<h2 className="mb-2 font-display font-extrabold text-[clamp(28px,4vw,38px)] text-[var(--ink)] leading-tight tracking-[-0.025em]">
+							{user.name ?? "Anonymous"}
+						</h2>
+						<div className="flex flex-wrap items-center justify-center gap-2 md:justify-start">
+							<span className="rounded-[2px] border border-primary bg-primary/[0.08] px-2.5 py-[3px] font-mono text-[9px] text-primary uppercase tracking-[0.05em]">
+								Level {Math.floor(solvedCount / 10) + 1}
+							</span>
+							<span className="rounded-[2px] border border-[var(--line)] bg-[var(--panel)] px-2.5 py-[3px] font-mono text-[9px] text-[var(--dim)] uppercase tracking-[0.05em]">
+								Joined Builder Network
+							</span>
+						</div>
+					</div>
+				</div>
+				<button
+					className="flex items-center gap-2 rounded-[2px] border border-[var(--line)] bg-[var(--panel)] px-4 py-2.5 font-mono text-[10px] text-[var(--dim)] uppercase tracking-[0.08em] transition-all duration-[0.18s] hover:border-[var(--sub)] hover:text-[var(--ink)]"
+					onClick={handleShare}
+					type="button"
+				>
+					<Share2 className="h-3.5 w-3.5" />
+					{isSharing ? "Sharing..." : "Share Profile"}
+				</button>
+			</div>
 
-            {/* Stats Grid */}
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                <Card className="border-neutral-800 bg-neutral-900/30 backdrop-blur-sm overflow-hidden relative group">
-                    <div className="absolute top-0 right-0 p-4 font-black text-6xl text-primary/5 select-none transition-transform group-hover:scale-110 duration-500">
-                        <Trophy />
-                    </div>
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium text-neutral-400 uppercase tracking-wider flex items-center gap-2">
-                            <Trophy className="h-4 w-4 text-yellow-500" />
-                            Total Solved
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-4xl font-black text-white">{solvedCount}</div>
-                        <p className="mt-1 text-xs text-neutral-500">problems mastered</p>
-                    </CardContent>
-                </Card>
+			{/* Stats Grid */}
+			<div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+				{[
+					{
+						title: "Total Solved",
+						value: solvedCount,
+						sub: "problems mastered",
+						icon: <Trophy className="h-3.5 w-3.5 text-primary" />,
+					},
+					{
+						title: "Streak",
+						value: "12",
+						sub: "days in a row",
+						icon: (
+							<Zap className="h-3.5 w-3.5 text-[var(--tag-intermediate-ink)]" />
+						),
+					},
+					{
+						title: "Achievements",
+						value: "7",
+						sub: "badges earned",
+						icon: (
+							<Award className="h-3.5 w-3.5 text-[var(--tag-beginner-ink)]" />
+						),
+					},
+				].map((stat, i) => (
+					<div
+						className="relative rounded-[2px] border border-[var(--line)] bg-[var(--panel)] p-6"
+						// biome-ignore lint/suspicious/noArrayIndexKey: stat list is static
+						key={i}
+					>
+						<div className="flex items-center gap-2 font-mono text-[10px] text-[var(--dim)] uppercase tracking-[0.18em]">
+							{stat.icon}
+							{stat.title}
+						</div>
+						<div className="mt-4 mb-2 font-display font-extrabold text-[36px] text-[var(--ink)] leading-none">
+							{stat.value}
+						</div>
+						<div className="font-mono text-[10px] text-[var(--sub)] uppercase tracking-[0.05em]">
+							{stat.sub}
+						</div>
+					</div>
+				))}
+			</div>
 
-                <Card className="border-neutral-800 bg-neutral-900/30 backdrop-blur-sm overflow-hidden relative group">
-                    <div className="absolute top-0 right-0 p-4 font-black text-6xl text-primary/5 select-none transition-transform group-hover:scale-110 duration-500">
-                        <Zap />
-                    </div>
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium text-neutral-400 uppercase tracking-wider flex items-center gap-2">
-                            <Zap className="h-4 w-4 text-primary" />
-                            Current Streak
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-4xl font-black text-white">12</div>
-                        <p className="mt-1 text-xs text-neutral-500">days in a row</p>
-                    </CardContent>
-                </Card>
+			{/* Breakdown and Heatmap */}
+			<div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+				{/* Difficulty Breakdown */}
+				<div className="rounded-[2px] border border-[var(--line)] bg-[var(--panel)] p-6 lg:col-span-4">
+					<h3 className="mb-6 flex items-center gap-2 font-display font-extrabold text-[15px] text-[var(--ink)]">
+						<Target className="h-4 w-4 text-primary" />
+						Difficulty Breakdown
+					</h3>
+					<div className="space-y-6">
+						{[
+							{
+								label: "Easy",
+								count: difficultyCounts.Easy,
+								total: totalCounts.Easy,
+								color: "bg-[var(--tag-beginner-ink)]",
+								textColor: "text-[var(--tag-beginner-ink)]",
+							},
+							{
+								label: "Medium",
+								count: difficultyCounts.Medium,
+								total: totalCounts.Medium,
+								color: "bg-[var(--tag-intermediate-ink)]",
+								textColor: "text-[var(--tag-intermediate-ink)]",
+							},
+							{
+								label: "Hard",
+								count: difficultyCounts.Hard,
+								total: totalCounts.Hard,
+								color: "bg-[var(--tag-advanced-ink)]",
+								textColor: "text-[var(--tag-advanced-ink)]",
+							},
+						].map((diff) => (
+							<div className="space-y-2.5" key={diff.label}>
+								<div className="flex justify-between font-mono text-[11px] uppercase tracking-[0.05em]">
+									<span className={`font-semibold ${diff.textColor}`}>
+										{diff.label}
+									</span>
+									<span className="text-[var(--ink)]">
+										{diff.count} / {diff.total}
+									</span>
+								</div>
+								<div className="h-[6px] w-full overflow-hidden rounded-[1px] bg-[var(--line)]">
+									<div
+										className={`h-full transition-all duration-1000 ${diff.color}`}
+										style={{
+											width: `${getPercentage(diff.count, diff.total)}%`,
+										}}
+									/>
+								</div>
+							</div>
+						))}
+					</div>
+				</div>
 
-                <Card className="border-neutral-800 bg-neutral-900/30 backdrop-blur-sm overflow-hidden relative group">
-                    <div className="absolute top-0 right-0 p-4 font-black text-6xl text-primary/5 select-none transition-transform group-hover:scale-110 duration-500">
-                        <Award />
-                    </div>
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium text-neutral-400 uppercase tracking-wider flex items-center gap-2">
-                            <Award className="h-4 w-4 text-purple-500" />
-                            Achievements
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-4xl font-black text-white">7</div>
-                        <p className="mt-1 text-xs text-neutral-500">badges earned</p>
-                    </CardContent>
-                </Card>
-            </div>
-
-            {/* difficulty Breakdown and Heatmap */}
-            <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-                {/* Difficulty Breakdown */}
-                <Card className="lg:col-span-4 border-neutral-800 bg-neutral-900/30 backdrop-blur-sm">
-                    <CardHeader>
-                        <CardTitle className="text-lg font-bold text-white flex items-center gap-2">
-                            <Target className="h-5 w-5 text-primary" />
-                            Difficulty Breakdown
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-6">
-                        <div className="space-y-2">
-                            <div className="flex justify-between text-sm">
-                                <span className="text-yellow-400 font-medium italic">Easy</span>
-                                <span className="text-white font-bold">{difficultyCounts.Easy} / {totalCounts.Easy}</span>
-                            </div>
-                            <div className="h-2 w-full rounded-full bg-neutral-800 overflow-hidden">
-                                <div
-                                    className="h-full bg-yellow-500 rounded-full transition-all duration-1000"
-                                    style={{ width: `${getPercentage(difficultyCounts.Easy, totalCounts.Easy)}%` }}
-                                />
-                            </div>
-                        </div>
-                        <div className="space-y-2">
-                            <div className="flex justify-between text-sm">
-                                <span className="text-amber-400 font-medium italic">Medium</span>
-                                <span className="text-white font-bold">{difficultyCounts.Medium} / {totalCounts.Medium}</span>
-                            </div>
-                            <div className="h-2 w-full rounded-full bg-neutral-800 overflow-hidden">
-                                <div
-                                    className="h-full bg-amber-500 rounded-full transition-all duration-1000 delay-100"
-                                    style={{ width: `${getPercentage(difficultyCounts.Medium, totalCounts.Medium)}%` }}
-                                />
-                            </div>
-                        </div>
-                        <div className="space-y-2">
-                            <div className="flex justify-between text-sm">
-                                <span className="text-rose-400 font-medium italic">Hard</span>
-                                <span className="text-white font-bold">{difficultyCounts.Hard} / {totalCounts.Hard}</span>
-                            </div>
-                            <div className="h-2 w-full rounded-full bg-neutral-800 overflow-hidden">
-                                <div
-                                    className="h-full bg-rose-500 rounded-full transition-all duration-1000 delay-200"
-                                    style={{ width: `${getPercentage(difficultyCounts.Hard, totalCounts.Hard)}%` }}
-                                />
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
-
-                {/* Heatmap */}
-                <Card className="lg:col-span-8 border-neutral-800 bg-neutral-900/30 backdrop-blur-sm">
-                    <CardHeader>
-                        <CardTitle className="text-lg font-bold text-white flex items-center gap-2">
-                            Consistency Graph
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <Heatmap data={history} />
-                        <div className="mt-4 flex items-center justify-end gap-2 text-[10px] text-neutral-500">
-                            <span>Less</span>
-                            <div className="flex gap-0.75">
-                                <div className="h-2.5 w-2.5 rounded-[2px] bg-neutral-900" />
-                                <div className="h-2.5 w-2.5 rounded-[2px] bg-primary/30" />
-                                <div className="h-2.5 w-2.5 rounded-[2px] bg-primary/60" />
-                                <div className="h-2.5 w-2.5 rounded-[2px] bg-primary" />
-                            </div>
-                            <span>More</span>
-                        </div>
-                    </CardContent>
-                </Card>
-            </div>
-        </div>
-    );
+				{/* Heatmap */}
+				<div className="rounded-[2px] border border-[var(--line)] bg-[var(--panel)] p-6 lg:col-span-8">
+					<h3 className="mb-6 font-display font-extrabold text-[15px] text-[var(--ink)]">
+						Consistency Graph
+					</h3>
+					<div>
+						<Heatmap data={history} />
+						<div className="mt-5 flex items-center justify-end gap-2 font-mono text-[9px] text-[var(--dim)] uppercase tracking-[0.05em]">
+							<span>Less</span>
+							<div className="flex gap-[3px]">
+								<div className="h-2.5 w-2.5 rounded-[1px] bg-[var(--line)]" />
+								<div className="h-2.5 w-2.5 rounded-[1px] bg-primary/30" />
+								<div className="h-2.5 w-2.5 rounded-[1px] bg-primary/60" />
+								<div className="h-2.5 w-2.5 rounded-[1px] bg-primary" />
+							</div>
+							<span>More</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
 }
 
 export function ProfileSkeleton() {
-    return (
-        <div className="space-y-8">
-            <div className="flex items-center gap-6">
-                <Skeleton className="h-24 w-24 rounded-full bg-neutral-800" />
-                <div className="space-y-2">
-                    <Skeleton className="h-8 w-48 bg-neutral-800" />
-                    <Skeleton className="h-4 w-32 bg-neutral-800" />
-                </div>
-            </div>
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                {[1, 2, 3].map((i) => (
-                    <Skeleton key={i} className="h-32 bg-neutral-800 rounded-xl" />
-                ))}
-            </div>
-            <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-                <Skeleton className="lg:col-span-4 h-64 bg-neutral-800 rounded-xl" />
-                <Skeleton className="lg:col-span-8 h-64 bg-neutral-800 rounded-xl" />
-            </div>
-        </div>
-    );
+	return (
+		<div className="space-y-10">
+			<div className="flex items-center gap-6 border-[var(--line)] border-b pb-8">
+				<Skeleton className="h-20 w-20 rounded-[2px] bg-[var(--line)]" />
+				<div className="space-y-2">
+					<Skeleton className="h-8 w-48 rounded-[2px] bg-[var(--line)]" />
+					<Skeleton className="h-4 w-32 rounded-[2px] bg-[var(--line)]" />
+				</div>
+			</div>
+			<div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+				{Array.from({ length: 3 }).map((_, i) => (
+					<Skeleton
+						className="h-32 rounded-[2px] bg-[var(--panel)]"
+						// biome-ignore lint/suspicious/noArrayIndexKey: skeleton items are static placeholders
+						key={i}
+					/>
+				))}
+			</div>
+			<div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+				<Skeleton className="h-64 rounded-[2px] bg-[var(--panel)] lg:col-span-4" />
+				<Skeleton className="h-64 rounded-[2px] bg-[var(--panel)] lg:col-span-8" />
+			</div>
+		</div>
+	);
 }

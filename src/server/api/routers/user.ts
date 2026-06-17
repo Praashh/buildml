@@ -11,7 +11,7 @@ export const userRouter = createTRPCRouter({
 	}),
 
 	getLeaderboard: publicProcedure.query(async ({ ctx }) => {
-		const users = await ctx.prisma.user.findMany({
+		const _users = await ctx.prisma.user.findMany({
 			include: {
 				_count: {
 					select: {
@@ -126,7 +126,8 @@ export const userRouter = createTRPCRouter({
 			for (const submission of user.submissions) {
 				if (!solvedProblemIds.has(submission.problemId)) {
 					solvedProblemIds.add(submission.problemId);
-					const difficulty = submission.problem.difficulty as keyof typeof difficultyCounts;
+					const difficulty = submission.problem
+						.difficulty as keyof typeof difficultyCounts;
 					difficultyCounts[difficulty]++;
 				}
 			}

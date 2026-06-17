@@ -1,9 +1,9 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { env } from "~/env";
+import { qstash } from "~/lib/qstash";
 import { runRateLimit, submitRateLimit } from "~/lib/rate-limiter";
 import { redis } from "~/lib/redis";
-import { qstash } from "~/lib/qstash";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
 // Shape of the FastAPI executor response
@@ -20,7 +20,7 @@ interface ExecutorResponse {
  * Calls the FastAPI executor with user code and a task_id (= problem slug).
  * The executor looks up `/app/tests/{task_id}.py` inside the Docker container.
  */
-async function callExecutor(
+async function _callExecutor(
 	code: string,
 	taskId: string,
 	problemSetSlug: string,
@@ -50,7 +50,7 @@ async function callExecutor(
  * Converts the executor's structured response into a status + output string
  * for storage / display.
  */
-function parseExecutorResult(result: ExecutorResponse): {
+function _parseExecutorResult(result: ExecutorResponse): {
 	status: string;
 	output: string;
 } {

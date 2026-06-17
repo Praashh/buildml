@@ -56,12 +56,15 @@ export function NeuralNetwork() {
 		}
 		nodesRef.current = nodes;
 
-		// Create edges for nearby nodes
 		const edges: Edge[] = [];
 		for (let i = 0; i < nodes.length; i++) {
+			const nodeA = nodes[i];
+			if (!nodeA) continue;
 			for (let j = i + 1; j < nodes.length; j++) {
-				const dx = nodes[i]!.x - nodes[j]!.x;
-				const dy = nodes[i]!.y - nodes[j]!.y;
+				const nodeB = nodes[j];
+				if (!nodeB) continue;
+				const dx = nodeA.x - nodeB.x;
+				const dy = nodeA.y - nodeB.y;
 				const dist = Math.sqrt(dx * dx + dy * dy);
 				if (dist < 120) {
 					edges.push({ from: i, to: j });
