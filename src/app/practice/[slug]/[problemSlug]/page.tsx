@@ -283,7 +283,7 @@ export default function PracticeProblemPage({
 		},
 		{
 			enabled: !!(
-				(result?.runId && result?.status === "PENDING") ||
+				(result?.runId && (result?.status === "PENDING" || !result?.status)) ||
 				(result?.id && result?.status === "PENDING")
 			),
 			refetchInterval: (query) => {
@@ -331,6 +331,8 @@ export default function PracticeProblemPage({
 		runMutation.isPending ||
 		submitMutation.isPending ||
 		result?.status === "PENDING" ||
+		(result?.runId !== undefined &&
+			(!statusData || statusData.status === "PENDING")) ||
 		statusData?.status === "PENDING";
 
 	// Find current problem index and adjacent problems
