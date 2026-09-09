@@ -37,7 +37,7 @@ const team = [
 		name: "praash",
 		role: "Founder & Engineer",
 		bio: "Started buildml because I wanted to learn AI/ML by implementing research papers from scratch. I’m still figuring things out, but I’m excited to build this community with you.",
-	}
+	},
 ];
 
 export default async function AboutPage() {

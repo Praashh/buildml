@@ -40,104 +40,104 @@ export function SignInClient() {
 
 	return (
 		<MotionConfig reducedMotion="user">
-		<div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[var(--background)] px-4 transition-colors duration-[0.18s]">
-			{/* Decorative grid overlay matching homepage/leaderboard styling */}
-			<div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(224,104,48,0.015)_1px,transparent_1px),linear-gradient(90deg,rgba(224,104,48,0.015)_1px,transparent_1px)] bg-[size:100px_100px]" />
+			<div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[var(--background)] px-4 transition-colors duration-[0.18s]">
+				{/* Decorative grid overlay matching homepage/leaderboard styling */}
+				<div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(224,104,48,0.015)_1px,transparent_1px),linear-gradient(90deg,rgba(224,104,48,0.015)_1px,transparent_1px)] bg-[size:100px_100px]" />
 
-			{/* Soft accent glow */}
-			<div className="pointer-events-none absolute -top-[200px] h-[600px] w-[600px] rounded-full bg-[radial-gradient(circle,var(--glow)_0%,transparent_70%)]" />
+				{/* Soft accent glow */}
+				<div className="pointer-events-none absolute -top-[200px] h-[600px] w-[600px] rounded-full bg-[radial-gradient(circle,var(--glow)_0%,transparent_70%)]" />
 
-			<div className="relative z-10 w-full max-w-[400px]">
-				<motion.div
-					animate={{ opacity: 1, y: 0 }}
-					initial={{ opacity: 0, y: 12 }}
-					transition={{ duration: 0.3 }}
-				>
-					{/* Back Link */}
-					<Link
-						className="group mb-6 inline-flex items-center gap-1 font-mono text-[10px] text-[var(--dim)] uppercase tracking-[0.1em] transition-colors hover:text-[var(--ink)]"
-						href="/"
+				<div className="relative z-10 w-full max-w-[400px]">
+					<motion.div
+						animate={{ opacity: 1, y: 0 }}
+						initial={{ opacity: 0, y: 12 }}
+						transition={{ duration: 0.3 }}
 					>
-						<ChevronLeft className="h-3 w-3 transition-transform group-hover:-translate-x-[2px]" />
-						Back to home
-					</Link>
+						{/* Back Link */}
+						<Link
+							className="group mb-6 inline-flex items-center gap-1 font-mono text-[10px] text-[var(--dim)] uppercase tracking-[0.1em] transition-colors hover:text-[var(--ink)]"
+							href="/"
+						>
+							<ChevronLeft className="h-3 w-3 transition-transform group-hover:-translate-x-[2px]" />
+							Back to home
+						</Link>
 
-					{/* Login Box */}
-					<div className="border border-[var(--line)] bg-[var(--panel)] p-8 shadow-[0_24px_80px_rgba(0,0,0,0.3)] md:p-11">
-						{/* Logo */}
-						<div className="mb-6 flex justify-center">
-							<Link
-								className="flex items-center gap-[9px] font-display font-extrabold text-[var(--ink)] text-base tracking-[-0.02em]"
-								href="/"
+						{/* Login Box */}
+						<div className="border border-[var(--line)] bg-[var(--panel)] p-8 shadow-[0_24px_80px_rgba(0,0,0,0.3)] md:p-11">
+							{/* Logo */}
+							<div className="mb-6 flex justify-center">
+								<Link
+									className="flex items-center gap-[9px] font-display font-extrabold text-[var(--ink)] text-base tracking-[-0.02em]"
+									href="/"
+								>
+									<div className="h-2 w-2 animate-pulse-dot rounded-full bg-primary shadow-[0_0_8px_var(--primary)]" />
+									buildml
+								</Link>
+							</div>
+
+							{/* Header */}
+							<div className="mb-8 text-center">
+								<h1 className="mb-1.5 font-display font-extrabold text-[24px] text-[var(--ink)] tracking-[-0.02em]">
+									Welcome back.
+								</h1>
+								<p className="font-sans text-[11px] text-[var(--sub)] leading-relaxed">
+									Sign in to track progress, save solutions, and climb the
+									leaderboard.
+								</p>
+							</div>
+
+							{/* Google Auth Button */}
+							<button
+								className="flex w-full items-center justify-center gap-3 rounded-[2px] bg-primary py-3 font-medium font-mono text-[11px] text-white uppercase tracking-[0.07em] shadow-[0_2px_12px_rgba(224,104,48,0.25)] transition-all duration-[0.18s] hover:translate-y-[-1px] hover:opacity-88 hover:shadow-[0_4px_20px_rgba(224,104,48,0.35)] disabled:opacity-50"
+								disabled={isLoading}
+								onClick={() => {
+									setIsLoading(true);
+									signIn("google", { callbackUrl: "/" });
+								}}
+								type="button"
 							>
-								<div className="h-2 w-2 animate-pulse-dot rounded-full bg-primary shadow-[0_0_8px_var(--primary)]" />
-								buildml
-							</Link>
-						</div>
+								{isLoading ? (
+									<>
+										<Loader2 className="h-3.5 w-3.5 animate-spin" />
+										<span>Loading...</span>
+									</>
+								) : (
+									<>
+										<GoogleIcon />
+										<span>Continue with Google</span>
+									</>
+								)}
+							</button>
 
-						{/* Header */}
-						<div className="mb-8 text-center">
-							<h1 className="mb-1.5 font-display font-extrabold text-[24px] text-[var(--ink)] tracking-[-0.02em]">
-								Welcome back.
-							</h1>
-							<p className="font-sans text-[11px] text-[var(--sub)] leading-relaxed">
-								Sign in to track progress, save solutions, and climb the
-								leaderboard.
+							{/* Divider */}
+							<div className="relative my-6">
+								<div className="absolute inset-0 flex items-center">
+									<span className="w-full border-[var(--line)] border-t" />
+								</div>
+								<div className="relative flex justify-center text-[9px] uppercase tracking-widest">
+									<span className="bg-[var(--panel)] px-2 text-[var(--dim)]">
+										Secure Authentication
+									</span>
+								</div>
+							</div>
+
+							<p className="text-center font-sans text-[10px] text-[var(--dim)] leading-relaxed">
+								By logging in, you agree to track your achievements using Google
+								authentication.
 							</p>
 						</div>
+					</motion.div>
 
-						{/* Google Auth Button */}
-						<button
-							className="flex w-full items-center justify-center gap-3 rounded-[2px] bg-primary py-3 font-medium font-mono text-[11px] text-white uppercase tracking-[0.07em] shadow-[0_2px_12px_rgba(224,104,48,0.25)] transition-all duration-[0.18s] hover:translate-y-[-1px] hover:opacity-88 hover:shadow-[0_4px_20px_rgba(224,104,48,0.35)] disabled:opacity-50"
-							disabled={isLoading}
-							onClick={() => {
-								setIsLoading(true);
-								signIn("google", { callbackUrl: "/" });
-							}}
-							type="button"
-						>
-							{isLoading ? (
-								<>
-									<Loader2 className="h-3.5 w-3.5 animate-spin" />
-									<span>Loading...</span>
-								</>
-							) : (
-								<>
-									<GoogleIcon />
-									<span>Continue with Google</span>
-								</>
-							)}
-						</button>
-
-						{/* Divider */}
-						<div className="relative my-6">
-							<div className="absolute inset-0 flex items-center">
-								<span className="w-full border-[var(--line)] border-t" />
-							</div>
-							<div className="relative flex justify-center text-[9px] uppercase tracking-widest">
-								<span className="bg-[var(--panel)] px-2 text-[var(--dim)]">
-									Secure Authentication
-								</span>
-							</div>
-						</div>
-
-						<p className="text-center font-sans text-[10px] text-[var(--dim)] leading-relaxed">
-							By logging in, you agree to track your achievements using Google
-							authentication.
-						</p>
-					</div>
-				</motion.div>
-
-				<motion.p
-					animate={{ opacity: 1 }}
-					className="mt-8 text-center font-mono text-[9px] text-[var(--dim)] uppercase tracking-widest"
-					initial={{ opacity: 0 }}
-					transition={{ delay: 0.3 }}
-				>
-					&copy; {new Date().getFullYear()} buildml. Engineering excellence.
-				</motion.p>
+					<motion.p
+						animate={{ opacity: 1 }}
+						className="mt-8 text-center font-mono text-[9px] text-[var(--dim)] uppercase tracking-widest"
+						initial={{ opacity: 0 }}
+						transition={{ delay: 0.3 }}
+					>
+						&copy; {new Date().getFullYear()} buildml. Engineering excellence.
+					</motion.p>
+				</div>
 			</div>
-		</div>
 		</MotionConfig>
 	);
 }

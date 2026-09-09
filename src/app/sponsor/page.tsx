@@ -12,7 +12,6 @@ export const metadata = createMetadata({
 	pathname: "/sponsor",
 });
 
-
 export default async function SponsorPage() {
 	return (
 		<HydrateClient>

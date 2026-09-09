@@ -215,9 +215,7 @@ function ConsolePanel({
 				) : (
 					!isExecuting && (
 						<div className="flex items-center text-[var(--dim)] italic">
-							<span className="mr-2.5 font-bold text-primary/30">
-								{"◆"}
-							</span>
+							<span className="mr-2.5 font-bold text-primary/30">{"◆"}</span>
 							Ready for execution. Click 'Run' to test your logic.
 						</div>
 					)

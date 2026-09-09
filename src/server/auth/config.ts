@@ -26,7 +26,7 @@ export const authConfig = {
 	secret: env.NEXTAUTH_SECRET,
 	pages: {
 		signIn: "/signin",
-    error: "/auth/error"
+		error: "/auth/error",
 	},
 	callbacks: {
 		jwt: async ({ token, user }) => {

@@ -26,7 +26,6 @@ export default function HeroSection() {
 
 				{/* Kicker */}
 				<div className="relative mb-[22px] flex items-center gap-[10px] text-[10px] text-primary uppercase tracking-[0.2em]">
-
 					AI / ML Coding Challenges
 				</div>
 
@@ -107,7 +106,7 @@ export default function HeroSection() {
 								"rounded-[2px] border px-3 py-[5px] font-sans text-[10px] uppercase tracking-[0.07em] transition-all duration-[0.18s]",
 								i === 0
 									? "cursor-pointer border-primary bg-primary/[0.07] text-primary"
-									: "border-[var(--line)] bg-[var(--background)] cursor-not-allowed text-[var(--dim)] hover:border-[var(--sub)] hover:text-[var(--sub)]",
+									: "cursor-not-allowed border-[var(--line)] bg-[var(--background)] text-[var(--dim)] hover:border-[var(--sub)] hover:text-[var(--sub)]",
 							)}
 							key={pill}
 						>

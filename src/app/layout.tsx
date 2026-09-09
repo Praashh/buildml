@@ -55,12 +55,8 @@ export default function RootLayout({
 					content="black-translucent"
 					name="apple-mobile-web-app-status-bar-style"
 				/>
-				<script type="application/ld+json">
-					{organizationJsonLd}
-				</script>
-				<script type="application/ld+json">
-					{websiteJsonLd}
-				</script>
+				<script type="application/ld+json">{organizationJsonLd}</script>
+				<script type="application/ld+json">{websiteJsonLd}</script>
 			</head>
 			<body>
 				<TRPCReactProvider>
