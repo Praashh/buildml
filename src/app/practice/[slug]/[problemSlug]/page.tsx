@@ -108,6 +108,16 @@ function ProblemHeaderBar({
 	);
 }
 
+interface ExecutionResult {
+	status?: string;
+	output?: string | null;
+	passed?: number;
+	total?: number;
+	results?: Array<{ name: string; passed: boolean; error?: string }>;
+	runId?: string;
+	id?: string;
+}
+
 function ConsolePanel({
 	isExecuting,
 	isRunPending,
@@ -119,7 +129,7 @@ function ConsolePanel({
 	isExecuting: boolean;
 	isRunPending: boolean;
 	isSubmitPending: boolean;
-	result: any;
+	result: ExecutionResult | null;
 	onRun: () => void;
 	onSubmit: () => void;
 }) {
@@ -175,7 +185,7 @@ function ConsolePanel({
 						) : (
 							<span className="flex items-center font-bold font-mono text-[10px] text-primary">
 								<div className="mr-2 h-1.5 w-1.5 animate-pulse rounded-full bg-primary" />
-								EXECUTION {result.status}
+								EXECUTION {result.status ?? "UNKNOWN"}
 							</span>
 						)}
 					</div>
@@ -190,7 +200,7 @@ function ConsolePanel({
 					</div>
 				)}
 
-				{result ? (
+				{!isExecuting && result ? (
 					<div className="space-y-4">
 						<div className="group">
 							<div className="mb-2 flex justify-between border-[var(--line)] border-b pb-1 text-[var(--dim)]">
@@ -232,7 +242,7 @@ export default function PracticeProblemPage({
 }) {
 	const { slug: setSlug, problemSlug } = use(params);
 	const [code, setCode] = useState("");
-	const [result, setResult] = useState<any>(null);
+	const [result, setResult] = useState<ExecutionResult | null>(null);
 
 	const { data: problem, isLoading } = api.problem.getBySlug.useQuery({
 		slug: problemSlug,
@@ -245,11 +255,23 @@ export default function PracticeProblemPage({
 		onSuccess: (data) => {
 			setResult(data);
 		},
+		onError: (error) => {
+			setResult({
+				status: "ERROR",
+				output: error.message || "Failed to execute solution",
+			});
+		},
 	});
 
 	const submitMutation = api.submission.submit.useMutation({
 		onSuccess: (data) => {
 			setResult(data);
+		},
+		onError: (error) => {
+			setResult({
+				status: "ERROR",
+				output: error.message || "Failed to submit solution",
+			});
 		},
 	});
 
@@ -261,7 +283,7 @@ export default function PracticeProblemPage({
 		},
 		{
 			enabled: !!(
-				result?.runId ||
+				(result?.runId && result?.status === "PENDING") ||
 				(result?.id && result?.status === "PENDING")
 			),
 			refetchInterval: (query) => {
@@ -277,7 +299,7 @@ export default function PracticeProblemPage({
 	// Update result when polling gets new data
 	useEffect(() => {
 		if (statusData && statusData.status !== "PENDING") {
-			setResult((prev: any) => ({ ...prev, ...statusData }));
+			setResult((prev) => (prev ? { ...prev, ...statusData } : statusData));
 		}
 	}, [statusData]);
 
@@ -296,17 +318,19 @@ export default function PracticeProblemPage({
 	}
 
 	const handleRun = () => {
+		setResult(null);
 		runMutation.mutate({ problemId: problem.id, code });
 	};
 
 	const handleSubmit = () => {
+		setResult(null);
 		submitMutation.mutate({ problemId: problem.id, code });
 	};
 
 	const isExecuting =
 		runMutation.isPending ||
 		submitMutation.isPending ||
-		(result?.status === "PENDING" && !statusData) ||
+		result?.status === "PENDING" ||
 		statusData?.status === "PENDING";
 
 	// Find current problem index and adjacent problems

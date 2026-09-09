@@ -79,7 +79,7 @@ function _parseExecutorResult(result: ExecutorResponse): {
 export const submissionRouter = createTRPCRouter({
 	/**
 	 * RUN — synchronous execution against the FastAPI executor.
-	 * No QStash, no webhook. Immediate feedback.
+	 * Immediate feedback for testing solution.
 	 */
 	run: protectedProcedure
 		.input(
@@ -98,25 +98,40 @@ export const submissionRouter = createTRPCRouter({
 				});
 			}
 
-			const runId = crypto.randomUUID();
-
-			// Dispatch to QStash for async processing
-			await qstash.publishJSON({
-				url: `${env.DEPLOYMENT_URL}/api/webhooks/process-submission`,
-				body: {
-					type: "RUN",
-					runId,
-					problemId: input.problemId,
-					code: input.code,
-					userId: ctx.session.user.id,
-				},
+			const problem = await ctx.prisma.problem.findUnique({
+				where: { id: input.problemId },
+				include: { problemSet: true },
 			});
 
-			return { runId };
+			if (!problem || !problem.problemSet) {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "Problem or Problem Set not found",
+				});
+			}
+
+			try {
+				const execRes = await _callExecutor(
+					input.code,
+					problem.slug,
+					problem.problemSet.slug,
+				);
+				return _parseExecutorResult(execRes);
+			} catch (err: unknown) {
+				console.error("[Submission.run] Execution error:", err);
+				const message =
+					err instanceof Error
+						? err.message
+						: "Failed to reach executor service.";
+				return {
+					status: "ERROR",
+					output: `Execution Error: ${message}\n\nMake sure the executor service is running at ${env.EXECUTOR_URL}.`,
+				};
+			}
 		}),
 
 	/**
-	 * SUBMIT — creates a DB record, then dispatches to QStash for async processing.
+	 * SUBMIT — creates a DB record, then dispatches to QStash (or executes directly in dev).
 	 */
 	submit: protectedProcedure
 		.input(
@@ -143,17 +158,75 @@ export const submissionRouter = createTRPCRouter({
 					code: input.code,
 					status: "PENDING",
 				},
-			});
-
-			// Publish to QStash for async processing
-			await qstash.publishJSON({
-				url: `${env.DEPLOYMENT_URL}/api/webhooks/process-submission`,
-				body: {
-					type: "SUBMIT",
-					submissionId: submission.id,
-					userId: ctx.session.user.id,
+				include: {
+					problem: {
+						include: {
+							problemSet: true,
+						},
+					},
 				},
 			});
+
+			const isLocal =
+				!env.DEPLOYMENT_URL ||
+				env.DEPLOYMENT_URL.includes("localhost") ||
+				env.DEPLOYMENT_URL.includes("127.0.0.1");
+
+			let qstashDispatched = false;
+
+			if (!isLocal && env.QSTASH_TOKEN) {
+				try {
+					await qstash.publishJSON({
+						url: `${env.DEPLOYMENT_URL}/api/webhooks/process-submission`,
+						body: {
+							type: "SUBMIT",
+							submissionId: submission.id,
+							userId: ctx.session.user.id,
+						},
+					});
+					qstashDispatched = true;
+				} catch (e) {
+					console.warn(
+						"[Submit] QStash dispatch failed, executing directly:",
+						e,
+					);
+				}
+			}
+
+			if (!qstashDispatched) {
+				try {
+					if (!submission.problem.problemSet) {
+						throw new TRPCError({
+							code: "NOT_FOUND",
+							message: "Problem set not found",
+						});
+					}
+
+					const execRes = await _callExecutor(
+						submission.code,
+						submission.problem.slug,
+						submission.problem.problemSet.slug,
+					);
+					const parsed = _parseExecutorResult(execRes);
+					return await ctx.prisma.submission.update({
+						where: { id: submission.id },
+						data: { status: parsed.status, output: parsed.output },
+					});
+				} catch (err: unknown) {
+					const message =
+						err instanceof Error
+							? err.message
+							: "Failed to reach executor service.";
+					const errMsg = `Execution Error: ${message}\n\nMake sure the executor service is running at ${env.EXECUTOR_URL}.`;
+					return await ctx.prisma.submission.update({
+						where: { id: submission.id },
+						data: {
+							status: "ERROR",
+							output: errMsg,
+						},
+					});
+				}
+			}
 
 			return submission;
 		}),
